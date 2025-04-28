@@ -21,7 +21,7 @@ import json
 import torch
 from PIL import Image
 from typing import Union, Dict, Any, List, Literal
-from tqdm import tqdm
+
 
 # %%
 # Configure logging
@@ -55,6 +55,10 @@ sys.path.append(str(ROOT_DIR))
 """
 
 # %%
+!pip install tqdm
+from tqdm import tqdm
+
+
 def install_dependencies():
     """Install required dependencies with progress tracking."""
     steps = [
