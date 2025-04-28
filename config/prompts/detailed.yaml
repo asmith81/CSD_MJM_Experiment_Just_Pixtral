@@ -1,0 +1,57 @@
+# Detailed Prompts Configuration
+# 
+# This file contains detailed prompts with comprehensive instructions for extraction.
+
+# Metadata about this configuration
+config_info:
+  name: detailed
+  description: Detailed prompt with context for extracting work order number and total cost
+  version: 1.0
+  last_updated: "2024-04-11"
+
+# The actual prompt definitions
+prompts:
+  - name: detailed
+    text: |
+      Please carefully analyze this invoice and extract the following information:
+
+      1. Work Order Number:
+         - This is a unique identifier for the service request
+         - It may appear as "Work Order", "WO", "Order #", or similar
+         - Look for it in the header or top section
+         - It's typically a combination of numbers and/or letters
+         - Make sure to capture the complete identifier
+
+      2. Total Cost:
+         - This is the final amount to be paid
+         - It may be labeled as "Total", "Amount Due", "Grand Total", etc.
+         - Usually found at the bottom of the invoice
+         - Include any currency symbols and decimal points
+         - Ensure you capture the complete amount
+
+      Return the extracted information in this exact JSON format:
+      {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      }
+    category: detailed
+    field_to_extract: [work_order, cost]
+    description: "Detailed prompt with comprehensive extraction instructions"
+    version: "1.0"
+    format_instructions:
+      output_format: "JSON"
+      required_fields: ["work_order_number", "total_cost"]
+    metadata:
+      source: "comprehensive_guidance"
+      rationale: "Detailed instructions may help the model better understand the context and requirements"
+    fields:
+      work_order_number:
+        prompt: "Please carefully examine this invoice and extract the work order number. The work order number is typically located at the top of the invoice and is an alphanumeric identifier. Return only the work order number, no additional text or explanation."
+        format: "alphanumeric"
+        location: "top of invoice"
+        context: "Work order numbers are used to track jobs and are usually prominently displayed at the top of invoices."
+      total_cost:
+        prompt: "Please locate and extract the total cost from this invoice. The total cost is typically found at the bottom of the invoice and represents the final amount due. Return only the numerical value, no currency symbol, commas, or additional text."
+        format: "currency"
+        location: "bottom of invoice"
+        context: "Total cost represents the final amount due for the work performed." 

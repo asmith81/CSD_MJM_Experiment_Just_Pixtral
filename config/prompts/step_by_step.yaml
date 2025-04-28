@@ -1,0 +1,43 @@
+# Step-by-Step Prompts Configuration
+# 
+# This file contains prompts that guide the extraction process step by step.
+
+# Metadata about this configuration
+config_info:
+  name: step_by_step
+  description: Prompts that break down extraction into clear steps
+  version: 1.0
+  last_updated: "2024-04-11"
+
+# The actual prompt definitions
+prompts:
+  - name: step_by_step
+    text: |
+      Let's extract information from this invoice step by step:
+
+      Step 1: First, look for the work order number
+      - It's usually a reference number
+      - Often labeled as "Work Order" or "WO"
+      - Note down what you find
+
+      Step 2: Next, find the total cost
+      - Look for the final amount
+      - It might be labeled as "Total" or "Amount Due"
+      - Make sure to get the complete amount
+
+      Step 3: Format your findings
+      Put the information in this exact JSON format:
+      {
+        "work_order_number": "what you found in step 1",
+        "total_cost": "what you found in step 2"
+      }
+    category: structured
+    field_to_extract: [work_order, cost]
+    description: "Prompt that breaks down extraction into clear steps"
+    version: "1.0"
+    format_instructions:
+      output_format: "JSON"
+      required_fields: ["work_order_number", "total_cost"]
+    metadata:
+      source: "structured_approach"
+      rationale: "Breaking down the task into steps may improve accuracy and completeness" 

@@ -21,7 +21,53 @@ import json
 import torch
 from PIL import Image
 from typing import Union, Dict, Any, List, Literal
+import yaml
 
+# Global variable to store selected prompt
+SELECTED_PROMPT = None
+
+def load_prompt_files() -> Dict[str, Dict]:
+    """Load all prompt YAML files from the config/prompts directory."""
+    prompts_dir = Path("config/prompts")
+    prompt_files = {
+        "basic_extraction": prompts_dir / "basic_extraction.yaml",
+        "detailed": prompts_dir / "detailed.yaml",
+        "few_shot": prompts_dir / "few_shot.yaml",
+        "locational": prompts_dir / "locational.yaml",
+        "step_by_step": prompts_dir / "step_by_step.yaml"
+    }
+    
+    loaded_prompts = {}
+    for name, file_path in prompt_files.items():
+        with open(file_path, 'r') as f:
+            loaded_prompts[name] = yaml.safe_load(f)
+    return loaded_prompts
+
+def select_prompt() -> str:
+    """Allow user to select a prompt type and return the prompt text."""
+    global SELECTED_PROMPT
+    
+    prompts = load_prompt_files()
+    print("\nAvailable prompt types:")
+    for i, name in enumerate(prompts.keys(), 1):
+        print(f"{i}. {name.replace('_', ' ').title()}")
+    
+    while True:
+        try:
+            choice = int(input("\nSelect a prompt type (1-5): "))
+            if 1 <= choice <= len(prompts):
+                selected_name = list(prompts.keys())[choice - 1]
+                SELECTED_PROMPT = prompts[selected_name]
+                print(f"\nSelected prompt type: {selected_name.replace('_', ' ').title()}")
+                print("\nPrompt text:")
+                print("-" * 50)
+                print(SELECTED_PROMPT['prompts'][0]['text'])
+                print("-" * 50)
+                return selected_name
+            else:
+                print("Invalid choice. Please select a number between 1 and 5.")
+        except ValueError:
+            print("Please enter a valid number.")
 
 # %%
 # Configure logging
@@ -398,4 +444,115 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
 # Download model
 model, processor = download_pixtral_model()
 logger.info("Model and processor ready for use")
+
+# %% [markdown]
+"""
+## Prompt Selection
+Select a prompt type for the model evaluation.
+"""
+
+# %%
+# Run the prompt selection
+selected_prompt_type = select_prompt()
+logger.info(f"Selected prompt type: {selected_prompt_type}")
+
+# The selected prompt is now stored in the global variable SELECTED_PROMPT
+# This can be accessed in subsequent cells for model evaluation
+
+# %% [markdown]
+"""
+## Single Image Test
+Run the model on a single image using the selected prompt.
+"""
+
+# %%
+def format_prompt(prompt_text: str) -> str:
+    """Format the prompt using the Pixtral template."""
+    config = yaml.safe_load(open("config/pixtral.yaml", 'r'))
+    special_tokens = config['model_params']['special_tokens']
+    
+    # Format the prompt with special tokens
+    formatted_prompt = f"{special_tokens[2]}\n{prompt_text}\n{special_tokens[3]}"
+    return formatted_prompt
+
+def load_and_process_image(image_path: str) -> Image.Image:
+    """Load and process the image according to Pixtral specifications."""
+    config = yaml.safe_load(open("config/pixtral.yaml", 'r'))
+    
+    # Load image
+    image = Image.open(image_path)
+    
+    # Convert to RGB if needed
+    if image.mode != config['model_params']['image_format']:
+        image = image.convert(config['model_params']['image_format'])
+    
+    # Resize if needed
+    max_size = config['model_params']['max_image_size']
+    if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
+        image.thumbnail(max_size, Image.Resampling.LANCZOS)
+    
+    return image
+
+def run_single_image_test():
+    """Run the model on a single image with the selected prompt."""
+    # Get the first .jpg file from data/images
+    image_dir = Path("data/images")
+    image_files = list(image_dir.glob("*.jpg"))
+    if not image_files:
+        raise FileNotFoundError("No .jpg files found in data/images directory")
+    
+    image_path = str(image_files[0])
+    
+    # Load and process image
+    image = load_and_process_image(image_path)
+    
+    # Format the prompt
+    prompt_text = SELECTED_PROMPT['prompts'][0]['text']
+    formatted_prompt = format_prompt(prompt_text)
+    
+    # Display the image
+    print("\nInput Image:")
+    display(image)
+    
+    # Display the prompt
+    print("\nFormatted Prompt:")
+    print("-" * 50)
+    print(formatted_prompt)
+    print("-" * 50)
+    
+    # Prepare model inputs
+    inputs = processor(
+        text=formatted_prompt,
+        images=image,
+        return_tensors="pt"
+    ).to(model.device)
+    
+    # Get inference parameters from config
+    config = yaml.safe_load(open("config/pixtral.yaml", 'r'))
+    inference_params = config['inference']
+    
+    # Generate response
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=inference_params['max_new_tokens'],
+            do_sample=inference_params['do_sample'],
+            temperature=inference_params['temperature'],
+            top_k=inference_params['top_k'],
+            top_p=inference_params['top_p']
+        )
+    
+    # Decode and display response
+    response = processor.decode(outputs[0], skip_special_tokens=True)
+    print("\nModel Response:")
+    print("-" * 50)
+    print(response)
+    print("-" * 50)
+
+# Run the single image test
+try:
+    run_single_image_test()
+except Exception as e:
+    logger.error(f"Error during single image test: {str(e)}")
+    raise
 

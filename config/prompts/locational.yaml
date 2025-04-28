@@ -1,0 +1,41 @@
+# Locational Prompts Configuration
+# 
+# This file contains prompts that focus on spatial location of fields in invoices.
+
+# Metadata about this configuration
+config_info:
+  name: locational
+  description: Prompts focusing on spatial location of invoice fields
+  version: 1.0
+  last_updated: "2024-04-11"
+
+# The actual prompt definitions
+prompts:
+  - name: locational
+    text: |
+      Please analyze this invoice with attention to field locations:
+      
+      1. Work Order Number:
+         - Typically found in upper right portion of image
+         - May be in a box or labeled section
+      
+      2. Total Cost:
+         - Usually in the bottom right section
+         - Often in a "Total" or "Amount Due" box
+         - May be the last line item
+      
+      Extract these values and return them in JSON format:
+      {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      }
+    category: positioned
+    field_to_extract: [work_order, cost]
+    description: "Prompt that focuses on spatial location of fields"
+    version: "1.0"
+    format_instructions:
+      output_format: "JSON"
+      required_fields: ["work_order_number", "total_cost"]
+    metadata:
+      source: "positional_guidance"
+      rationale: "Using spatial location hints to improve field extraction accuracy" 

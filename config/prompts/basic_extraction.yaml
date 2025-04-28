@@ -1,0 +1,43 @@
+# Basic Extraction Prompts Configuration
+# 
+# This file contains basic prompts for extracting work order number and total cost from invoices.
+
+# Metadata about this configuration
+config_info:
+  name: basic_extraction
+  description: Basic prompt for extracting work order number and total cost
+  version: 1.0
+  last_updated: "2024-04-11"
+
+# The actual prompt definitions
+prompts:
+  - name: basic_extraction
+    text: |
+      Please extract the following information from this invoice:
+      1. Work Order Number
+      2. Total Cost
+      
+      Return the information in JSON format with these exact keys:
+      {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      }
+    category: basic
+    field_to_extract: [work_order, cost]
+    description: "Basic prompt for extracting work order number and total cost"
+    version: "1.0"
+    format_instructions: 
+      output_format: "JSON"
+      required_fields: ["work_order_number", "total_cost"]
+    metadata:
+      source: "initial_prompt_set"
+      rationale: "Simple, direct extraction of key invoice fields"
+    fields:
+      work_order_number:
+        prompt: "Extract the work order number from this invoice. Return only the work order number, no additional text."
+        format: "alphanumeric"
+        location: "top of invoice"
+      total_cost:
+        prompt: "Extract the total cost from this invoice. Return only the numerical value, no currency symbol or additional text."
+        format: "currency"
+        location: "bottom of invoice" 

@@ -1,0 +1,81 @@
+# Few-Shot Prompts Configuration
+# 
+# This file contains prompts that include examples to guide the extraction process.
+
+# Metadata about this configuration
+config_info:
+  name: few_shot
+  description: Few-shot prompt with examples for extracting work order number and total cost
+  version: 1.0
+  last_updated: "2024-04-11"
+
+# The actual prompt definitions
+prompts:
+  - name: few_shot
+    text: |
+      Here are some examples of how to extract information from invoices:
+
+      Example 1:
+      Invoice shows:
+      Work Order: 12345
+      Total: $1,234.56
+      
+      Extracted as:
+      {
+        "work_order_number": "12345",
+        "total_cost": "1234.56"
+      }
+
+      Example 2:
+      Invoice shows:
+      WO#: 67890
+      Amount Due: $5,678.90
+      
+      Extracted as:
+      {
+        "work_order_number": "67890",
+        "total_cost": "5678.90"
+      }
+
+      Now, please extract the same information from this invoice and return it in the same JSON format.
+    category: example_based
+    field_to_extract: [work_order, cost]
+    description: "Prompt that includes examples for better extraction"
+    version: "1.0"
+    format_instructions:
+      output_format: "JSON"
+      required_fields: ["work_order_number", "total_cost"]
+    metadata:
+      source: "example_based_learning"
+      rationale: "Providing examples helps the model understand the expected format and extraction patterns"
+
+# New fields
+fields:
+  work_order_number:
+    prompt: |
+      Extract the work order number from this invoice. Here are some examples:
+      Example 1:
+      Invoice shows: "Work Order: WO12345"
+      Extract: "WO12345"
+      
+      Example 2:
+      Invoice shows: "Job #: JOB-6789"
+      Extract: "JOB-6789"
+      
+      Now extract the work order number from this invoice. Return only the work order number, no additional text.
+    format: "alphanumeric"
+    location: "top of invoice"
+  total_cost:
+    prompt: |
+      Extract the total cost from this invoice. Here are some examples:
+      Example 1:
+      Invoice shows: "Total: $1,234.56"
+      Extract: "1234.56"
+      
+      Example 2:
+      Invoice shows: "Amount Due: 567.89"
+      Extract: "567.89"
+      
+      Now extract the total cost from this invoice. Return only the numerical value, no currency symbol, commas, or additional text.
+    format: "currency"
+    location: "bottom of invoice" 
