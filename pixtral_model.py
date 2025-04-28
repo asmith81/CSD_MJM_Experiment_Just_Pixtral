@@ -9,6 +9,7 @@ It follows the project's notebook handling rules and functional programming appr
 # %% [markdown]
 """
 ## Setup and Configuration
+### Initial Imports
 """
 
 # %%
@@ -23,6 +24,12 @@ from PIL import Image
 from typing import Union, Dict, Any, List, Literal
 import yaml
 
+# %% [markdown]
+"""
+### Prompt Selection
+"""
+
+# %%
 # Global variable to store selected prompt
 SELECTED_PROMPT = None
 
@@ -68,7 +75,10 @@ def select_prompt() -> str:
                 print("Invalid choice. Please select a number between 1 and 5.")
         except ValueError:
             print("Please enter a valid number.")
-
+# %% [markdown]
+"""
+### Logging Configuration
+"""
 # %%
 # Configure logging
 logging.basicConfig(
@@ -76,7 +86,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
+# %% [markdown]
+"""
+### Root Directory Determination
+"""
 # %%
 # Determine root directory
 try:
