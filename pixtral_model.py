@@ -26,7 +26,7 @@ import yaml
 
 # %% [markdown]
 """
-### Prompt Selection
+### Define a Function and Global Variable to Decide and Hold the Prompt
 """
 
 # %%
@@ -75,7 +75,6 @@ def select_prompt() -> str:
                 print("Invalid choice. Please select a number between 1 and 5.")
         except ValueError:
             print("Please enter a valid number.")
-select_prompt()
 # %% [markdown]
 """
 ### Logging Configuration
