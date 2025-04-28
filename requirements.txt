@@ -1,0 +1,64 @@
+# Core Dependencies
+# PyTorch dependencies installed separately with:
+# pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118
+transformers==4.50.3
+Pillow==9.3.0
+PyYAML==6.0.1
+pandas==1.5.3  # Downgraded to be compatible with numpy 1.24.1
+numpy==1.24.1
+jupyter==1.0.0
+matplotlib==3.7.3
+seaborn==0.12.2
+opencv-python==4.9.0.80  # For image processing
+joblib==1.3.2  # For caching support
+psutil==5.9.8  # For memory monitoring in tests
+accelerate>=0.26.0  # Required for device mapping in transformers
+
+# Configuration and Type Checking
+pydantic==2.6.1  # For data validation and settings management
+typing-extensions==4.10.0  # Updated to match version required for torch
+mypy==1.8.0
+types-PyYAML==6.0.12.12
+types-Pillow==10.2.0.20240311  # Type stubs for Pillow
+# types-pandas removed due to availability issues
+injector==0.21.0  # For dependency injection support
+
+# Data Processing
+scikit-learn==1.3.2
+scipy==1.11.3  # Adjusted for better compatibility with numpy 1.24.1
+tqdm==4.67.1
+python-magic==0.4.27
+# python-magic-bin==0.4.14 # only for windows
+
+# Testing and Development
+pytest==8.0.0  # Adjusted for Python 3.11 compatibility
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-asyncio==0.23.5
+pytest-dependency==0.5.1  # For testing dependency injection
+pytest-factoryboy==2.7.0  # For factory pattern testing
+black==24.1.1
+flake8==7.0.0
+isort==5.13.2
+
+# Documentation
+sphinx==7.2.6
+sphinx-rtd-theme==2.0.0
+nbsphinx==0.9.3
+myst-parser==2.0.0
+
+# Model Dependencies
+# Uncomment as needed for specific model implementations
+# doctr==2.4.0
+# llama-cpp-python==0.2.23
+# pixtral==0.1.0
+
+# Note: System Requirements
+# - CUDA 11.8 is required for PyTorch
+# - GPU: NVIDIA H100 NVL recommended
+# - Minimum GPU memory: 93.00 GB
+# - Python version: 3.11
+
+bitsandbytes==0.45.5
+huggingface_hub>=0.20.3
+flash-attn==2.5.0

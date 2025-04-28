@@ -1,0 +1,66 @@
+# Pixtral model configuration
+
+# Model architecture
+architecture:
+  name: "pixtral"
+  version: "1.0"
+  framework: "transformers"
+  model_type: "vision-language"
+  tokenizer: "pixtral-tokenizer"
+
+# Hardware requirements
+hardware:
+  min_gpu_memory_gb: 16
+  recommended_gpu_memory_gb: 24
+  supported_devices:
+    - "cuda"
+    - "cpu"
+  quantization_support: true
+
+# Inference parameters
+inference:
+  max_new_tokens: 500
+  do_sample: false
+  temperature: 1.0
+  top_k: 50
+  top_p: 0.95
+  batch_size: 1
+  max_batch_memory_gb: 20
+
+# Performance monitoring
+performance:
+  expected_accuracy: 0.7
+  inference_timeout_seconds: 30
+  gpu_utilization_threshold: 0.8
+  metrics:
+    - gpu_utilization
+    - inference_time
+    - accuracy
+    - memory_usage
+
+# Error handling
+error_handling:
+  retry_attempts: 2
+  fallback_strategy: "minimal_params"
+  critical_error_fields:
+    - device_map
+    - torch_dtype
+    - trust_remote_code
+  error_categories:
+    - memory_error
+    - timeout_error
+    - validation_error
+    - inference_error
+
+# Model-specific parameters
+model_params:
+  image_processor: "pixtral-image-processor"
+  max_image_size: [4032, 3024]
+  image_format: "RGB"
+  text_processor: "pixtral-text-processor"
+  max_text_length: 512
+  special_tokens:
+    - "[IMG]"
+    - "[/IMG]"
+    - "[INST]"
+    - "[/INST]" 

@@ -1,0 +1,30 @@
+﻿Invoice,Type,Timestamp,Name,Work Order Number/Numero de Orden,Total
+1017,Invoice,10/17/2024,Edgar,20502, 950.00 
+1018,Invoice,10/17/2024,Edgar,20558, 550.00 
+1019,Invoice,10/17/2024,Edgar,20509, 150.00 
+1020,Invoice,10/17/2024,Edgar,20479, 140.00 
+1021,Invoice,10/17/2024,Edgar,20516, 190.00 
+1022,Invoice,10/18/2024,Edgar,20525," 1,050.00 "
+1023,Invoice,10/17/2024,Edgar,20548, 240.00 
+1024,Invoice,10/12/2024,Harold,0001," 47,035.00 "
+1025,Invoice,10/20/2024,Frank,20570," 1,500.00 "
+1026,Invoice,10/20/2024,Frank,20590," 1,500.00 "
+1027,Invoice,10/25/2024,Frank,20633, 250.00 
+1028,Invoice,10/25/2024,Frank,20658," 1,600.00 "
+1029,Invoice,10/25/2024,Frank,20677," 1,800.00 "
+1030,Invoice,10/25/2024,Frank,20628, 400.00 
+1031,Invoice,10/25/2024,Frank,20604, 500.00 
+1033,Invoice,10/28/2024,Htin,20308, 535.00 
+1034,Invoice,10/28/2024,24/7 Tech,19931," 2,125.50 "
+1035,Invoice,10/28/2024,Htin,19869, 325.00 
+1036,Invoice,10/28/2024,Htin,20578, 500.00 
+1037,Invoice,10/29/2024,Harold,1260," 5,656.00 "
+1038,Invoice,10/28/2024,Marco,20591," 1,900.00 "
+1039,Invoice,10/28/2024,Marco,20662," 1,900.00 "
+1040,Invoice,10/30/2024,Marco,Aston ," 2,000.00 "
+1041,Estimate,10/30/2024,Marco,Aston, 500.00 
+1042,Invoice,10/11/2024,Frank,20455, 250.00 
+1043,Invoice,10/11/2024,Frank,20458, 200.00 
+1044,Invoice,10/11/2024,Frank,20376, 500.00 
+1045,Invoice,10/11/2024,Frank,20388, 700.00 
+1046,Invoice,10/13/2024,Marco,20254, 850.00 
