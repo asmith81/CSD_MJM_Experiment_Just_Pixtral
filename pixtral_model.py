@@ -245,6 +245,38 @@ logger.info(f"Device Map: {device_map}")
 
 # %% [markdown]
 """
+## Optional: Multi-GPU Configuration
+"""
+
+# %%
+def configure_multi_gpu() -> dict:
+    """
+    Configure device mapping for multiple GPUs.
+    Returns device map configuration for parallel processing.
+    """
+    if torch.cuda.device_count() <= 1:
+        logger.info("Only one GPU detected. Using single GPU configuration.")
+        return {"": 0}
+    
+    num_gpus = torch.cuda.device_count()
+    logger.info(f"Detected {num_gpus} GPUs. Configuring for parallel processing.")
+    
+    # Create balanced device map
+    device_map = {}
+    for i in range(num_gpus):
+        device_map[f"model.layers.{i}"] = i % num_gpus
+    
+    # Map remaining layers to first GPU
+    device_map[""] = 0
+    
+    return device_map
+
+# Optional: Use this instead of single GPU configuration if multiple GPUs are available
+# device_map = configure_multi_gpu()
+# logger.info(f"Multi-GPU Device Map: {device_map}")
+
+# %% [markdown]
+"""
 ## Version Checks
 """
 
@@ -362,36 +394,4 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
 # Download model
 model, processor = download_pixtral_model()
 logger.info("Model and processor ready for use")
-
-# %% [markdown]
-"""
-## Optional: Multi-GPU Configuration
-"""
-
-# %%
-def configure_multi_gpu() -> dict:
-    """
-    Configure device mapping for multiple GPUs.
-    Returns device map configuration for parallel processing.
-    """
-    if torch.cuda.device_count() <= 1:
-        logger.info("Only one GPU detected. Using single GPU configuration.")
-        return {"": 0}
-    
-    num_gpus = torch.cuda.device_count()
-    logger.info(f"Detected {num_gpus} GPUs. Configuring for parallel processing.")
-    
-    # Create balanced device map
-    device_map = {}
-    for i in range(num_gpus):
-        device_map[f"model.layers.{i}"] = i % num_gpus
-    
-    # Map remaining layers to first GPU
-    device_map[""] = 0
-    
-    return device_map
-
-# Optional: Use this instead of single GPU configuration if multiple GPUs are available
-# device_map = configure_multi_gpu()
-# logger.info(f"Multi-GPU Device Map: {device_map}")
 
