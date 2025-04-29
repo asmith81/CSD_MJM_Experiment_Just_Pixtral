@@ -454,6 +454,11 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
             else:
                 raise RuntimeError(f"Failed to download model after {max_retries} attempts: {str(e)}")
 
+# %% [markdown]
+"""
+## Model Download
+"""
+# %%
 # Download model
 model, processor = download_pixtral_model()
 logger.info("Model and processor ready for use")
@@ -586,6 +591,15 @@ def run_single_image_test():
         images=image,
         return_tensors="pt"
     ).to(model.device)
+    
+    # Handle type conversion based on quantization level
+    if quantization == "bfloat16":
+        # Convert image inputs to bfloat16
+        inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+    elif quantization in ["int8", "int4"]:
+        # For int8/int4 quantization, keep inputs as float32
+        # The model will handle internal quantization
+        pass
     
     # Get inference parameters from config
     config = yaml.safe_load(open("config/pixtral.yaml", 'r'))

@@ -60,5 +60,5 @@ myst-parser==2.0.0
 # - Python version: 3.11
 
 bitsandbytes==0.45.5
-huggingface_hub>=0.20.3
+huggingface_hub[hf_xet]>=0.20.3
 flash-attn==2.5.0
