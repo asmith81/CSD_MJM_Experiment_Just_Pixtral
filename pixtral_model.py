@@ -459,7 +459,7 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
 ## Model Download
 """
 # %%
-# Download model
+## Initialize Model
 model, processor = download_pixtral_model()
 logger.info("Model and processor ready for use")
 
@@ -531,8 +531,8 @@ def format_prompt(prompt_text: str) -> str:
     config = yaml.safe_load(open("config/pixtral.yaml", 'r'))
     special_tokens = config['model_params']['special_tokens']
     
-    # Format the prompt with special tokens
-    formatted_prompt = f"{special_tokens[2]}\n{prompt_text}\n{special_tokens[3]}"
+    # Format the prompt with special tokens and image token
+    formatted_prompt = f"{special_tokens[2]}\n{prompt_text}\n{special_tokens[0]}\n{special_tokens[1]}\n{special_tokens[3]}"
     return formatted_prompt
 
 def load_and_process_image(image_path: str) -> Image.Image:
@@ -588,7 +588,7 @@ def run_single_image_test():
     # Prepare model inputs using the original image
     inputs = processor(
         text=formatted_prompt,
-        images=image,
+        images=[image],  # Pass image as a list
         return_tensors="pt"
     ).to(model.device)
     
