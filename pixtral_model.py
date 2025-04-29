@@ -458,6 +458,48 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
 model, processor = download_pixtral_model()
 logger.info("Model and processor ready for use")
 
+def initialize_model(quantization: Literal["bfloat16", "int8", "int4"]) -> tuple:
+    """
+    Initialize the Pixtral model and processor with the specified quantization.
+    
+    Args:
+        quantization: The quantization level to use ("bfloat16", "int8", or "int4")
+        
+    Returns:
+        tuple: (model, processor) if successful
+        
+    Raises:
+        RuntimeError: If model initialization fails
+    """
+    try:
+        from transformers import AutoProcessor, LlavaForConditionalGeneration
+        
+        # Configure model loading based on selected quantization
+        model_kwargs = {
+            "device_map": device_map,
+            "trust_remote_code": True
+        }
+        
+        if quantization == "bfloat16":
+            model_kwargs["torch_dtype"] = torch.bfloat16
+        elif quantization == "int8":
+            model_kwargs["load_in_8bit"] = True
+        elif quantization == "int4":
+            model_kwargs["load_in_4bit"] = True
+        
+        # Initialize model and processor
+        model = LlavaForConditionalGeneration.from_pretrained("mistral-community/pixtral-12b", **model_kwargs)
+        processor = AutoProcessor.from_pretrained("mistral-community/pixtral-12b")
+        
+        return model, processor
+        
+    except Exception as e:
+        raise RuntimeError(f"Failed to initialize model: {str(e)}")
+
+# Initialize model and processor
+model, processor = initialize_model(quantization)
+logger.info(f"Model and processor initialized with {quantization} quantization")
+
 # %% [markdown]
 """
 ## Prompt Selection
@@ -519,13 +561,18 @@ def run_single_image_test():
     # Load and process image
     image = load_and_process_image(image_path)
     
+    # Create a display version of the image with a max size of 800x800
+    display_image = image.copy()
+    max_display_size = (800, 800)
+    display_image.thumbnail(max_display_size, Image.Resampling.LANCZOS)
+    
     # Format the prompt
     prompt_text = SELECTED_PROMPT['prompts'][0]['text']
     formatted_prompt = format_prompt(prompt_text)
     
     # Display the image
-    print("\nInput Image:")
-    display(image)
+    print("\nInput Image (resized for display):")
+    display(display_image)
     
     # Display the prompt
     print("\nFormatted Prompt:")
@@ -533,7 +580,7 @@ def run_single_image_test():
     print(formatted_prompt)
     print("-" * 50)
     
-    # Prepare model inputs
+    # Prepare model inputs using the original image
     inputs = processor(
         text=formatted_prompt,
         images=image,

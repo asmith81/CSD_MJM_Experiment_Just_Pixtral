@@ -1,83 +1,56 @@
 # Pixtral Model Evaluation
 
-This notebook evaluates the Pixtral-12B model's performance on invoice data extraction. It follows a structured approach to model configuration and setup.
+This project evaluates the Pixtral-12B model's performance on invoice data extraction. It follows a notebook-based approach with proper configuration and error handling.
 
-## Environment Setup
+## Features
 
-The notebook handles the following setup steps:
+- Configurable model quantization (bfloat16, int8, int4)
+- Multiple prompt types for evaluation
+- Memory resource monitoring
+- Flash Attention support
+- Device mapping configuration
+- Single and multi-GPU support
 
-1. **Dependencies Installation**
-   - Installs required packages from requirements.txt
-   - Configures PyTorch with CUDA 11.8 support
-   - Sets up logging configuration
+## Setup
 
-2. **Memory Resource Check**
-   - Verifies GPU availability
-   - Checks available GPU memory
-   - Checks system RAM
-   - Provides recommendations based on available resources
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-3. **Quantization Selection**
-   - Offers three quantization options:
-     - bfloat16 (full precision, 93GB VRAM)
-     - int8 (8-bit, 46GB VRAM)
-     - int4 (4-bit, 23GB VRAM)
-   - Allows user to select appropriate quantization level
-
-4. **Flash Attention Configuration**
-   - Checks GPU support for Flash Attention
-   - Automatically enables Flash Attention if supported
-   - Provides feedback on Flash Attention status
-
-5. **Device Mapping**
-   - Configures single GPU setup by default
-   - Optional multi-GPU support for parallel processing
-   - Provides clear error if no GPU is available
-
-6. **Version Checks**
-   - Verifies all required package versions
-   - Enforces transformers >=4.45.0 requirement
-   - Checks critical dependencies:
-     - transformers
-     - Pillow
-     - torch
-     - accelerate
-     - bitsandbytes
-     - flash-attn
-   - Provides warnings for version mismatches
-
-7. **Model Download**
-   - Downloads Pixtral-12B model from HuggingFace
-   - Implements retry logic (2 attempts)
-   - Monitors memory usage during download
-   - Applies selected quantization settings
-   - Returns both model and processor
-   - Handles critical error cases
-
-## Requirements
-
-- Python 3.11
-- CUDA 11.8
-- NVIDIA GPU with sufficient VRAM (minimum 23GB for 4-bit quantization)
-- See requirements.txt for package dependencies
+2. Configure the model:
+   - Select quantization level (bfloat16, int8, int4)
+   - Choose prompt type
+   - Set up device mapping
 
 ## Usage
 
-1. Run the notebook cells in sequence
-2. Select quantization level when prompted
-3. The notebook will automatically:
-   - Check package versions
-   - Configure memory resources
-   - Enable Flash Attention (if supported)
-   - Set up device mapping
-   - Download and configure the model
-4. For multi-GPU systems, uncomment the multi-GPU configuration cell
+1. Run the notebook cells in sequence:
+   - Setup and configuration
+   - Model initialization with selected quantization
+   - Prompt selection
+   - Single image test
+
+2. The model will process images and extract information based on the selected prompt.
+
+## Configuration
+
+- Model parameters are in `config/pixtral.yaml`
+- Prompts are stored in `config/prompts/`
+- Images should be placed in `data/images/`
 
 ## Notes
 
-- The notebook requires a GPU to run
+- The model handles tensor type conversions internally based on quantization settings
 - Memory requirements vary based on quantization level
-- Flash Attention is enabled by default if supported
-- Multi-GPU support is optional and commented out by default
-- Model download includes retry logic and memory monitoring
-- Package version checks ensure compatibility 
+- Flash Attention is automatically configured if supported by the GPU
+
+## Error Handling
+
+- Memory resource checks before model initialization
+- Graceful handling of GPU availability
+- Proper cleanup on initialization failures
+
+## License
+
+[Your License Here] 
