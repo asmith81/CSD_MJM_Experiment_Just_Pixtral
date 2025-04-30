@@ -630,3 +630,173 @@ except Exception as e:
     logger.error(f"Error during single image test: {str(e)}")
     raise
 
+# %% [markdown]
+"""
+## Batch Test
+Run the model on all images and save results.
+"""
+
+# %%
+
+def generate_test_id() -> str:
+    """Generate a unique test identifier using timestamp."""
+    from datetime import datetime
+    return datetime.now().strftime("%Y%m%d_%H%M%S")
+
+def collect_test_metadata() -> dict:
+    """Collect metadata about the current test configuration."""
+    return {
+        "test_id": generate_test_id(),
+        "timestamp": datetime.now().isoformat(),
+        "quantization": quantization,
+        "prompt_type": selected_prompt_type,
+        "model_config": {
+            "device_map": device_map,
+            "use_flash_attention": use_flash_attention
+        },
+        "system_resources": check_memory_resources()
+    }
+
+def process_all_images(results_file: Path) -> list:
+    """Process all images in the data/images directory and collect responses."""
+    results = []
+    image_dir = Path("data/images")
+    image_files = list(image_dir.glob("*.jpg"))
+    
+    if not image_files:
+        raise FileNotFoundError("No .jpg files found in data/images directory")
+    
+    for image_path in image_files:
+        try:
+            # Load and process image
+            image = load_and_process_image(str(image_path))
+            
+            # Format the prompt
+            prompt_text = SELECTED_PROMPT['prompts'][0]['text']
+            formatted_prompt = format_prompt(prompt_text)
+            
+            # Prepare model inputs
+            inputs = processor(
+                text=formatted_prompt,
+                images=[image],
+                return_tensors="pt"
+            ).to(model.device)
+            
+            # Handle type conversion based on quantization level
+            if quantization == "bfloat16":
+                inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+            
+            # Get inference parameters from config
+            config = yaml.safe_load(open("config/pixtral.yaml", 'r'))
+            inference_params = config['inference']
+            
+            # Generate response
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    max_new_tokens=inference_params['max_new_tokens'],
+                    do_sample=inference_params['do_sample'],
+                    temperature=inference_params['temperature'],
+                    top_k=inference_params['top_k'],
+                    top_p=inference_params['top_p']
+                )
+            
+            # Decode response
+            response = processor.decode(outputs[0], skip_special_tokens=True)
+            
+            # Try to parse response as JSON and validate structure
+            try:
+                parsed_response = json.loads(response)
+                # Validate that we have exactly two key-value pairs
+                if not isinstance(parsed_response, dict) or len(parsed_response) != 2:
+                    raise ValueError("Response does not contain exactly two key-value pairs")
+                
+                response_data = {
+                    "is_valid": True,
+                    "key_value_pairs": parsed_response
+                }
+            except (json.JSONDecodeError, ValueError) as e:
+                response_data = {
+                    "is_valid": False,
+                    "error": str(e),
+                    "raw_response": response
+                }
+            
+            # Create result entry
+            result = {
+                "image_name": image_path.name,
+                "status": "completed" if response_data["is_valid"] else "invalid_response",
+                "response": response_data,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            # Add to results
+            results.append(result)
+            
+            # Save incremental results
+            save_incremental_results(results_file, results)
+            
+            logger.info(f"Processed image: {image_path.name}")
+            
+        except Exception as e:
+            logger.error(f"Error processing image {image_path.name}: {str(e)}")
+            result = {
+                "image_name": image_path.name,
+                "status": "error",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
+            results.append(result)
+            # Save incremental results even on error
+            save_incremental_results(results_file, results)
+    
+    return results
+
+def save_incremental_results(results_file: Path, results: list):
+    """Save results incrementally to a temporary file."""
+    # Create temporary file if it doesn't exist
+    if not results_file.exists():
+        initial_data = {
+            "metadata": collect_test_metadata(),
+            "prompt": {
+                "raw_text": SELECTED_PROMPT['prompts'][0]['text'],
+                "formatted": format_prompt(SELECTED_PROMPT['prompts'][0]['text'])
+            },
+            "results": []
+        }
+        with open(results_file, 'w') as f:
+            json.dump(initial_data, f, indent=2)
+    
+    # Update the results section
+    with open(results_file, 'r') as f:
+        data = json.load(f)
+    
+    data["results"] = results
+    
+    with open(results_file, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def run_batch_test():
+    """Run the model on all images and save results."""
+    try:
+        # Create results directory if it doesn't exist
+        results_dir = Path("results")
+        results_dir.mkdir(exist_ok=True)
+        
+        # Generate unique filename
+        test_id = generate_test_id()
+        results_file = results_dir / f"test_results_{test_id}.json"
+        
+        # Process all images with incremental saving
+        results = process_all_images(results_file)
+        
+        logger.info(f"Batch test completed. Results saved to: {results_file}")
+        return str(results_file)
+        
+    except Exception as e:
+        logger.error(f"Error during batch test: {str(e)}")
+        raise
+
+# Example usage:
+# run_batch_test()
+
