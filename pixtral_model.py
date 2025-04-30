@@ -108,6 +108,11 @@ except NameError:
 
 sys.path.append(str(ROOT_DIR))
 
+# Create results directory
+results_dir = ROOT_DIR / "results"
+results_dir.mkdir(exist_ok=True)
+logger.info(f"Results will be saved to: {results_dir}")
+
 # %% [markdown]
 """
 ## Install Dependencies
@@ -779,10 +784,6 @@ def save_incremental_results(results_file: Path, results: list):
 def run_batch_test():
     """Run the model on all images and save results."""
     try:
-        # Create results directory if it doesn't exist
-        results_dir = Path("results")
-        results_dir.mkdir(exist_ok=True)
-        
         # Generate unique filename
         test_id = generate_test_id()
         results_file = results_dir / f"test_results_{test_id}.json"
