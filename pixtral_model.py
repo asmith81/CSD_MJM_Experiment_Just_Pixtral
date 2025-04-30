@@ -19,6 +19,7 @@ import subprocess
 from pathlib import Path
 import logging
 import json
+from datetime import datetime
 import torch
 from PIL import Image
 from typing import Union, Dict, Any, List, Literal
@@ -459,10 +460,6 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
             else:
                 raise RuntimeError(f"Failed to download model after {max_retries} attempts: {str(e)}")
 
-# %% [markdown]
-"""
-## Model Download
-"""
 # %%
 ## Initialize Model
 model, processor = download_pixtral_model()
@@ -645,7 +642,6 @@ Run the model on all images and save results.
 
 def generate_test_id() -> str:
     """Generate a unique test identifier using timestamp."""
-    from datetime import datetime
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def collect_test_metadata() -> dict:
