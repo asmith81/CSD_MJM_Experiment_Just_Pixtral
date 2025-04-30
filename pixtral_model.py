@@ -460,11 +460,15 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
             else:
                 raise RuntimeError(f"Failed to download model after {max_retries} attempts: {str(e)}")
 
-# %%
-## Initialize Model
 model, processor = download_pixtral_model()
 logger.info("Model and processor ready for use")
 
+# %% [markdown]
+"""
+## Initialize Model
+"""
+
+# %%
 def initialize_model(quantization: Literal["bfloat16", "int8", "int4"]) -> tuple:
     """
     Initialize the Pixtral model and processor with the specified quantization.
@@ -658,6 +662,46 @@ def collect_test_metadata() -> dict:
         "system_resources": check_memory_resources()
     }
 
+def extract_json_from_response(response: str) -> tuple[dict, str]:
+    """
+    Extract and parse JSON from model response.
+    Returns tuple of (parsed_json, error_message).
+    If successful, error_message will be empty.
+    """
+    try:
+        # Find the JSON marker
+        json_marker = "```json"
+        if json_marker not in response:
+            return None, "No JSON marker found in response"
+        
+        # Extract JSON content
+        start_idx = response.find(json_marker) + len(json_marker)
+        end_idx = response.find("```", start_idx)
+        if end_idx == -1:
+            return None, "No closing backticks found for JSON"
+        
+        json_str = response[start_idx:end_idx].strip()
+        
+        # Parse JSON
+        parsed_json = json.loads(json_str)
+        
+        # Validate structure
+        if not isinstance(parsed_json, dict):
+            return None, "Response is not a JSON object"
+        
+        # Validate required fields
+        required_fields = {"work_order_number", "total_cost"}
+        missing_fields = required_fields - set(parsed_json.keys())
+        if missing_fields:
+            return None, f"Missing required fields: {missing_fields}"
+        
+        return parsed_json, ""
+        
+    except json.JSONDecodeError as e:
+        return None, f"JSON parsing error: {str(e)}"
+    except Exception as e:
+        return None, f"Unexpected error: {str(e)}"
+
 def process_all_images(results_file: Path) -> list:
     """Process all images in the data/images directory and collect responses."""
     results = []
@@ -705,31 +749,23 @@ def process_all_images(results_file: Path) -> list:
             # Decode response
             response = processor.decode(outputs[0], skip_special_tokens=True)
             
-            # Try to parse response as JSON and validate structure
-            try:
-                parsed_response = json.loads(response)
-                # Validate that we have exactly two key-value pairs
-                if not isinstance(parsed_response, dict) or len(parsed_response) != 2:
-                    raise ValueError("Response does not contain exactly two key-value pairs")
-                
-                response_data = {
-                    "is_valid": True,
-                    "key_value_pairs": parsed_response
-                }
-            except (json.JSONDecodeError, ValueError) as e:
-                response_data = {
-                    "is_valid": False,
-                    "error": str(e),
-                    "raw_response": response
-                }
+            # Extract and parse JSON
+            parsed_json, error_message = extract_json_from_response(response)
             
             # Create result entry
             result = {
                 "image_name": image_path.name,
-                "status": "completed" if response_data["is_valid"] else "invalid_response",
-                "response": response_data,
+                "status": "completed" if parsed_json else "error",
                 "timestamp": datetime.now().isoformat()
             }
+            
+            if parsed_json:
+                result["extracted_data"] = parsed_json
+            else:
+                result["error"] = {
+                    "message": error_message,
+                    "raw_response": response
+                }
             
             # Add to results
             results.append(result)
@@ -744,7 +780,10 @@ def process_all_images(results_file: Path) -> list:
             result = {
                 "image_name": image_path.name,
                 "status": "error",
-                "error": str(e),
+                "error": {
+                    "message": str(e),
+                    "type": "processing_error"
+                },
                 "timestamp": datetime.now().isoformat()
             }
             results.append(result)
@@ -772,8 +811,10 @@ def save_incremental_results(results_file: Path, results: list):
     with open(results_file, 'r') as f:
         data = json.load(f)
     
+    # Update only the results section
     data["results"] = results
     
+    # Save the updated data
     with open(results_file, 'w') as f:
         json.dump(data, f, indent=2)
 
