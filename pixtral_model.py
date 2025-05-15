@@ -653,14 +653,70 @@ def collect_test_metadata() -> dict:
     return {
         "test_id": generate_test_id(),
         "timestamp": datetime.now().isoformat(),
-        "quantization": quantization,
-        "prompt_type": selected_prompt_type,
-        "model_config": {
-            "device_map": device_map,
-            "use_flash_attention": use_flash_attention
+        "model_info": {
+            "name": "Pixtral-12B",
+            "version": "1.0",
+            "model_id": "mistral-community/pixtral-12b",
+            "quantization": quantization,
+            "parameters": {
+                "use_flash_attention": use_flash_attention,
+                "device_map": device_map
+            }
         },
+        "prompt_type": selected_prompt_type,
         "system_resources": check_memory_resources()
     }
+
+def get_most_recent_test_results() -> Path:
+    """Get the most recent test results file from the results directory."""
+    results_dir = Path("results")
+    if not results_dir.exists():
+        raise FileNotFoundError("Results directory not found")
+    
+    # Get all test results files
+    test_files = list(results_dir.glob("test_results_*.json"))
+    if not test_files:
+        raise FileNotFoundError("No test results files found")
+    
+    # Sort by modification time (most recent first)
+    test_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+    return test_files[0]
+
+def select_test_results_file() -> Path:
+    """Allow user to select a test results file or use the most recent."""
+    try:
+        most_recent = get_most_recent_test_results()
+        print(f"\nMost recent test results file: {most_recent.name}")
+        print("\nOptions:")
+        print("1. Use most recent file")
+        print("2. Select a different file")
+        
+        while True:
+            try:
+                choice = int(input("\nSelect an option (1-2): "))
+                if choice == 1:
+                    return most_recent
+                elif choice == 2:
+                    # List all available files
+                    results_dir = Path("results")
+                    test_files = list(results_dir.glob("test_results_*.json"))
+                    test_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+                    
+                    print("\nAvailable test results files:")
+                    for i, file in enumerate(test_files, 1):
+                        print(f"{i}. {file.name}")
+                    
+                    file_choice = int(input("\nSelect a file number: "))
+                    if 1 <= file_choice <= len(test_files):
+                        return test_files[file_choice - 1]
+                    else:
+                        print("Invalid choice. Please select a valid file number.")
+                else:
+                    print("Invalid choice. Please select 1 or 2.")
+            except ValueError:
+                print("Please enter a valid number.")
+    except FileNotFoundError as e:
+        raise RuntimeError(f"Error selecting test results file: {str(e)}")
 
 def extract_json_from_response(response: str) -> tuple[dict, str]:
     """
@@ -1045,42 +1101,47 @@ Generate and display analysis of model performance.
 # %%
 def run_analysis():
     """Run the model and analyze its performance."""
-    # Run the batch test and get results file path
-    results_file = run_batch_test()
-    
-    # Generate analysis
-    analysis = analyze_results(results_file)
-    
-    # Create analysis directory if it doesn't exist
-    analysis_dir = Path("analysis")
-    analysis_dir.mkdir(exist_ok=True)
-    
-    # Save analysis to file
-    analysis_file = analysis_dir / f"analysis_{analysis['metadata']['test_id']}.json"
-    with open(analysis_file, 'w') as f:
-        json.dump(analysis, f, indent=2)
-    
-    # Display summary
-    print("\nAnalysis Summary:")
-    print("-" * 50)
-    print(f"Total Images: {analysis['summary']['total_images']}")
-    print(f"Completed: {analysis['summary']['completed']}")
-    print(f"Errors: {analysis['summary']['errors']}")
-    print(f"Work Order Accuracy: {analysis['summary']['work_order_accuracy']:.2%}")
-    print(f"Total Cost Accuracy: {analysis['summary']['total_cost_accuracy']:.2%}")
-    print(f"Average CER: {analysis['summary']['average_cer']:.3f}")
-    
-    print("\nWork Order Error Categories:")
-    for category, count in analysis['error_categories']['work_order'].items():
-        print(f"- {category}: {count}")
-    
-    print("\nTotal Cost Error Categories:")
-    for category, count in analysis['error_categories']['total_cost'].items():
-        print(f"- {category}: {count}")
-    
-    print(f"\nAnalysis saved to: {analysis_file}")
-    
-    return analysis
+    try:
+        # Get test results file
+        results_file = select_test_results_file()
+        
+        # Generate analysis
+        analysis = analyze_results(str(results_file))
+        
+        # Create analysis directory if it doesn't exist
+        analysis_dir = Path("analysis")
+        analysis_dir.mkdir(exist_ok=True)
+        
+        # Save analysis to file
+        analysis_file = analysis_dir / f"analysis_{analysis['metadata']['test_id']}.json"
+        with open(analysis_file, 'w') as f:
+            json.dump(analysis, f, indent=2)
+        
+        # Display summary
+        print("\nAnalysis Summary:")
+        print("-" * 50)
+        print(f"Total Images: {analysis['summary']['total_images']}")
+        print(f"Completed: {analysis['summary']['completed']}")
+        print(f"Errors: {analysis['summary']['errors']}")
+        print(f"Work Order Accuracy: {analysis['summary']['work_order_accuracy']:.2%}")
+        print(f"Total Cost Accuracy: {analysis['summary']['total_cost_accuracy']:.2%}")
+        print(f"Average CER: {analysis['summary']['average_cer']:.3f}")
+        
+        print("\nWork Order Error Categories:")
+        for category, count in analysis['error_categories']['work_order'].items():
+            print(f"- {category}: {count}")
+        
+        print("\nTotal Cost Error Categories:")
+        for category, count in analysis['error_categories']['total_cost'].items():
+            print(f"- {category}: {count}")
+        
+        print(f"\nAnalysis saved to: {analysis_file}")
+        
+        return analysis
+        
+    except Exception as e:
+        logger.error(f"Error during analysis: {str(e)}")
+        raise
 
 # Run the analysis
 analysis_results = run_analysis()
