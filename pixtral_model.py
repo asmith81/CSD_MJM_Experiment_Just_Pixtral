@@ -669,20 +669,30 @@ def extract_json_from_response(response: str) -> tuple[dict, str]:
     If successful, error_message will be empty.
     """
     try:
-        # Find the JSON marker
-        json_marker = "```json"
-        if json_marker not in response:
-            return None, "No JSON marker found in response"
+        # Find the second occurrence of {
+        first_brace = response.find('{')
+        if first_brace == -1:
+            return None, "No JSON object found in response"
+            
+        second_brace = response.find('{', first_brace + 1)
+        if second_brace == -1:
+            return None, "No second JSON object found in response"
         
-        # Extract JSON content
-        start_idx = response.find(json_marker) + len(json_marker)
-        end_idx = response.find("```", start_idx)
-        if end_idx == -1:
-            return None, "No closing backticks found for JSON"
-        
-        json_str = response[start_idx:end_idx].strip()
-        
-        # Parse JSON
+        # Find the matching closing brace
+        brace_count = 1
+        end_idx = second_brace + 1
+        while brace_count > 0 and end_idx < len(response):
+            if response[end_idx] == '{':
+                brace_count += 1
+            elif response[end_idx] == '}':
+                brace_count -= 1
+            end_idx += 1
+            
+        if brace_count != 0:
+            return None, "Unmatched braces in JSON object"
+            
+        # Extract and parse JSON
+        json_str = response[second_brace:end_idx].strip()
         parsed_json = json.loads(json_str)
         
         # Validate structure
