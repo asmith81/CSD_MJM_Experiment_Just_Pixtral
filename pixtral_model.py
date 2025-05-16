@@ -902,7 +902,7 @@ def run_batch_test():
         raise
 
 # Example usage:
-# run_batch_test()
+run_batch_test()
 
 # %% [markdown]
 """
@@ -994,7 +994,13 @@ def analyze_results(results_file: str, ground_truth_file: str = "data/ground_tru
     with open(results_file, 'r') as f:
         results = json.load(f)
     
-    ground_truth = pd.read_csv(ground_truth_file)
+    # Read ground truth with explicit string type for Invoice column
+    ground_truth = pd.read_csv(ground_truth_file, dtype={'Invoice': str})
+    
+    # Debug ground truth data
+    logger.info(f"Ground truth columns: {ground_truth.columns.tolist()}")
+    logger.info(f"Ground truth shape: {ground_truth.shape}")
+    logger.info(f"Sample of ground truth Invoice values: {ground_truth['Invoice'].head().tolist()}")
     
     # Initialize analysis structure
     analysis = {
@@ -1020,14 +1026,20 @@ def analyze_results(results_file: str, ground_truth_file: str = "data/ground_tru
     total_cost_matches = 0
     
     for result in results["results"]:
-        # Get ground truth for this image
+        # Get ground truth for this image - remove .jpg extension for matching
         image_id = result["image_name"].replace(".jpg", "")
+        
+        # Debug image matching
+        logger.info(f"Looking for image_id: {image_id}")
+        logger.info(f"Available Invoice values: {ground_truth['Invoice'].tolist()}")
+        
         gt_row = ground_truth[ground_truth["Invoice"] == image_id]
         
         if gt_row.empty:
+            logger.warning(f"No ground truth found for image {image_id}")
             continue
             
-        gt_work_order = str(gt_row["Work Order Number/Numero de Orden"].iloc[0])
+        gt_work_order = str(gt_row["Work Order Number/Numero de Orden"].iloc[0]).strip()
         gt_total_cost = normalize_total_cost(str(gt_row["Total"].iloc[0]))
         
         # Initialize result analysis
