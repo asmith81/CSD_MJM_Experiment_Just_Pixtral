@@ -808,11 +808,17 @@ def process_all_images(results_file: Path) -> list:
                 text=formatted_prompt,
                 images=[image],
                 return_tensors="pt"
-            ).to(model.device)
+            )
             
-            # Handle type conversion based on quantization level
+            # Move inputs to the correct device and dtype
+            inputs = {k: v.to(model.device) for k, v in inputs.items()}
+            
+            # Convert inputs to the correct dtype based on quantization
             if quantization == "bfloat16":
                 inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+            elif quantization in ["int8", "int4"]:
+                # For quantized models, convert to float16
+                inputs = {k: v.to(torch.float16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
             
             # Get inference parameters from config
             config = yaml.safe_load(open("config/pixtral.yaml", 'r'))
