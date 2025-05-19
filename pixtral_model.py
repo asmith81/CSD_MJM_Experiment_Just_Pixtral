@@ -938,6 +938,9 @@ def normalize_total_cost(cost_str: str) -> float:
     """Convert a cost string to a float by removing currency symbols and commas."""
     if not cost_str:
         return None
+    # If already a float, return as is
+    if isinstance(cost_str, (int, float)):
+        return float(cost_str)
     # Remove $ and commas, then convert to float
     return float(cost_str.replace('$', '').replace(',', '').strip())
 

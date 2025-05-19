@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "test_id": "20250519_223729",
+    "timestamp": "2025-05-19T22:37:29.013694",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "int8",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "locational",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.0,
+      "system_ram": 1511.55,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "prompt": {
+    "raw_text": "Please analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n",
+    "formatted": "[INST]\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n[IMG]\n[/IMG]\n[/INST]"
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:29.012696",
+      "extracted_data": {
+        "work_order_number": "20522",
+        "total_cost": "95.00"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "error",
+      "timestamp": "2025-05-19T22:37:32.472630",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[\n  \"work_order_number\": \"20606\",\n  \"total_cost\": \"95.00\"\n]\n```"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:36.103320",
+      "extracted_data": {
+        "work_order_number": "20501",
+        "total_cost": "950.00"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:39.680451",
+      "extracted_data": {
+        "work_order_number": "20458",
+        "total_cost": "200"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:43.339505",
+      "extracted_data": {
+        "work_order_number": "20455",
+        "total_cost": "$250"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:47.192087",
+      "extracted_data": {
+        "work_order_number": "E1 3000201",
+        "total_cost": "$500"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:50.467355",
+      "extracted_data": {
+        "work_order_number": "EJ Contracting",
+        "total_cost": "400"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:53.907391",
+      "extracted_data": {
+        "work_order_number": "20677",
+        "total_cost": "1800"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:37:57.572717",
+      "extracted_data": {
+        "work_order_number": "20658",
+        "total_cost": "2,600.00"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:00.865942",
+      "extracted_data": {
+        "work_order_number": "20683",
+        "total_cost": "$250"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:04.493361",
+      "extracted_data": {
+        "work_order_number": "Estimate 20590",
+        "total_cost": "1500"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:08.129411",
+      "extracted_data": {
+        "work_order_number": "United 019",
+        "total_cost": 1500.0
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:15.334647",
+      "extracted_data": {
+        "work_order_number": "0007",
+        "invoice_number": "07",
+        "date": "10/17/24",
+        "total_cost": "240.00"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:19.056265",
+      "extracted_data": {
+        "work_order_number": "20525",
+        "total_cost": "1050.00"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:26.293233",
+      "extracted_data": {
+        "work_order_number": "20516",
+        "total_cost": "$190.00"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:29.822966",
+      "extracted_data": {
+        "work_order_number": "20479",
+        "total_cost": "$140.00"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:33.590359",
+      "extracted_data": {
+        "work_order_number": "20509",
+        "total_cost": "150.00"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:37.511629",
+      "extracted_data": {
+        "work_order_number": "20558",
+        "total_cost": "550.00"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:38:41.097204",
+      "extracted_data": {
+        "work_order_number": "20502",
+        "total_cost": "950.00"
+      }
+    }
+  ]
+}
