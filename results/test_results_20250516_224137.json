@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "test_id": "20250516_224139",
+    "timestamp": "2025-05-16T22:41:39.549471",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "bfloat16",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "basic_extraction",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.11,
+      "system_ram": 1385.56,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "prompt": {
+    "raw_text": "Please extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n",
+    "formatted": "[INST]\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n[IMG]\n[/IMG]\n[/INST]"
+  },
+  "results": [
+    {
+      "image_name": "1043.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:39.546330",
+      "extracted_data": {
+        "work_order_number": "20458",
+        "total_cost": "200"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:42.127086",
+      "extracted_data": {
+        "work_order_number": "20455",
+        "total_cost": "$250.00"
+      }
+    },
+    {
+      "image_name": "1041.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:44.630551",
+      "extracted_data": {
+        "work_order_number": "10-13-04",
+        "total_cost": "500.00"
+      }
+    },
+    {
+      "image_name": "1040.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:47.313557",
+      "extracted_data": {
+        "work_order_number": "10-12-24",
+        "total_cost": "$2,000.00"
+      }
+    },
+    {
+      "image_name": "1039.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:49.242910",
+      "extracted_data": {
+        "work_order_number": "10-24-24",
+        "total_cost": "$1,900.00"
+      }
+    },
+    {
+      "image_name": "1038.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:51.113207",
+      "extracted_data": {
+        "work_order_number": "10-22-24",
+        "total_cost": "$900.00"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:52.816927",
+      "extracted_data": {
+        "work_order_number": "20609",
+        "total_cost": "$500.00"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:54.458514",
+      "extracted_data": {
+        "work_order_number": "20628",
+        "total_cost": "400"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:56.190329",
+      "extracted_data": {
+        "work_order_number": "20679",
+        "total_cost": "$1,800.00"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:57.939672",
+      "extracted_data": {
+        "work_order_number": "20658",
+        "total_cost": "$2,600.00"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:41:59.588531",
+      "extracted_data": {
+        "work_order_number": "20683",
+        "total_cost": "250"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:01.382658",
+      "extracted_data": {
+        "work_order_number": "20590",
+        "total_cost": "1500.00"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:03.065169",
+      "extracted_data": {
+        "work_order_number": "019",
+        "total_cost": "$1,500"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:04.683539",
+      "extracted_data": {
+        "work_order_number": "07",
+        "total_cost": "240.00"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:06.408249",
+      "extracted_data": {
+        "work_order_number": "20525",
+        "total_cost": "1050.00"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:08.091770",
+      "extracted_data": {
+        "work_order_number": "20516",
+        "total_cost": "$190.00"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:09.862338",
+      "extracted_data": {
+        "work_order_number": "20479",
+        "total_cost": "140.00"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:11.657598",
+      "extracted_data": {
+        "work_order_number": "20509",
+        "total_cost": "$150.00"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:13.445330",
+      "extracted_data": {
+        "work_order_number": "20558",
+        "total_cost": "$560.00"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-16T22:42:15.222798",
+      "extracted_data": {
+        "work_order_number": "20502",
+        "total_cost": "950.00"
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "test_id": "20250515_222604",
+    "timestamp": "2025-05-15T22:26:04.814524",
+    "quantization": "bfloat16",
+    "prompt_type": "basic_extraction",
+    "model_config": {
+      "device_map": {
+        "": 0
+      },
+      "use_flash_attention": true
+    },
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.11,
+      "system_ram": 2015.56,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "summary": {
+    "total_images": 20,
+    "completed": 0,
+    "errors": 0,
+    "work_order_accuracy": 0.0,
+    "total_cost_accuracy": 0.0,
+    "average_cer": 0.0
+  },
+  "error_categories": {
+    "work_order": {},
+    "total_cost": {}
+  },
+  "results": []
+}
