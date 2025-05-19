@@ -20,7 +20,7 @@ hardware:
 # Inference parameters
 inference:
   max_new_tokens: 500
-  do_sample: false
+  do_sample: true
   temperature: 1.0
   top_k: 50
   top_p: 0.95
