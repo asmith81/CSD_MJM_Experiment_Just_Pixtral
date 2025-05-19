@@ -59,6 +59,6 @@ myst-parser==2.0.0
 # - Minimum GPU memory: 93.00 GB
 # - Python version: 3.11
 
-bitsandbytes>=0.41.1,<0.42.0  # Updated for compatibility with transformers
+bitsandbytes>=0.43.2  # Updated to support 4-bit quantization
 huggingface_hub[hf_xet]>=0.20.3
 flash-attn==2.5.0

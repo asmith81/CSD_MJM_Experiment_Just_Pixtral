@@ -412,7 +412,7 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
     Raises:
         RuntimeError: If download fails after max retries
     """
-    from transformers import AutoProcessor, LlavaForConditionalGeneration
+    from transformers import AutoProcessor, LlavaForConditionalGeneration, BitsAndBytesConfig
     import time
     import psutil
     
@@ -438,9 +438,17 @@ def download_pixtral_model(model_id: str = "mistral-community/pixtral-12b",
             if quantization == "bfloat16":
                 model_kwargs["torch_dtype"] = torch.bfloat16
             elif quantization == "int8":
-                model_kwargs["load_in_8bit"] = True
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_8bit=True,
+                    bnb_4bit_compute_dtype=torch.float16
+                )
             elif quantization == "int4":
-                model_kwargs["load_in_4bit"] = True
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4"
+                )
             
             # Download model and processor
             model = LlavaForConditionalGeneration.from_pretrained(model_id, **model_kwargs)
@@ -483,7 +491,7 @@ def initialize_model(quantization: Literal["bfloat16", "int8", "int4"]) -> tuple
         RuntimeError: If model initialization fails
     """
     try:
-        from transformers import AutoProcessor, LlavaForConditionalGeneration
+        from transformers import AutoProcessor, LlavaForConditionalGeneration, BitsAndBytesConfig
         
         # Configure model loading based on selected quantization
         model_kwargs = {
@@ -494,9 +502,17 @@ def initialize_model(quantization: Literal["bfloat16", "int8", "int4"]) -> tuple
         if quantization == "bfloat16":
             model_kwargs["torch_dtype"] = torch.bfloat16
         elif quantization == "int8":
-            model_kwargs["load_in_8bit"] = True
+            model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_8bit=True,
+                bnb_4bit_compute_dtype=torch.float16
+            )
         elif quantization == "int4":
-            model_kwargs["load_in_4bit"] = True
+            model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4"
+            )
         
         # Initialize model and processor
         model = LlavaForConditionalGeneration.from_pretrained("mistral-community/pixtral-12b", **model_kwargs)
