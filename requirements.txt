@@ -16,7 +16,7 @@ accelerate>=0.26.0  # Required for device mapping in transformers
 
 # Configuration and Type Checking
 pydantic==2.6.1  # For data validation and settings management
-typing-extensions==4.10.0  # Updated to match version required for torch
+typing-extensions>=4.9.0,<5.0.0  # Updated for compatibility with bitsandbytes
 mypy==1.8.0
 types-PyYAML==6.0.12.12
 types-Pillow==10.2.0.20240311  # Type stubs for Pillow
@@ -59,6 +59,6 @@ myst-parser==2.0.0
 # - Minimum GPU memory: 93.00 GB
 # - Python version: 3.11
 
-bitsandbytes==0.45.5
+bitsandbytes>=0.41.1,<0.42.0  # Updated for compatibility with transformers
 huggingface_hub[hf_xet]>=0.20.3
 flash-attn==2.5.0
