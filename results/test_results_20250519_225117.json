@@ -1,0 +1,204 @@
+{
+  "metadata": {
+    "test_id": "20250519_225120",
+    "timestamp": "2025-05-19T22:51:20.745543",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "int8",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "locational",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.0,
+      "system_ram": 1511.55,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "prompt": {
+    "raw_text": "Please analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n",
+    "formatted": "[INST]\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n[IMG]\n[/IMG]\n[/INST]"
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:20.744415",
+      "extracted_data": {
+        "work_order_number": "20522",
+        "total_cost": "95.00"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:24.441828",
+      "extracted_data": {
+        "work_order_number": "20606",
+        "total_cost": "$95.00"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:27.990870",
+      "extracted_data": {
+        "work_order_number": "20501",
+        "total_cost": "950.00"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "error",
+      "timestamp": "2025-05-19T22:51:30.748758",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nWork Order Number: \"20458\"\nTotal Cost: \"200\""
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:35.462743",
+      "extracted_data": {
+        "work_order_number": "20455",
+        "total_cost": "$250"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:38.661802",
+      "extracted_data": {
+        "work_order_number": "20609",
+        "total_cost": "500"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:45.283381",
+      "extracted_data": {
+        "work_order_number": "20628",
+        "total_cost": "400"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:48.746907",
+      "extracted_data": {
+        "work_order_number": "505",
+        "total_cost": "$1800"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:52.418384",
+      "extracted_data": {
+        "work_order_number": "20658",
+        "total_cost": "2,600.00"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:55.929164",
+      "extracted_data": {
+        "work_order_number": "20683",
+        "total_cost": "250.00"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:51:59.531324",
+      "extracted_data": {
+        "work_order_number": "20590",
+        "total_cost": "1500.00"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:52:03.122765",
+      "extracted_data": {
+        "work_order_number": "Unit 019",
+        "total_cost": "1500.00"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:52:06.781635",
+      "extracted_data": {
+        "work_order_number": "X7-707",
+        "total_cost": "240.00"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:52:10.368172",
+      "extracted_data": {
+        "work_order_number": "20525",
+        "total_cost": "1050.00"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "error",
+      "timestamp": "2025-05-19T22:52:49.935359",
+      "error": {
+        "message": "JSON parsing error: Expecting value: line 2 column 26 (char 27)",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nIn order to extract the relevant information from the image, the following steps are typically involved:\n\n1. **Preprocessing the Image**: This may include converting the image to grayscale, which helps in enhancing the contrast between the text and the background.\n\n2. **Binary Thresholding**: Applying a binary thresholding algorithm such as Otsu's method or adaptive binarization to separate the text from the background.\n\n3. **Text Localization**: Using techniques like edge detection or contour finding to locate regions of the image that contain text.\n\n4. **Text Recognition**: Utilizing an Optical Character Recognition (OCR) tool like Tesseract to convert the image of text into machine-encoded text.\n\n5. **Parsing the Extracted Text**: Extracting and organizing the relevant information like the Work Order Number, Total Cost, etc.\n\nHere is the Python code that achieves this using OpenCV and Tesseract:\n\n```python\nimport cv2\nimport pytesseract\n\n# Load and preprocess the image\nimage = cv2.imread('invoice_image.jpg')\ngray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)\n\n# Apply binary thresholding to separate text from background\n_, binary_image = cv2.threshold(gray_image, 0, 255)\n\n# Use pytesseract to perform OCR on the preprocessed image\ntext = pytesseract.image_to_string(binary_image)\n\n# Parse the extracted text for relevant information\nwork_order_number = None\ntotal_cost = None\n\nfor line in text.split('\\n'):\n    if 'Work Order Number:' in line:\n        work_order_number = line.split(':')[1].strip()\n    elif 'Total Cost:' in line:\n        total_cost = line.split(':')[1].strip()\n\n# Output the extracted information in JSON format\nextracted_info = {\n    \"work_order_number\": work_order_number,\n    \"total_cost\": total_cost\n}\n\nimport json\nprint(json.dumps(extracted_info, indent=4))\n```\n\n### Explanation:\n\n1. **Image Reading and Conversion**: The code reads the invoice image and converts it to grayscale using OpenCV.\n\n2. **Binary Thresholding**: It applies a binary threshold to enhance the contrast between the text and the background, making the text more distinguishable.\n\n3. **OCR with Tesseract**: The preprocessed image is fed into Tesseract (through `"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:52:53.480755",
+      "extracted_data": {
+        "work_order_number": "20479",
+        "total_cost": "140.00"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:52:57.025670",
+      "extracted_data": {
+        "work_order_number": "20509",
+        "total_cost": "150.00"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:53:00.485157",
+      "extracted_data": {
+        "work_order_number": "20558",
+        "total_cost": "$560.00"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-19T22:53:04.016128",
+      "extracted_data": {
+        "work_order_number": "20502",
+        "total_cost": "950.00"
+      }
+    }
+  ]
+}

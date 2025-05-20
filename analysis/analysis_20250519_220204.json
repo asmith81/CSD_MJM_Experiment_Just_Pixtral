@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "test_id": "20250519_220204",
+    "timestamp": "2025-05-19T22:02:04.227582",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "bfloat16",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "locational",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.0,
+      "system_ram": 1511.55,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "summary": {
+    "total_images": 19,
+    "completed": 19,
+    "errors": 0,
+    "work_order_accuracy": 0.7894736842105263,
+    "total_cost_accuracy": 0.8947368421052632,
+    "average_cer": 0.1105263157894737
+  },
+  "error_categories": {
+    "work_order": {
+      "Exact Match": 15,
+      "Partial Match": 4
+    },
+    "total_cost": {
+      "Numeric Match": 17,
+      "Completely Wrong": 2
+    }
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20522",
+        "ground_truth": "20522",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 95.0,
+        "ground_truth": 95.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20606",
+        "ground_truth": "20606",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 95.0,
+        "ground_truth": 95.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20501",
+        "ground_truth": "20501",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 950.0,
+        "ground_truth": 950.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20458",
+        "ground_truth": "20458",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 200.0,
+        "ground_truth": 200.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20455",
+        "ground_truth": "20455",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 250.0,
+        "ground_truth": 250.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20609",
+        "ground_truth": "20604",
+        "error_category": "Partial Match",
+        "cer": 0.2
+      },
+      "total_cost": {
+        "predicted": 500.0,
+        "ground_truth": 500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20628",
+        "ground_truth": "20628",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 400.0,
+        "ground_truth": 400.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20677",
+        "ground_truth": "20677",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1800.0,
+        "ground_truth": 1800.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20658",
+        "ground_truth": "20658",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 2600.0,
+        "ground_truth": 1600.0,
+        "error_category": "Completely Wrong"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20683",
+        "ground_truth": "20633",
+        "error_category": "Partial Match",
+        "cer": 0.2
+      },
+      "total_cost": {
+        "predicted": 250.0,
+        "ground_truth": 250.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20590",
+        "ground_truth": "20590",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1500.0,
+        "ground_truth": 1500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "United 019",
+        "ground_truth": "20570",
+        "error_category": "Partial Match",
+        "cer": 0.9
+      },
+      "total_cost": {
+        "predicted": 1500.0,
+        "ground_truth": 1500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "07",
+        "ground_truth": "20548",
+        "error_category": "Partial Match",
+        "cer": 0.8
+      },
+      "total_cost": {
+        "predicted": 240.0,
+        "ground_truth": 240.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20525",
+        "ground_truth": "20525",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1050.0,
+        "ground_truth": 1050.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20516",
+        "ground_truth": "20516",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 190.0,
+        "ground_truth": 190.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20479",
+        "ground_truth": "20479",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 140.0,
+        "ground_truth": 140.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20509",
+        "ground_truth": "20509",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 150.0,
+        "ground_truth": 150.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20558",
+        "ground_truth": "20558",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 560.0,
+        "ground_truth": 550.0,
+        "error_category": "Completely Wrong"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "work_order": {
+        "predicted": "20502",
+        "ground_truth": "20502",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 950.0,
+        "ground_truth": 950.0,
+        "error_category": "Numeric Match"
+      }
+    }
+  ]
+}

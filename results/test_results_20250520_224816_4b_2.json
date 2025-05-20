@@ -1,0 +1,210 @@
+{
+  "metadata": {
+    "test_id": "20250520_224821",
+    "timestamp": "2025-05-20T22:48:21.704892",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "int4",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "detailed",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.0,
+      "system_ram": 1511.55,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "prompt": {
+    "raw_text": "Please carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n",
+    "formatted": "[INST]\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n[IMG]\n[/IMG]\n[/INST]"
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:48:21.700579",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nThis is an invoice in Spanish from **F K Contracting Services**. Here is a summary of the invoice:\n\n- **Invoice Number:** 20522\n- **Date:** 10/22/2013\n- **Customer:** Jose Villanueva\n- **Project Location:** 801 East\n- **Description of Work:**\n  - Repair of a toilet seat that was broken and glued back together poorly.\n  - Reinstallation of two bathroom doors.\n\n- **Total Amount:** $92.00\n\n- **Signature & Date:** Not filled.\n\nPlease note that the translation of the invoice details may not be perfect due to potential language nuances. However, the provided summary should give you a good understanding of the invoice content.\n\nWould you like any further assistance or more specific information?"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:48:28.293511",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nI understand that you're dealing with an invoice and its description is in Spanish. Here\u2019s a breakdown of what the invoice says in English:\n\n### Invoice Details\n- **Customer Name:** F K Contracting Services\n- **Customer Contact:** Jose Villanueva\n- **Customer Address:** 5004 D Street SE\n\n### Description of Work\n- The work involved purchasing a new toilet seat cover and installing it. The existing toilet seat cover was removed to accommodate the new installation.\n\n### Charges\n- **Total Amount:** $95.00\n\n### Important Information\n- **Invoice Number:** 20606\n- **Invoice Date:** 10/22/24\n- **Due Date:** 11/2\n- **Payable to:** F K Contracting\n\n### Signature\n- **Signed by:** Frank M.\n\nThis translates the invoice and provides clear information on the services rendered and charges involved. If there's anything specific you need help with or additional clarification, feel free to ask!"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:48:42.366661",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n[/IMG]\n["
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:48:44.207957",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/a9z8TqX.jpg[/IMG]\n[/QUOTE]"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:48:54.159564",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n1. **Work Order Number:** Extracted Value (Not Clearly Visible)\n2. **Total Cost:** 250\n\n### Breakdown of Work Description and Costs:\n\n1. **Demolition of 3 Windows and Part of the Second Floor of a Building:**\n   - **Description:**\n     - Se destapon 3 Uniales en el Bano R el Segundo Piso del Building\n     - Se quitaron los 3 Ba\u00f1os\n     - Se desahojo del 25' y el 45' y el Piso\n     - Quitaras, Pasas, se Agro Destapon todos los Uniales y se Ajustaron todos.\n   - **Cost:** $150\n\n2. **Installation and Replacement of 10 Racks in Mimo Bath:**\n   - **Description:**\n     - Se Reparen todos los 2 Uniales del Bano Mimo,\n     - Se Destapon con el Snake 1' se Ajustaron los Demas 5' del Bano\n     - se Ajustaron todos los Uniales y se Ajustaron todos sin Ningun K.\n   - **Cost:** $100\n\n### Total Cost:\n\n- **Grand Total:** $250\n\n### Additional Information:\n\n- **Estimate Number:** 20455\n- **Estimate Date:** 10/11/29\n- **Payable To:** MJM Contracting\n\nPlease note that any prices mentioned in the estimate are exclusive of taxes and other applicable fees.\n\n---\n\nIf you have additional requirements or need a more detailed breakdown, please let me know!"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:49:08.211173",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n-111\nI didn't know there was an actual code for that.\n[/QUOTE]\n\n[QUOTE]10-30-2021 07:54 AM\nby [IMG]https://secure.gravatar.com/blavatar/671c3838a5c3b08497e1981d39a00c76?size=80: [/IMG] [/QUOTE]\n\n[QUOTE]10-30-2021 07:54 AM\nby [IMG]https://secure.gravatar.com/blavatar/671c3838a5c3b08497e1981d39a00c76?size=80: [/IMG] [/QUOTE]\n\n[QUOTE]10-30-2021 07:55 AM\nby [IMG]https://secure.gravatar.com/blavatar/671c3838a5c3b08497e1981d39a00c76?size=80: [/IMG] [/QUOTE]\n\n[QUOTE]10-30-2021 07:57 AM\nby [IMG]https://secure.gravatar.com/blavatar/671c3838a5c3b08497e1981d39a00c76?size=80: [/IMG] [/QUOTE]\n\n[QUOTE]10-30-2021 07:57 AM\nby [IMG]https://secure.gravatar.com/blavatar/671c3838a5c3b08497e1981d39a00c76?size=80: [/IMG] [/QUOTE]\n\n[QUOTE]10-30-2021 08:39 AM\nby [IMG]https://secure.gravatar.com/blavatar/671c3838a5c3b08497e19"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:49:14.262552",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/YmHJ2tV.png[/IMG]\n[IMG]https://i.imgur.com/lm3mO5p.png[/IMG]\n[/UNANCHOR]\n\nTo sum up my day, today I experienced an emergency from a customer's water heater and I had to clean it up. It's one of those emergency calls and thank God, today I'm able to do it, although I've spent all day cleaning and unclogging it. That's the experience of my day.\n\nThis is my colleague's experience today. He had a few emergency calls, he helped a family, and I had to clean up the water heater and unclog it and it was a success.\n\nThat's it. Thank you for listening and I'm going to end my day here.\n\n[/UNANCHOR]"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:49:28.337150",
+      "error": {
+        "message": "Missing required fields: {'work_order_number', 'total_cost'}",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nIn this example, the invoice is written in Spanish and details various construction tasks such as plastering, painting, and flooring. The quantities and costs are also specified.\n\nTo extract the required information, we can follow these steps:\n1. **Quantity Extraction:** Identify the quantity (number of units, pieces, meters, etc.) mentioned for each task.\n2. **Description Extraction:** Extract the description of the tasks or items specified in the invoice.\n3. **Cost Extraction:** Extract the costs associated with each task or item.\n\nHere\u2019s the structured output based on the provided invoice:\n\n```json\n{\n  \"estimate\": {\n    \"company_name\": \"El Contracting\",\n    \"date\": \"10-24-24\",\n    \"estimate_number\": \"20677\",\n    \"tasks\": [\n      {\n        \"description\": \"Unit 505\",\n        \"details\": \"United de 32 x 22 - 484 pies cuadrados\",\n        \"quantity\": 1,\n        \"task_details\": [\n          {\n            \"task\": \"Pintar cieloing white flat completo\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Sprayer 8 pies de alto pintado aread de 33 x 8. color amarillo\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Pintar 2 aceros de guetos blancas\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Unmix 2 ventilam\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Remover Tiles & baseboard de whole de laundry\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Dermele bombillas de lamparas\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Plastear ceiling del area y pintando de 8'x56'\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Paper ceiling nuevo / Remover el muro de shower\",\n            \"quantity\": 1\n          },\n          {\n            \"task\": \"Paper ceiling nuevo sobre las mudas y gabinetes\",\n            \"quantity\": 1\n          }\n        ]\n      }\n    ],\n    \"total_cost\": \"1,800\"\n  }\n}\n```\n\n**Ex"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:49:37.140613",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[IMG]https://user-images.githubusercontent.com/12924685/159999312-9a1e-4f4f-860a-58df0c4b27c8.jpg[/IMG]\n```python\nimport re\n\n# Define the regular expression pattern\npattern = re.compile(r\"(?<=Work\\ Description:)\\s*(?:\\w\\W*)\\s*\")\n\n# Define the function to extract the text\ndef extract_text(file):\n    with open(file, \"r\") as f:\n        content = f.read()\n    return pattern.findall(content)\n\n# Test the function\nfile_path = \"path_to_file\"\nextracted_text = extract_text(file_path)\nextracted_text\n```\nThis code defines a regular expression pattern that matches the desired text after the phrase \"Work Description:\". The function `extract_text` reads the file and applies the pattern to extract the text. The resulting extracted text is then returned.\n\nTo test the function, replace `\"path_to_file\"` with the actual path to your text file. The extracted text will be printed to the console.\n\nYou can run this code using a Python environment or an online code editor such as Jupyter Notebook or Google Colab. Make sure to install the necessary libraries before running the code.\n\nYou can then copy the extracted text and paste it into the appropriate field in the PDF form using a PDF editor."
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:49:51.196074",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[\n/IMG\n]\n28. **Question 5 (5 points)**\n\nA machine learning model is trained on a dataset to predict a target variable. The accuracy of the model is measured using a metric called mean squared error (MSE). Which of the following statements is correct about MSE?\n\nA. MSE measures the average difference between the predicted values and the actual values.\n\nB. MSE measures the average difference between the predicted values and the actual values squared.\n\nC. MSE measures the average error in percentage terms.\n\nD. MSE measures the average error in terms of the range of the target variable.\n\n**Answer 5 (5 points):**\n\nB. MSE measures the average difference between the predicted values and the actual values squared.\n\nExplanation:\n\nMean Squared Error (MSE) is a metric that quantifies the average of the squares of the errors or differences between the predicted values and the actual values. It provides a measure of how well the model's predictions match the actual data.\n\n29. **Question 6 (6 points)**\n\nConsider a binary classification problem where a machine learning model is trained to classify data points into two categories: positive (1) or negative (0). Which of the following tables most likely represents the confusion matrix for evaluating the performance of the classifier?\n\n|                  | Predicted Positive (1) | Predicted Negative (0) |\n|------------------|--------------------------|-------------------------|\n| Actual Positive (1)| TP                        | FP                       |\n| Actual Negative (0)| FN                        | TN                        |\n\nA. Predicted Positive (1) -> True Positive, Predicted Negative (0) -> False Positive\n\nB. Predicted Positive (1) -> True Positive, Predicted Negative (0) -> False Negative\n\nC. Predicted Positive (1) -> True Negative, Predicted Negative (0) -> False Negative\n\nD. Predicted Positive (1) -> False Negative, Predicted Negative (0) -> True Negative\n\n**Answer 6 (6 points):**\n\nA. Predicted Positive (1) -> True Positive, Predicted Negative (0) -> False Positive\n\nExplanation:\n\nA confusion matrix is a table used to describe the performance of a classification model on a set of test data for which the true values are known. Each column in the confusion matrix represents the instances in a predicted class while each row represents the instances in an actual class. The key elements in a confusion matrix are:\n\n- True"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:50:05.277891",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nEstimate:\n| Date: 10-21-2021 |\n| Company Name: MJM Contracting |\n| Contact Name: Francisco Antonio Lionel Dominguez |\n| Contact Number: 400-4916 |\n| Address: 4225 6th Street Second Apt. |\n| Estimate Number: 20590 |\n| Due Date: __________ |\n| Payable to: __________ |\n| Description of Work: |\n| - Paint a 6' white flat door to 40 8 pieces |\n| - Paint with a complete set of 49 x 8 x 40 inches |\n| - Paint with a pre-sanded 1/24 door. |\n| - Paint with a sanded 1/24 door with 40 8 |\n| - Paint with 3 tiles of 48 8 of 8 x 8 |\n| - Paint with a set of 400 80 80 pieces and pieces and pieces. |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with 2 sheets of 48 x 8 x 8 x 8 |\n| - Paint with "
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:50:10.782383",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n### Work Order Description\n\n**Work Order 019**\n\n**Pintar 05** \u2013 Painting of white flat surface, 99 pieces.\n- Painted surface approximately 90\u201dx8\u201d 160.\n- Painted 21x8 and the ceiling 16t.\n- Tamped sealant on the edge of the wall.\n- Painted walls and ceiling with ventilated paint.\n- Painted backboard with 49 pieces.\n- Painted the backboard with 2600.\n- Replaced 3 windows with tempered glass.\n- Repaired 80 pieces and the backboard.\n- Painted the wall and backboard with new sealant.\n- Painted with ventilated paint.\n\n**Estimate Total $1,500**\n\n---"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:50:15.341835",
+      "error": {
+        "message": "Missing required fields: {'work_order_number', 'total_cost'}",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[IMG]https://api.pdf.co/img/pdf-to-jpg/72c59419-23e3-4806-870b-3d49d86c76d5/0002.png[/IMG]\n```json\n{\n  \"pages\": [\n    {\n      \"width\": 540,\n      \"height\": 728,\n      \"data\": \"/9j/4I+Ix8z/Ly9uZQ1+xF/dy0N//Z\",\n      \"rotate\": 0\n    }\n  ]\n}\n```"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:50:24.234815",
+      "error": {
+        "message": "JSON parsing error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n```python\n# Code snippet to calculate the total cost\n\n# Extract the relevant data from the invoice\nwork_description = \"\"\"\nHay que pintar 6.96 pies 5\nCubrirle el parde del plat se usara\n2 colores diferentes para las paredes\nTambien hay que pintar 3.27 pies\nCubrirle de celling 3 marcos de puzata y bacer 41 reparaciones\nfuegias de plater\n\nEste apartamento lambo tiene\n9.64 22 pies cuadrados de celling y 68 pies cuadrados de parde que hay que pintar\nVamos a sobrirle todo el cuerpo de gahinele y el piso para no manchar\nUsaremos platico y papel para cubrir\n\"\"\"\n\n# Sample data for invoice calculations\nwork_hours = 8\nmaterial_cost = 50\nlabour_rate_per_hour = 20\n\n# Calculate the total cost\ntotal_material_cost = material_cost\ntotal_labour_cost = work_hours * labour_rate_per_hour\ntotal_cost = total_material_cost + total_labour_cost\n\n# Print out the calculated costs\nprint(f\"Total Material Cost: ${total_material_cost:.2f}\")\nprint(f\"Total Labour Cost: ${total_labour_cost:.2f}\")\nprint(f\"Total Cost: ${total_cost:.2f}\")\n```"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-20T22:50:33.347718",
+      "extracted_data": {
+        "work_order_number": "Extracted value",
+        "total_cost": "Extracted value",
+        "description": "Hay que desinstar la chapa \nVieja porque esta darada.\nIr a comprar una chapa nueva.\nPara el electrical room y instalar la chapa comercial.",
+        "grand_total": "$190.00",
+        "invoice_number": "06",
+        "invoice_date": "01/17/24",
+        "due_date": "",
+        "payable_to": "F K Contracting"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:50:40.020488",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/0wTUwHv.jpg[/IMG]\n[IMG]https://i.imgur.com/8DxvgYV.jpg[/IMG]\n[IMG]https://i.imgur.com/O6tCWrP.jpg[/IMG]\n[IMG]https://i.imgur.com/2pRvF9n.jpg[/IMG]\n[IMG]https://i.imgur.com/SG06p6r.jpg[/IMG]\n\n**Summary of the work done:**\n\n1. Repair of 6 windows in the front of the building. 2. Cleaning of the rails. 3. Painting of the window frames with concrete to prevent escaping more.\n\n**Total cost of the work done:** $140.00\n\n**Payment method:** Cash\n\n**Date of payment:** 10/17/2021\n\n** Signature of the contractor:** FK Contracting\n\nPlease let me know if you need any further assistance.\n\nBest regards,\n\n[Your Name]"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:50:42.860349",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[IMG]https://docs.google.com/document/d/17gWk3F1rK8bw6K8nRUxLcwDc8Z9z9lVg5l92vQ/view?usp=sharing[/IMG]\n[/QUOTE]"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-20T22:50:46.100098",
+      "extracted_data": {
+        "work_order_number": "20558",
+        "total_cost": "$860.00"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-20T22:50:49.574962",
+      "extracted_data": {
+        "work_order_number": "20502",
+        "total_cost": "950.00"
+      }
+    }
+  ]
+}

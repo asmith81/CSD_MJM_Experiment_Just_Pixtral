@@ -1,0 +1,193 @@
+{
+  "metadata": {
+    "test_id": "20250520_223942",
+    "timestamp": "2025-05-20T22:39:42.114829",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "int4",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "basic_extraction",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.0,
+      "system_ram": 1511.55,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "summary": {
+    "total_images": 19,
+    "completed": 0,
+    "errors": 19,
+    "work_order_accuracy": 0.0,
+    "total_cost_accuracy": 0.0,
+    "average_cer": 0.0
+  },
+  "error_categories": {
+    "work_order": {},
+    "total_cost": {}
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n```markdown\n# Purchase Order Analysis\n\n## Input Data\n**Invoice Image:** [/IMG](invoice_image_url)\n**Purchase Order Number:** 20522\n**Date:** 10/22/24\n**Customer:** FK Contracting\n**Location:** 801 East\n**Description:** Reparaci\u00f3n de una fugas en la red de agua\n**Total Amount:** $95.00\n\n## Analysis and Findings\n\n### Purchase Order Number\n- The purchase order number is **20522**.\n- This number is unique and typically used for tracking and identifying specific orders within a company's records.\n\n### Date\n- The date provided is **10/22/24**.\n- This suggests a future date, which may indicate an upcoming or anticipated purchase rather than a historical record.\n\n### Customer\n- The customer listed is **FK Contracting**.\n- The context suggests that this might be a business or individual that the company is contracting services from.\n\n### Location\n- The location specified is **801 East**.\n- This likely refers to a physical address or site where the services or work described in the invoice were performed.\n\n### Description of Work\n- The description of work states **Reparaci\u00f3n de una fugas en la red de agua**.\n- This translates to \"Repair of a leak in the water network\", suggesting plumbing or water line repair services.\n\n### Total Amount\n- The total amount is **$95.00**.\n- This indicates the total cost associated with the described services or repairs.\n\n### Potential Issues or Considerations\n- Future dates can sometimes indicate errors in data entry or confusion about scheduled versus completed work.\n- Ensure that the customer and service descriptions are accurate to avoid billing or payment discrepancies.\n\n## Recommendations\n\n- **Verify Dates:** Confirm whether the dates are correctly entered to avoid confusion between future or past activities.\n- **Customer Verification:** Ensure that the customer information is accurate.\n- **Work Description Accuracy:** Validate that the work described matches the intended services or repairs.\n\n## Conclusion\n\nBased on the provided information and analysis, the invoice appears to document plumbing or water network repair services for **FK Contracting** at **801 East**. Ensure all details, particularly dates, customer info, and work descriptions, are accurate to facilitate smooth transactions and to prevent potential issues.\n```"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nIn Spanish, the invoice reads:\n\n[LIST]\n[*] **FK Contracting Services**\n[*] **Jos\u00e9 Villanueva**\n[*] **5004 D Street SF**\n[/LIST]\n\n**Description of Work:** [LIST]\n[*] **Fumos a comprar una toilet seat nueva porque la que avia no se pedia a porar.**\n[*] **Desin talamos la toilet seat vieja y instalamos la nueva correctamente.**\n[/LIST]\n\n[/LIST]\n[/SPAN]"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nAn example of a contract in Spanish that includes detailed descriptions of the work to be done, along with a breakdown of costs for materials and labor.\n\nThe image shows an estimate sheet with the following information:\n\n- **Company Name:** El Contracting\n- **Company Contact Information:** Francisco Antonio Lyrain Karme 8, 9809, 99th Avenue NW WhatsApp\n- **Project Location:** 3318 Idaho Ave NW, Washington\n- **Work Description:** Painting of ceilings and walls, patching of 15x25 plywood sheets, painting of 10 plywood sheets, painting of 2 columns of egg cartons, and painting of an egg carton.\n- **Materials:** 15x25 plywood sheets, 10 plywood sheets, 2 columns of egg cartons, and an egg carton.\n- **Labor Costs:** Not explicitly detailed in the image but can be inferred.\n- **Payment Terms:** Not explicitly detailed in the image but can be inferred.\n\n**Summary:****\n- The contract specifies various painting and patching tasks to be carried out in a particular location.\n- Detailed material specifications are provided.\n- The estimated total cost is $950 USD.\n- The document appears to be a form of estimate or proposal for a painting and repair project.\n\nWould you need any further assistance related to this contract or anything else?"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/CXyWm6V.jpg[/IMG]\n```"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "error",
+      "error": {
+        "message": "Missing required fields: {'work_order_number', 'total_cost'}",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nEstimate for demolition and removal of debris, including disposal and cleanup costs.\n```json\n[\n  {\n    \"task\": \"Demolition and Removal\",\n    \"description\": \"Se Destaparon 3 uninales en el Bano B 2 y Destaparon 2 uninales y se Agrio Destaparon Todos los Ininales\",\n    \"cost\": 150,\n    \"currency\": \"USD\"\n  },\n  {\n    \"task\": \"Cleanup and Disposal\",\n    \"description\": \"Todas las Uninales y los Snakes y se Agrio Destaparon Todos los Ininales y se Ajoaron Todos los Snakes\",\n    \"cost\": 100,\n    \"currency\": \"USD\"\n  }\n]\n```\n[/JSON]\n\n[IMG]https://cdn.mathamatics.com/case_studies/2019/09/20190920_194240_0007.png\n[/IMG]\n```yaml\n---\ntitle: \"Summary Report for Case 20190920\"\ndate: \"2019-09-20\"\n...\n\nEstimates for demolition and removal of debris, including disposal and cleanup costs. Estimates for demolition and removal of debris, including disposal and cleanup costs. Estimates for demolition and removal of debris, including disposal and cleanup costs.\n```\n[/YAML]"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://imgur.com/PJx2kH5[/IMG]\n[IMG]https://imgur.com/huKJkV2[/IMG]\n[IMG]https://imgur.com/XbLmV2y[/IMG]\n[/QUOTE]"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n### Title\nEstimate for Bathroom Renovation\n\n### Body\nEstimate Number: 20628\nDate: 10-13-24\nClient Name: Francisco Antonio Alexis\nLocation: 1900 Mississippi Ave NW Unit 27\nDescription of Work:\n- Demolition of existing bathroom fixtures including toilet, sink, shower, and tiles ($200)\n- Installation of new bathroom fixtures including toilet, sink, shower, and tiles ($200)\n- Plumbing and electrical work for new fixtures ($100)\n- Painting and tiling of bathroom walls and floor ($100)\n\nTotal Cost: $600\n\nPayment Terms:\n- Deposit: $300 (due date: 10-15-24)\n- Balance: $300 (due date: 11-15-24)\n\nSignature: [Client Signature]\nDate: 10-13-24\n```\nThis example demonstrates how you can use the `llm_caller` function to generate Python code."
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nThe document you have provided appears to be a handwritten estimate or invoice in Spanish. It details a project involving various painting and renovation tasks. Below is a summary and translation of the key points from the document:\n\n### Summary:\n1. **Project Description**:\n   - Unit 505 renovation.\n   - Painting different areas with specific colors.\n   - Installing drywall and baseboard.\n   - Removing old wallpaper and applying new paint.\n\n2. **Specific Tasks**:\n   - Painting walls, ceilings, and bathroom areas.\n   - Priming surfaces and painting kitchen cabinets.\n   - Removing wallpaper, applying putty, and painting.\n\n3. **Materials and Supplies**:\n   - 22 square feet of wall space.\n   - Various types of paint.\n   - New baseboard and vent covers.\n\n### Detailed Translation:\n```plaintext\nESTIMATE\n\nNombre de tu compa\u00f1ia: _El contracting_\n\nFecha: _10-29-24_\n\nEstimate Number: _20679_\n\nDue Date: ____________\n\nPayable to: ____________\n\nEstimate for: MJM Contracting\n1627 K Street NW Suite 500\nWashington, DC 20006\n\nDescripci\u00f3n del trabajo:\nUNIT 505\n\nUnidad de 32 x 22 - 484 pies cuadrados\nPintar techo blanco liso completo\nPintar paredes completas 8 pies de alto\nPintar pared de 32 x 8 color amarillo\nLavar pared con tela de vapor\nPintar 2 muebles de madera blanca\nInstalar 2 ventiladores\nRemover Tapa de Baseboard de la pared de lavabre\nPoner baseboard nuevo en la pared\nDesempapelar bombillas de l\u00e1minas\nPintar techo y paredes de 0.56\nPoner techo nuevo/Aplicar elbow del shower\nPoner ceiling NUEVO SOBRE MUEBLES Y GABINETES\nAplicar Apartamento completo\n\nTotal: _$1,800_\n\nPayment terms:\nSignature & Date ___________\n```\n\n### Tasks Breakdown:\n1. **General Painting**:\n   - Entire 32 x 22 unit (~484 sq. ft.).\n   - Ceiling: White, smooth finish.\n"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nEstimate\n```\nEstimate\n```\n```\nNombre de tu empresa:   El Contratista\n```\nTu nombre, direcci\u00f3n y n\u00famero de tel\u00e9fono:\n```\nFrancisco Aniceto sin  Kames\n4809 49 1b  calle bellshirk 40\n```\nDirecci\u00f3n del Proyecto:\n```\n4125 6th street seward 8 wdc\n```\nFecha:\nEstimate Number:\n```\n10  23  29 20658\n```\nDescripci\u00f3n del Trabajo\n```\nwcd 410\n```\nUnidad de 23x13 299 pies cuadrados pintar techo en dos colores y ventilaci\u00f3n Pintar paredes y techos del ba\u00f1o del \u00e1rea de 22x8 de la tienda Pintar 23 ventiladores y techos para pintar todo el piso y el techo de la unidad que ha entrado se llama nuevo y el piso est\u00e1 completamente hecho Reemplazar bombillos y lamparas para limpiar y pintar la contraventana que est\u00e1 en este lugar $1,000\n```\nGrand Total:   $1,600\n```\n```\nPago al contado\n```\nDue Date: Payable to:\n```\n$100\n```\nEstimate for:\n```\nMJM Contracting\n1427 K Street NW Suite 500\nWashington DC 20005\n```\nSignature & Date\n```\nL.A.B\n```\nPayment terms:\n```\nL.A.B\n```"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG] https://i.imgur.com/t1wTnF8.jpg[/IMG]\n[/QUOTE]"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nCertainly! Here is a transcription of the provided document along with a summary of its key points:\n\n### Document Transcription\n\n```\nESTIMATE\nNombre de tu compa\u00f1ia: El Contracting\n\nTu nombre, direccion y numero de telefono: Francisco Antonio\nJavier Dominguez 18-09 4916 Avenue Los Alamos 940\n\nDireccion del Proyecto: 4125 6 th street SE second 8 VIS\n\nDescription of Work: Unibed 3/19\n\nPantalla blanca pintada de 99 pies\nPared envuelta completo de 49 x 8 de altura 1,000\nPared envuelta pintada de 2218 x 1 14 con la misma pintura que la pared.\nJard\u00edn alrededor de la casa A voyer y\nJardines/patios y ramas de naranjos\nPared exterior blanca pintada 99 pies cerrada\nPared exterior blanca nueva en luks\nA la unidad 3 tambi\u00e9n alrededor de 6 bambinos y tampones\nPared interior nuevo y los mismos en los mismos\nPared cocina nuevo sobre 8 metros de altura con luks\n\nFechas: 10/31/24 Estimate Number: 205900\nDue Date: Payable to:\n\nEstimate for: MJM Contracting 1627 K Street NW Suite 500\nWashington, DC 20035\n\nTOTAL\nPayment terms: _______________ Grand Total $ 1,500\n\nSignature & Date\n```\n\n### Summary\n\n1. **Company Name**: El Contracting\n2. **Contact Information**:\n   - Francisco Antonio Javier Dominguez\n   - Address: 18-09 4916 Avenue Los Alamos 940\n3. **Project Address**: 4125 6th street SE, second floor 8 VIS\n4. **Project Description**:\n   - Unibed 3/19\n   - Interior and exterior painting tasks\n     - 99 feet of interior white painting\n     - Complete 49 x 8 feet wall painting\n     - Outdoor painting involving 2218 x 114 feet area with specific painting\n     - Garden and patio"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n## ESTIMATE\n\n**Nombre de tu compa\u00f1\u00eda:**\n\n**El Contracting**\n\n**Tu nombre, direcci\u00f3n y n\u00famero de tel\u00e9fono:**\n\n**Francisco Antonio Jairon Kammire**\n**4804 491th Avenue Kankakee MD**\n\n**Direcci\u00f3n del Proyecto:**\n\n**4225 6th Sheet SE Ward 8ws**\n\n**Fecha:**\n\n**10 31 24**\n\n**Estimate Number:**\n\n**20 570**\n\n**Due Date:**\n\n**Payment to:**\n\n**Estimate for:**\n\n**M/J/M Contracting**\n**1627 K Street NW Suite 600**\n**Washington, D.C. 20036**\n\n**Description of Work:**\n\n**Orinal 019**\n\n- **Pinter** casing white flat de 99 pies\n  - **pinter** white complete de 90' x 8.6' arco\n  - **pinter** uno paine de 22'8' de alto 18'\n  - **Limpie** send de la aca a vapor\n  - **Limpie** pinos y marcos de ventanas\n\n**Remover, 49 pies cuadados de baseboard de pintery de paine y panel en tucla de cimbreal.**\n\n- **Remover** 3 bombos de laminacion.\n  - **Pinter** marco de paine\n  - **Limpie** afici\u00f3n nuevo sobre muebles\n  - **Pinter** Apuntamento.\n\n**Total:**\n\n$ **1,500**\n\n**Grand Total:**\n\n$ **1,500**\n\n**Payment terms:**\n\n**Signature & Date:**\n\n**Jairon**\n\n---\n\nThis is an estimate form filled out with handwritten details in Spanish. The total cost and grand total are both listed as $1,500. The payments terms are indicated at the bottom of the document, with a signature and date from \"Jairon.\""
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "error",
+      "error": {
+        "message": "Missing required fields: {'work_order_number', 'total_cost'}",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nCertainly! Below is the text transcription of the invoice in English, along with additional context provided in the accompanying JSON format.\n\n**Invoice Transcription:**\n```\nInvoice\n---------------------\nTo quien le facturo: Jose Villanueva\nDireccion del proyecto: 001 EAST\n\nDescription of Work:\nHay que remplazar el flush valve de la tolva que esta direta la unica manera de parado es serrando el agua y para el flush valve no venden partes la unica forma es remplazarle completo.\n\nFecha: 10/17/24\nInvoice Number: 0007\n\nDue Date:\nPayable to: FK Contracting\n\nInvoice for: 14JM Contracting\n1627 S Washington Ave\nWashington, DC 20036\n\nDescription of Work:\n---------------------\nHay que remplazar el flush valve de la tolva que esta direta la unica manera de parado es serrando el agua y para el flush valve no venden partes la unica forma es remplazarle completo.\n\nGrand Total: $240.00\n\nSignature & Date: Frank\n---------------------\n```\n**JSON Context for Invoice:**\n```json\n{\n  \"invoice\": {\n    \"to\": \"Jose Villanueva\",\n    \"project_address\": \"001 EAST\",\n    \"description_of_work\": \"Replacement of flush valve in the tank that is directly controlled by shutting off the water. No replacement parts available, complete replacement required.\",\n    \"invoice_number\": \"0007\",\n    \"invoice_date\": \"10/17/24\",\n    \"due_date\": \"\",\n    \"payable_to\": \"FK Contracting\",\n    \"client\": \"14JM Contracting\",\n    \"client_address\": \"1627 S Washington Ave, Washington, DC 20036\",\n    \"grand_total\": \"$240.00\",\n    \"signature_and_date\": \"Frank\"\n  }\n}\n```\n**Key Points:**\n1. **Client Name:** Jose Villanueva\n2. **Project Address:** 001 EAST\n3. **Work Description:** Replacement of the flush valve in the tank that is controlled directly by turning off the water, with no available replacement parts, requiring a complete replacement.\n4. **Invoice Number:** 0007\n5. **Invoice Date:** 10/17/2"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "error",
+      "error": {
+        "message": "JSON parsing error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/IxYvQz1.png[/IMG]\n\\[\n\\begin{array}{rl}\n\\text{Total:} & \\text{\\$1050.00} \\\\\n\\text{Grand Total:} & \\text{\\$1050.00} \\\\\n\\text{Signature \\& Date:} & \\text{\\_\\_\\_\\_\\_\\_\\_\\_} \\\\\n\\end{array}\n\\]"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n[QUOTE=Ospie4225;980550]\nI agree with both of you,  the fact that they are Spanish and have no way of verifying their identity is a huge red flag.  [/QUOTE]\n[IMG]https://static.tilden.net/?url=https%3A%2Fmedia.discordapp.com%2Fattachments%2F11022597842860883954%2F2024-01-24%2015.58.00.png[/IMG]\n[/QUOTE]\n\n```\n[QUOTE=Spookz;980610]\nThe issue isnt so much the work they performed, but rather the way they received payment for the work they completed.\n[/QUOTE]\n```\n\n```\n[QUOTE=Spookz;980818]\nYes. All of the above. But the real question is whether the person the invoice was issued to is actually the person who authorized and received the goods and services from the person who issued the invoice.\nIn other words, we are talking about two people: the seller (who issued the invoice) and the buyer (who authorized the invoice and received the goods or services from the seller.)[/QUOTE]\n```"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n**Invoice**\n1. **Nombre de tu compan\u00eda:**\n   FK Contracting\n\n2. **Tu nombre, direcci\u00f3n y numero de telefono:**\n   Jose Villanueva\n\n3. **Direcci\u00f3n del Proyecto:**\n   2-210 Adams place\n\n4. **MJM Order Number:**\n   20479\n\n5. **Invoice Number:**\n   05\n\n6. **Fecha:**\n   10/17/24\n\n7. **Due Date:**\n   \u2013\n\n8. **Payable to:**\n   FK Contracting\n\n9. **Invoice for:**\n   MJM Contracting\n   1627 K Street NW Suite 500\n   Washington D.C 20006\n\n10. **Total:**\n    \u2013\n\n11. **Description of Work:**\n    Hay que reparar 6 agujeros en la parte del frente del edificio. Porque se est\u00e1n haciendo valas para dentro de la pared necesitan fillenar los con concreto para que no pueda esconderse m\u00e1s.\n\n12. **Grand Total:**\n    $140.00\n\n13. **Signature & Date:**\n    [Signature Field]\n    [Date Field]\n\n**Total**"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nCertainly! Below is a summary and breakdown of the given invoice in English:\n\n### Summary\nThe invoice is from FK contracting services for a project involving the sealing of a labyrinth water feature and the re-handling of a fountain to add visual interest and beauty to the labyrinth. The total amount for this service is $150.00.\n\n### Invoice Breakdown\n- **Company Name:** FK contracting services\n- **Invoice Number:** 04\n- **Date:** 10/17/21\n- **Payment Due Date:** Not specified\n- **Amount Due:** $150.00\n- **Description of Work:**\n  - Sealing of the labyrinth water feature\n  - Re-handling of the fountain to add visual interest and beauty to the labyrinth\n\n### Contact Information\n- **Customer:** MJM Contracting\n  - Address: 1627 K Street NW Suite 300\n  - City, State, ZIP: Washington, D.C. 20036\n\n- **Contractor:** Jose Villanueva\n\n### Additional Notes\n- The invoice includes a signature placeholder with \"Estudillo\" but does not specify whether a signature has been added.\n- No specific payment terms are mentioned other than the payable amount and contractor's name.\n\nIf you need further assistance or details, please let me know!"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "error",
+      "error": {
+        "message": "JSON parsing error: Expecting ':' delimiter: line 1 column 27 (char 26)",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\\[ \\text{\"FK Contracting Services\"}\n    \\text{Invoice Number: 20558}\n    \\text{Date: 10/17/21}\n    \\text{Amount: 8.50}\n\n    \\text{Description of Work:}\n    \\text{FK Contracting Services performed the following work on October 17, 2021:}\n    \\text{Replaced all shower heads and repaired damaged showerhead at 801 East.}\n    \\text{Repaired and replaced two ceiling grilles and four ceiling repairs.}\n    \\text{Sealed two plastic escutcheon and repaired pipe for Puder house.}\n    \\text{Sealed two plastic escutcheons and repaired pipe.}\n\n    \\text{Signature & Date: 10/17/21}\n    \\text{Se Vn De Emergencia}\n    \\text{Grand Total: $8.50} \\]\n```"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "error",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nIn the above provided receipt, the work performed is listed in detail with quantities and costs. The total cost is clearly indicated. This structure helps in understanding the services provided and the charges associated with them. It includes important elements like the description of work, quantities, and unit prices. Here\u2019s a breakdown:\n\n1. **Customer Information:**\n   - Customer: Jose Villanueva\n   - Contact Info: 3318 Idaho Ave NW Apt 423\n\n2. **Work Description:**\n   - Plumbing work:\n     - 890 pieces of 3/4 inch plaster boards\n     - 6 plaster repairs\n     - 69 pieces of 130 plastic plumbing\n     - 19 pieces of 17-pin drain pipe and 8 plastic bags\n   - Electrical work:\n     - 16x80 in-wood panel and completed 36x80 panel\n\n3. **Materials Used:**\n   - Cubrima\n   - Cubrima sheets\n   - Plastic for roofing, plastic for non-roofing, plastic for painting\n   - T-bars, corner bars, gabeltines\n\n4. **Total Cost:**\n   - Grand Total: $950.00\n\n5. **Payment Information:**\n   - Payment Due Date: 10/16/24\n   - Payable to: FK Contracting\n\nThis receipt's structure and detail could be very useful for future reference, accounting, or verifying the work done and costs involved."
+      }
+    }
+  ]
+}

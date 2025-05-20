@@ -1,0 +1,204 @@
+{
+  "metadata": {
+    "test_id": "20250520_225710",
+    "timestamp": "2025-05-20T22:57:10.969037",
+    "model_info": {
+      "name": "Pixtral-12B",
+      "version": "1.0",
+      "model_id": "mistral-community/pixtral-12b",
+      "quantization": "int4",
+      "parameters": {
+        "use_flash_attention": true,
+        "device_map": {
+          "": 0
+        }
+      }
+    },
+    "prompt_type": "locational",
+    "system_resources": {
+      "gpu_available": true,
+      "gpu_memory": 93.0,
+      "system_ram": 1511.55,
+      "recommendations": [
+        "Sufficient GPU memory for full precision model"
+      ]
+    }
+  },
+  "prompt": {
+    "raw_text": "Please analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n",
+    "formatted": "[INST]\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n[IMG]\n[/IMG]\n[/INST]"
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:10.967879",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nName: Jose Villanueva\nInvoice Number: 20522\nInvoice Date: 10/22/2013\nDue Date: 12/20/2013\nPayable to: FK Contracting\nProject Address: 801 East\nDescription of Work: Repairing toilet seat and broken door latch\nTotal Amount: $92.00\n\n```\n**Invoice**\n\n*voucher do to compraita:*\n\n**FK Contracting services**\n\n*o numero, direccion y numero de telefone:*\n\n**Jose Villanueva**\n\n*proyecto del proyecto:*\n\n**801 East**\n\n*Description of Work:*\n\n**Fuimos a comprar una toilet seat nueva porque la que avia estaba rota**\n\n**y la que regresamos y la silla estaba carcometida**\n\n**Total**\n\n*Signature & Date:*\n\n**E. K. Knight**\n```"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:15.701917",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n10/22/24 1:2 Due Date:\n- **Invoice Number:** 20606\n- **Payable to:** FK Contracting\n- **Description of Work:**\n  - \"Fumos a comprar una toilet seat nueva porque la que ten\u00eda no se paga te para deslamos la toilet seat vieja y instalamos la nueva correctamente.\"\n- **Grand Total:** $95.00\n\nWhat is the description of work in this invoice?\n\nThe description of work in this invoice involves purchasing a new toilet seat because the existing one was unusable, removing the old toilet seat, and then installing the new one correctly."
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:22.745706",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/3aT9jH7.png[/IMG]\n[IMG]https://i.imgur.com/WcHd6cY.png[/IMG]\n[IMG]https://i.imgur.com/Y4f58yW.png[/IMG]\n\n## Results\nThe total number of words obtained from the image preprocessing step was 46. After applying the language detection model, the language identified was `es` (Spanish). Following this, the text was translated into English using the translation model. The final translated text consists of 44 words.\n\nBelow is the English translation of the text:\n\n**Description of the Work:**\nInstall rafters in walls with 15' 2\" white plywood.\nPut two 1x35 white plywood pieces on top of 10 pieces of 1x2 white plywood.\nPaint the 2 x 9 white plywood.\nPaint the rafters and wall with white paint.\nPaint the doors and windows with white paint.\nPaint the Eggshell.\n\n**Payment terms:**\n[Signature & Date]"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:29.727978",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n**Summary of Estimate:**\n\n1. **Destruction of Windows and Prime Coating of Building Wall:**\n   - Destruction of 8 windows with a total area of 13.5 square meters.\n   - Snake applied with a cost of $150 (including the application of primer and snake).\n\n2. **Interior Wall Construction:**\n   - Interior wall construction involving 32 sheets with a cost of $50.\n\n### Cost Breakdown:\n\n1. **Exterior Wall Destruction and Coating:**\n   - Materials: 8 windows with an area of 13.5 square meters.\n   - Labor: Snake applied in exterior.\n\n   **Total Cost for Exterior Work:**\n   - $150\n\n2. **Interior Wall Construction:**\n   - Materials: 32 sheets of drywall.\n   - Labor: Interior wall construction.\n\n   **Total Cost for Interior Work:**\n   - $50\n\n### Grand Total:\n- **$200**\n\n---\n\nThis translated and structured summary provides a comprehensive overview of the estimate details and costs associated with the specified project."
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:31.491805",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/k6QfjTg.png[/IMG]\n```"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:45.531437",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n1. 1. **MJM Contracting Inc.**\n    1. **Address:** 1627 K Street NW, Washington, DC 20006\n    2. **Phone:** (301) 498-7445\n    3. **Fax:** (443) 858-0644\n    4. **Email:** info@mjmcontracting.com\n    5. **Website:** www.mjmcontracting.com\n\n2. **Project Information:**\n    1. **Project Name:** East 47th Street Waterline Replacement\n    2. **Project Location:** 47th Street & 1st Avenue, New York, NY 10018\n    3. **Project Dates:** October 21, 2020 \u2013 July 14, 2021\n\n3. **Scope of Work:**\n    1. **Demolition:**\n        1. Demolition of 62'x41'5\" vaults to a depth of 13'\n        2. Demolition of vault walls up to roof deck\n    2. **Excavation:**\n        1. Excavation of 75'x66'12\" trench up to vault roof\n        2. Excavation of vault walls up to roof deck\n        3. Excavation of 75'x75'6\" trench with waterstop and sealer\n    3. **Utility Relocation:**\n        1. Relocation of gas, water, sewer, and steam services and laterals\n        2. Installation of waterstop and sealer\n    4. **Emergency Water Connection:**\n        1. Connection of an emergency water connection\n\n4. **Estimate Summary:**\n    1. **Subtotal:** $200,000\n    2. **Emergency Water Connection:** $300\n    3. **Total:** $500,000\n\n5. **Payment Terms:**\n    1. **Terms:** [Not specified]\n\n6. **Signature & Date:**\n    1. **Signature:** [Not specified]\n    2. **Date:** 10/21/2020"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:57:51.774857",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/2b3Vqw5.png[/IMG]\n\n> 4 toilets 4 floors in the first one without mirrors or windows in the 2 bathrooms of the first floor.\n>\n> You give me the toilet of the 2nd and 4th floors where the water and sewage comes out. You remove the walls and install the tiles on the first floor. You remove the tiles and put the sink and toilet of the 2nd and 4th floors. With the pipe of the floor below.\n\n[IMG]https://i.imgur.com/6Wrq7d0.png[/IMG]\n[IMG]https://i.imgur.com/yhLxFoC.png[/IMG]\n[IMG]https://i.imgur.com/jx6X7zO.png[/IMG]\n[IMG]https://i.imgur.com/2b3Vqw5.png[/IMG]"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:06.178498",
+      "error": {
+        "message": "Unmatched braces in JSON object",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n```javascript\nconst extractedInfo = {\n    name: \"EL CONTRACTING\",\n    phone: \"786-991-4995\",\n    address: \"121 NE 67 AVE\",\n    location: \"MIAMI SHORES FL 33138\",\n    description: \"Unit 505: United de 32x32 - 484 pies cuadrados. Pintor ceiling white flat, completo. Pintar 3 paredes completas de 8 pies de alto. Pintar alrededor de 33.8 de color amarillo. Ventana Pared el tela q vapor. Pintor 2 ni\u0106\u0083\u0106\u0083os de puertas blancas. Limpier 2 Ventanas. Remover table el baseboard de la puerta y la ventana. Bote de basura bombilla de l\u00e1mparas de tamperas. Plaster ceiling del ba\u00f1o y pintando de 9x17.56. Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de la cocina nueva/ Bodega el lugar donde shower, Papel de"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:13.428898",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nEstimate Number: 20658\n\n**Estimate for:**\nMJM Contracting\n1477 K Street NW Suite 900\nWashington DC 20006\n\n**Due Date:**\n11/23/24\n\n**Payment Terms:**\n\n**Description of Work:**\n\n* Work 410\n\n  - Painted 23x13-299 feet aquedados.\n  - Painted ceiling white flat complete.\n  - Painted walls completely white ceiling.\n  - Painted paneling 22x8.\n  - Vacuum cleaned area in vapor.\n  - Painted vent and skylights.\n  - Removed and replaced insulation on wall side.\n  - Removed baseboard on door to room.\n  - Replaced bathroom ceiling with pop and light.\n  - Installed caulking new to the ceiling, base, wall and windows.\n  - Installed control panels and wiring to electrical panel.\n  - Repaired electrical panel to the control.\n\n**Grand Total:** $1,600\n\n**Signature & Date:**\n\nA.B."
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:17.724800",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/qHZ8n93.jpg[/IMG]\n```html\n<div class=\"content\">\n  <p>Invoice Number: 20683</p>\n  <p>Due Date: 10/23/1</p>\n  <p>Payable to: MJM Contracting</p>\n  <p>1627 K Street NW Suite 500</p>\n  <p>Washington, D.C. 20006</p>\n</div>\n```"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:27.615267",
+      "error": {
+        "message": "Missing required fields: {'total_cost'}",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/eZoY7mD.png[/IMG]\n```json\n{\n  \"work_order_number\": \"20590\",\n  \"company_name\": \"EL CONTRATING\",\n  \"customer_information\": {\n    \"name\": \"FRANCISCO ANTONIO JORGE PONCE\",\n    \"phone_number\": \"10-04-9916\",\n    \"address\": \"Avenida Larga #32\"\n  },\n  \"project_direction\": \"4225 6th Street Second 3rd's NW Suite 319\",\n  \"description_of_work\": \"Unified 3/9:\",\n  \"project_details\": {\n    \"paint\": \"Paint 6 side white flat of 99 pieces\",\n    \"wall_area\": \"6 side complete of 49x8ft\",\n    \"wall_height\": \"1818 inch wall height\",\n    \"wall_color\": \"A Vortex color paint\",\n    \"windows\": \"Double Windows and Single Windows\",\n    \"baseboard\": \"99 pieces of anealed baseboard of 5 3/4 inches of a 32.5 in the whole length\",\n    \"lamps\": \"3 lamps of a 32.5 in the whole length\",\n    \"light_fixture\": \"New ceiling light fixture\",\n    \"exhaust_fan\": \"New Exhaust Fan\"\n  },\n  \"payment_terms\": \"Payment terms:\",\n  \"grand_total\": \"$1,500\"\n}\n```"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:33.368009",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n Este es un documento de Estimado en espa\u00f1ol de una empresa llamada El Contracting. La fecha del documento es 10/21/24 y el n\u00famero del estimado es 0570. El cliente es MJM Contracting y la direcci\u00f3n es 1627 K Street NW Suite 500 Washington D.C. 20036. Los trabajos a realizar incluyen la pintura de un techo de 49 pies, la reparaci\u00f3n de tableros de yeso, la instalaci\u00f3n de molduras y la pintura de una cocina. El estimado total es de $1,500. Sin embargo, el documento no proporciona detalles sobre el contenido o los t\u00e9rminos de pago.\n\nSi necesitas informaci\u00f3n m\u00e1s espec\u00edfica o asistencia con este documento, por favor ind\u00edcamelo. \u00a1Estoy aqu\u00ed para ayudar!"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:40.859093",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nHere is a formatted representation of the invoice:\n\n```plaintext\n                     Invoice\n    Company:        FK Contracting Services\n    Address, Phone: Jos\u00e9 Villanueva\n    Project:        001 East\n\n    Description of Work:\n        Hay que remplazar el flush valve\n        de 1 inod que esta directo\n        la \u00fanica mandra de para y se\n        serrande lo a que y para ese\n        flush valve no venden partes\n        la \u00fanica forma es remplazar\n        Completo.\n\n    Invoice Number:       07\n    Date Issued:            10/19/24\n    Due Date:               11/19/24\n    Payable to:             FK Contracting\n    Invoice For:            4JM Contracting\n    Address:                1627 Washington Blvd SW\n                           Washington, D.C. 20036\n\n    Total:                    $240.00\n```\nThis invoice details the company and contact information, the project description, invoice details, and the total amount due. The work required involves replacing a flush valve and related tasks."
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:51.124222",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nThe document provided is an invoice in Spanish. The key details and text from the invoice are as follows:\n\n### Invoice Details\n- **Nombre du tu compagnie**: TK contracting services\n- **MJM Order Number**: 20525\n- **Fecha**: 10/13/29\n- **Due Date**: [Blank]\n- **Payable to**: TK contracting\n- **Invoice for**: MJM Contracting\n- **Invoice Number**: [Blank]\n- **Apartment Number**: 5004 T street SE APT 404\n- **Phone Number**: 2025251561\n- **Project Number**: 9063826\n- **Payer**: 202-525-1561\n- **Grand Total**: $1050.00\n\n### Description of Work\n1. **Pintar**: 6.46 pies cuadrados de pared de plat se usaron 2 colores.\n2. **Pintar**: 3.27 pies cuadrados de clelling de tres marcos de purtura y bracer 41 repared.\n3. **Este apartamento de laminado tiene 664.22 pies cuadrados de clelling y 66 pies cuadrados de pared que hay que pintar.\n4. **Vamos a cubrir algunas gabinetes y el piso para no manchar.\n5. **Usaremos plastico y papel para cubrir el area.**\n\nThis invoice is for painting and associated tasks in a specified apartment, with detailed descriptions of the work involved and the corresponding materials used."
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:58:56.458310",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nSo I take a look at your invoice. It appears you paid $190 for repairs you asked us to make.\n\nFirst, there's no mention of any electrical room, much less an electrical room being added. It seems you asked us to redo some part of your construction.\n\nIn my many years of construction, we will be asked the same thing repeatedly. Mostly, it's by someone's friend of a friend.\n\nAnd I'm sorry to say, the price you see on the invoice is only the charge, which I call a tip, and the rest goes into the wind.\n\nAnd if you need help with things like that, you should start with hiring an engineer.\n\nYou need to know what you're paying for and you need to get quotes from several different contractors."
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:59:02.786872",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n### Translation:\n\n**Invoice**\nNombre de tu compa\u00f1\u00eda:\nF K Contracting\nTu nombre, direcci\u00f3n y n\u00famero de tel\u00e9fono:\nJose Villanueva\nDirecci\u00f3n del Proyecto:\n2210 Adams place\nDescripci\u00f3n del Trabajo:\nTengo que reparar 6 agujeros en la parte del frente del edificio. Porque se est\u00e1n peliendo varias partes. Se necesita rellenar los con concreto para que no puedan escaver m\u00e1s!\nM\u00b7J\u00b7M Order Number: 20179\nFecha: 10/17/21\nFactura: 05\nFecha de Vencimiento: 11/17/21\nPago a:\nF K Contracting\nFactura para:\nM\u00b7J\u00b7M Contracting\n1627 K Street NW Suite 500\nWashington, D.C. 20006\nTotal:\n140.00\n[/IMG]\n```"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:59:08.849797",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n**Invoice Details:**\n- **Name of the Business:** F K Contracting Services\n- **Business Name:** FK Contracting\n- **Date:** October 17, 2021\n- **Invoice Number:** 04\n- **Order Number:** 20509\n- **Client Name:** Jose Villanueva\n- **Project Location:** 2210 Adams Place\n\n**Description of Work:**\n- **Work Description (in Spanish):** La puerta de la lavadora se qued\u00f3 laqueada. Se par\u00f3 y handle la puerta hay que desinstalar la puerta de la lavadora. Para luego reparar el handle nuevo.\n\n**Total Amount:**\n- **Grand Total:** $150.00\n\n**Payment Information:**\n- **Payable to:** F K Contracting\n- **Due Date:** Not specified\n\n---\n\nThis template helps translate invoices in the context of business contracts."
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:59:14.385240",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\n\n[IMG]https://i.imgur.com/YGwP6r5.png[/IMG]\n```\nName:          Jose Villanueve\n\nDireccion:     801 East\nPhone:         202-816-3892\n\nDate:           10/17/21\n\nDescription of Work:  I fixed the water heater and cleaned the drain pipes in the basement. I did all the wiring. I replaced one pipe in the bathroom and replaced three sections of plaster in the bathroom and painted 192 square feet of the ceiling and 10 square feet of the wall. I have a picture of the plastic and the can and bought five new computer chips and a picture for the light fixture replacement!\n\nTotal:           $650.00\n```"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "error",
+      "timestamp": "2025-05-20T22:59:25.723055",
+      "error": {
+        "message": "No second JSON object found in response",
+        "raw_response": "\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n[/IMG]\nCertainly! Below is a summary of the invoice provided:\n\n### Invoice Summary:\n\n**Customer Information:**\n- **Company Name:** FK Contracting Services\n- **Customer's Name:** Jose Villanueva\n- **Customer's Address:** 3313 Idaho Ave NW Apt 423\n\n**Invoice Details:**\n- **Invoice Number:** 20502\n- **Invoice Date:** 10/16/24\n- **Total:** $950.00\n- **Description of Work:**\n  1. Subered que pinta 890 pcs cuadros de pared flat y de bici 6 reparaciones de plaster.\n  2. Pequenas cajas pareds tamber pintados 130 pcs cuadras de ceiling flat y 19 poles de 17 pies de largo y 8 pulgadas de ancho tambien pintiados en una pica de 36 x 80 con marco complete.\n  3. Cubrima todo el piso con papel y lamien cubrima toda las camas y gabeteros con plastica para que no manchar nada.\n  4. Todo se le dio una mano de pintura y nos aseguramos de que no se limpio la limpieza.\n\n**Signature and Date:**\n- **Signature:** [Signature Not Clear]\n- **Date:** 10/16/24\n\n### Payment Information:\n- **Payable to:** FK Contracting\n- **Address:** 1627 K Street NW Suite 500 Washington, D.C. 20036\n\n### Notes:\n- The invoice appears to be handwritten and detailed.\n- It describes various painting and plaster repair tasks performed.\n- The invoice total is $950.00.\n\nIf you need any further information or adjustments, feel free to ask!"
+      }
+    }
+  ]
+}
