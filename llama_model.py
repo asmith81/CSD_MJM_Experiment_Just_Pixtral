@@ -167,6 +167,8 @@ def install_dependencies():
             logger.error(f"Error installing {step_name}: {e}")
             raise
 
+install_dependencies()
+
 # %% [markdown]
 """
 ## Model Configuration
