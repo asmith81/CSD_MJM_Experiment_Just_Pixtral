@@ -176,40 +176,6 @@ install_dependencies()
 
 # %% [markdown]
 """
-## Quantization Selection
-"""
-
-# %%
-def select_quantization() -> Literal["bfloat16", "int8", "int4"]:
-    """
-    Select quantization level for the model.
-    Returns one of: "bfloat16", "int8", "int4"
-    """
-    print("\nAvailable quantization options:")
-    print("1. bfloat16 (full precision, 93GB VRAM)")
-    print("2. int8 (8-bit, 46GB VRAM)")
-    print("3. int4 (4-bit, 23GB VRAM)")
-    
-    while True:
-        try:
-            choice = int(input("\nSelect quantization (1-3): "))
-            if choice == 1:
-                return "bfloat16"
-            elif choice == 2:
-                return "int8"
-            elif choice == 3:
-                return "int4"
-            else:
-                print("Invalid choice. Please select 1, 2, or 3.")
-        except ValueError:
-            print("Please enter a number between 1 and 3.")
-
-# Select quantization
-quantization = select_quantization()
-logger.info(f"Selected quantization: {quantization}")
-
-# %% [markdown]
-"""
 ## Flash Attention Configuration
 """
 
@@ -246,6 +212,58 @@ def configure_flash_attention() -> bool:
 # Configure Flash Attention
 use_flash_attention = configure_flash_attention()
 logger.info(f"Flash Attention Status: {'Enabled' if use_flash_attention else 'Disabled'}")
+
+# %% [markdown]
+"""
+## Model Settings
+Configure model settings including quantization.
+"""
+
+# %%
+def get_quantization_config(selected_option: str = None) -> Dict[str, Any]:
+    """
+    Get quantization configuration for the selected option.
+    If no option is selected, prompts the user to choose one.
+    
+    Args:
+        selected_option: Optional pre-selected quantization option
+        
+    Returns:
+        Dict containing the quantization configuration
+    """
+    if not MODEL_CONFIG or "quantization" not in MODEL_CONFIG:
+        raise ValueError("Model configuration not loaded or missing quantization options")
+    
+    quantization_options = MODEL_CONFIG["quantization"]["options"]
+    default_option = MODEL_CONFIG["quantization"]["default"]
+    
+    if not selected_option:
+        print("\nAvailable quantization options:")
+        for i, (option, config) in enumerate(quantization_options.items(), 1):
+            memory_req = "16GB" if option == "bfloat16" else "8GB" if option == "int8" else "4GB"
+            print(f"{i}. {option.upper()} (Memory: {memory_req})")
+        
+        while True:
+            try:
+                choice = int(input(f"\nSelect quantization (1-3) [default: {default_option}]: ") or "1")
+                if 1 <= choice <= len(quantization_options):
+                    selected_option = list(quantization_options.keys())[choice - 1]
+                    break
+                else:
+                    print(f"Invalid choice. Please select a number between 1 and {len(quantization_options)}.")
+            except ValueError:
+                print("Please enter a valid number.")
+    
+    if selected_option not in quantization_options:
+        raise ValueError(f"Invalid quantization option: {selected_option}")
+    
+    logger.info(f"Using {selected_option} quantization")
+    return quantization_options[selected_option]
+
+# Initialize quantization configuration
+QUANTIZATION_CONFIG = get_quantization_config()
+quantization = list(QUANTIZATION_CONFIG.keys())[0]  # Get the selected quantization type
+logger.info("Quantization configuration loaded successfully")
 
 # %% [markdown]
 """
@@ -387,57 +405,6 @@ except Exception as e:
 
 # %% [markdown]
 """
-## Model Settings
-Configure model settings including quantization.
-"""
-
-# %%
-def get_quantization_config(selected_option: str = None) -> Dict[str, Any]:
-    """
-    Get quantization configuration for the selected option.
-    If no option is selected, prompts the user to choose one.
-    
-    Args:
-        selected_option: Optional pre-selected quantization option
-        
-    Returns:
-        Dict containing the quantization configuration
-    """
-    if not MODEL_CONFIG or "quantization" not in MODEL_CONFIG:
-        raise ValueError("Model configuration not loaded or missing quantization options")
-    
-    quantization_options = MODEL_CONFIG["quantization"]["options"]
-    default_option = MODEL_CONFIG["quantization"]["default"]
-    
-    if not selected_option:
-        print("\nAvailable quantization options:")
-        for i, (option, config) in enumerate(quantization_options.items(), 1):
-            memory_req = "16GB" if option == "bfloat16" else "8GB" if option == "int8" else "4GB"
-            print(f"{i}. {option.upper()} (Memory: {memory_req})")
-        
-        while True:
-            try:
-                choice = int(input(f"\nSelect quantization (1-3) [default: {default_option}]: ") or "1")
-                if 1 <= choice <= len(quantization_options):
-                    selected_option = list(quantization_options.keys())[choice - 1]
-                    break
-                else:
-                    print(f"Invalid choice. Please select a number between 1 and {len(quantization_options)}.")
-            except ValueError:
-                print("Please enter a valid number.")
-    
-    if selected_option not in quantization_options:
-        raise ValueError(f"Invalid quantization option: {selected_option}")
-    
-    logger.info(f"Using {selected_option} quantization")
-    return quantization_options[selected_option]
-
-# Initialize quantization configuration
-QUANTIZATION_CONFIG = get_quantization_config()
-logger.info("Quantization configuration loaded successfully")
-
-# %% [markdown]
-"""
 ## Model Loading Configuration
 Configure model loading parameters and device mapping.
 """
@@ -527,9 +494,10 @@ def get_model_loading_params() -> Dict[str, Any]:
     logger.info("Model loading parameters configured successfully")
     return params
 
-# Initialize model loading parameters
+# Initialize model loading parameters and device mapping
 try:
     MODEL_LOADING_PARAMS = get_model_loading_params()
+    device_map = MODEL_LOADING_PARAMS["device_map"]  # Make device_map available globally
     logger.info("Model loading configuration completed")
 except Exception as e:
     logger.error(f"Failed to configure model loading parameters: {e}")
