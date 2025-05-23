@@ -215,58 +215,6 @@ logger.info(f"Flash Attention Status: {'Enabled' if use_flash_attention else 'Di
 
 # %% [markdown]
 """
-## Model Settings
-Configure model settings including quantization.
-"""
-
-# %%
-def get_quantization_config(selected_option: str = None) -> Dict[str, Any]:
-    """
-    Get quantization configuration for the selected option.
-    If no option is selected, prompts the user to choose one.
-    
-    Args:
-        selected_option: Optional pre-selected quantization option
-        
-    Returns:
-        Dict containing the quantization configuration
-    """
-    if not MODEL_CONFIG or "quantization" not in MODEL_CONFIG:
-        raise ValueError("Model configuration not loaded or missing quantization options")
-    
-    quantization_options = MODEL_CONFIG["quantization"]["options"]
-    default_option = MODEL_CONFIG["quantization"]["default"]
-    
-    if not selected_option:
-        print("\nAvailable quantization options:")
-        for i, (option, config) in enumerate(quantization_options.items(), 1):
-            memory_req = "16GB" if option == "bfloat16" else "8GB" if option == "int8" else "4GB"
-            print(f"{i}. {option.upper()} (Memory: {memory_req})")
-        
-        while True:
-            try:
-                choice = int(input(f"\nSelect quantization (1-3) [default: {default_option}]: ") or "1")
-                if 1 <= choice <= len(quantization_options):
-                    selected_option = list(quantization_options.keys())[choice - 1]
-                    break
-                else:
-                    print(f"Invalid choice. Please select a number between 1 and {len(quantization_options)}.")
-            except ValueError:
-                print("Please enter a valid number.")
-    
-    if selected_option not in quantization_options:
-        raise ValueError(f"Invalid quantization option: {selected_option}")
-    
-    logger.info(f"Using {selected_option} quantization")
-    return quantization_options[selected_option]
-
-# Initialize quantization configuration
-QUANTIZATION_CONFIG = get_quantization_config()
-quantization = list(QUANTIZATION_CONFIG.keys())[0]  # Get the selected quantization type
-logger.info("Quantization configuration loaded successfully")
-
-# %% [markdown]
-"""
 ## Model Configuration
 Load and validate the Llama Vision model configuration.
 """
@@ -323,6 +271,58 @@ try:
 except Exception as e:
     logger.error(f"Failed to load model configuration: {e}")
     raise
+
+# %% [markdown]
+"""
+## Model Settings
+Configure model settings including quantization.
+"""
+
+# %%
+def get_quantization_config(selected_option: str = None) -> Dict[str, Any]:
+    """
+    Get quantization configuration for the selected option.
+    If no option is selected, prompts the user to choose one.
+    
+    Args:
+        selected_option: Optional pre-selected quantization option
+        
+    Returns:
+        Dict containing the quantization configuration
+    """
+    if not MODEL_CONFIG or "quantization" not in MODEL_CONFIG:
+        raise ValueError("Model configuration not loaded or missing quantization options")
+    
+    quantization_options = MODEL_CONFIG["quantization"]["options"]
+    default_option = MODEL_CONFIG["quantization"]["default"]
+    
+    if not selected_option:
+        print("\nAvailable quantization options:")
+        for i, (option, config) in enumerate(quantization_options.items(), 1):
+            memory_req = "16GB" if option == "bfloat16" else "8GB" if option == "int8" else "4GB"
+            print(f"{i}. {option.upper()} (Memory: {memory_req})")
+        
+        while True:
+            try:
+                choice = int(input(f"\nSelect quantization (1-3) [default: {default_option}]: ") or "1")
+                if 1 <= choice <= len(quantization_options):
+                    selected_option = list(quantization_options.keys())[choice - 1]
+                    break
+                else:
+                    print(f"Invalid choice. Please select a number between 1 and {len(quantization_options)}.")
+            except ValueError:
+                print("Please enter a valid number.")
+    
+    if selected_option not in quantization_options:
+        raise ValueError(f"Invalid quantization option: {selected_option}")
+    
+    logger.info(f"Using {selected_option} quantization")
+    return quantization_options[selected_option]
+
+# Initialize quantization configuration
+QUANTIZATION_CONFIG = get_quantization_config()
+quantization = list(QUANTIZATION_CONFIG.keys())[0]  # Get the selected quantization type
+logger.info("Quantization configuration loaded successfully")
 
 # %% [markdown]
 """
