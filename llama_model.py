@@ -24,6 +24,7 @@ import torch
 from PIL import Image
 from typing import Union, Dict, Any, List, Literal
 import yaml
+import tqdm  # Import tqdm at the top level
 
 # %% [markdown]
 """
@@ -133,8 +134,14 @@ logger.info(f"Results will be saved to: {results_dir}")
 # %%
 def install_dependencies():
     """Install required dependencies with progress tracking."""
+    # First install tqdm if not already installed
+    try:
+        import tqdm
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
+        import tqdm
+    
     steps = [
-        ("tqdm", [sys.executable, "-m", "pip", "install", "-q", "tqdm"]),
         ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements_llama.txt")]),
         ("PyTorch", [
             sys.executable, "-m", "pip", "install", "-q",
@@ -145,16 +152,13 @@ def install_dependencies():
         ])
     ]
     
-    for step_name, command in tqdm(steps, desc="Installing dependencies"):
+    for step_name, command in tqdm.tqdm(steps, desc="Installing dependencies"):
         try:
             subprocess.check_call(command)
             logger.info(f"Successfully installed {step_name}")
         except subprocess.CalledProcessError as e:
             logger.error(f"Error installing {step_name}: {e}")
             raise
-
-# Import tqdm after installation
-from tqdm import tqdm
 
 # %% [markdown]
 """
