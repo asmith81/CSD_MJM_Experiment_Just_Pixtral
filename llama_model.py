@@ -798,23 +798,18 @@ def run_single_image_test():
             "eos_token_id": processor.tokenizer.eos_token_id
         }
         
-        # For AutoModelForCausalLM, we need to pass the input_ids and attention_mask
-        model_inputs = {
-            "input_ids": inputs["input_ids"],
-            "attention_mask": inputs["attention_mask"]
-        }
+        # First, get the model outputs from a forward pass
+        outputs = model(**inputs)
         
-        # Add pixel values directly to model inputs
-        if "pixel_values" in inputs:
-            model_inputs["pixel_values"] = inputs["pixel_values"]
-        
-        outputs = model.generate(
-            **model_inputs,
+        # Then use the outputs for generation
+        generated_ids = model.generate(
+            input_ids=inputs["input_ids"],
+            attention_mask=inputs["attention_mask"],
             **generation_params
         )
     
     # Decode and display response
-    response = processor.decode(outputs[0], skip_special_tokens=True)
+    response = processor.decode(generated_ids[0], skip_special_tokens=True)
     print("\nModel Response:")
     print("-" * 50)
     print(response)
