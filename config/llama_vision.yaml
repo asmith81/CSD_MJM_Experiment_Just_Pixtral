@@ -87,7 +87,6 @@ inference:
   temperature: 1.0
   top_k: 50
   top_p: 0.95
-  repetition_penalty: 1.2  # Added repetition penalty
   batch_size: 1
   max_batch_memory_gb: 16  # Adjusted for lower memory requirement
 

@@ -794,7 +794,6 @@ def run_single_image_test():
             "do_sample": INFERENCE_PARAMS["do_sample"],
             "temperature": INFERENCE_PARAMS["temperature"],
             "top_k": INFERENCE_PARAMS["top_k"],
-            "repetition_penalty": INFERENCE_PARAMS["repetition_penalty"],
             "pad_token_id": processor.tokenizer.pad_token_id,
             "eos_token_id": processor.tokenizer.eos_token_id
         }
