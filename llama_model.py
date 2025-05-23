@@ -139,6 +139,35 @@ logger.info(f"Results will be saved to: {results_dir}")
 """
 
 # %%
+def configure_flash_attention() -> bool:
+    """
+    Check if Flash Attention is available and configure it.
+    Returns True if Flash Attention is enabled, False otherwise.
+    """
+    try:
+        import flash_attn
+        
+        # Check if GPU supports Flash Attention
+        if not torch.cuda.is_available():
+            logger.warning("Flash Attention requires CUDA GPU. Disabling Flash Attention.")
+            return False
+            
+        # Get GPU compute capability
+        major, minor = torch.cuda.get_device_capability()
+        compute_capability = float(f"{major}.{minor}")
+        
+        # Flash Attention 2 requires compute capability >= 8.0
+        if compute_capability >= 8.0:
+            logger.info("Flash Attention 2 enabled - GPU supports compute capability 8.0+")
+            return True
+        else:
+            logger.warning(f"GPU compute capability {compute_capability} does not support Flash Attention 2")
+            return False
+            
+    except ImportError:
+        logger.warning("Flash Attention not installed. Please install with: pip install flash-attn")
+        return False
+
 def install_dependencies():
     """Install required dependencies with progress tracking."""
     # First install tqdm if not already installed
@@ -148,7 +177,11 @@ def install_dependencies():
         subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
         import tqdm
     
-    steps = [
+    # Update pip first
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
+    
+    # Install base requirements without flash-attn
+    base_requirements = [
         ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements_llama.txt")]),
         ("PyTorch", [
             sys.executable, "-m", "pip", "install", "-q",
@@ -159,13 +192,30 @@ def install_dependencies():
         ])
     ]
     
-    for step_name, command in tqdm.tqdm(steps, desc="Installing dependencies"):
+    for step_name, command in tqdm.tqdm(base_requirements, desc="Installing base dependencies"):
         try:
             subprocess.check_call(command)
             logger.info(f"Successfully installed {step_name}")
         except subprocess.CalledProcessError as e:
             logger.error(f"Error installing {step_name}: {e}")
             raise
+    
+    # Try to install flash-attn separately
+    try:
+        logger.info("Attempting to install flash-attn...")
+        subprocess.check_call([
+            sys.executable, "-m", "pip", "install", "-q",
+            "flash-attn==2.3.6",  # Using an older, more stable version
+            "--no-build-isolation"
+        ])
+        logger.info("Successfully installed flash-attn")
+    except subprocess.CalledProcessError as e:
+        logger.warning(f"Could not install flash-attn: {e}")
+        logger.warning("Continuing without flash-attn. Some features may be limited.")
+
+# Configure Flash Attention
+use_flash_attention = configure_flash_attention()
+logger.info(f"Flash Attention Status: {'Enabled' if use_flash_attention else 'Disabled'}")
 
 install_dependencies()
 
