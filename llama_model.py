@@ -176,6 +176,40 @@ install_dependencies()
 
 # %% [markdown]
 """
+## Quantization Selection
+"""
+
+# %%
+def select_quantization() -> Literal["bfloat16", "int8", "int4"]:
+    """
+    Select quantization level for the model.
+    Returns one of: "bfloat16", "int8", "int4"
+    """
+    print("\nAvailable quantization options:")
+    print("1. bfloat16 (full precision, 93GB VRAM)")
+    print("2. int8 (8-bit, 46GB VRAM)")
+    print("3. int4 (4-bit, 23GB VRAM)")
+    
+    while True:
+        try:
+            choice = int(input("\nSelect quantization (1-3): "))
+            if choice == 1:
+                return "bfloat16"
+            elif choice == 2:
+                return "int8"
+            elif choice == 3:
+                return "int4"
+            else:
+                print("Invalid choice. Please select 1, 2, or 3.")
+        except ValueError:
+            print("Please enter a number between 1 and 3.")
+
+# Select quantization
+quantization = select_quantization()
+logger.info(f"Selected quantization: {quantization}")
+
+# %% [markdown]
+"""
 ## Flash Attention Configuration
 """
 
@@ -208,20 +242,6 @@ def configure_flash_attention() -> bool:
     except ImportError:
         logger.warning("Flash Attention not installed. Please install with: pip install flash-attn")
         return False
-
-# Try to install flash-attn
-try:
-    logger.info("Attempting to install flash-attn...")
-    subprocess.check_call([
-        sys.executable, "-m", "pip", "install", "-q",
-        "flash-attn==2.3.6",  # Using an older, more stable version
-        "--no-build-isolation",
-        "--use-pep517"  # Use PEP 517 build interface
-    ])
-    logger.info("Successfully installed flash-attn")
-except subprocess.CalledProcessError as e:
-    logger.warning(f"Could not install flash-attn: {e}")
-    logger.warning("Continuing without flash-attn. Some features may be limited.")
 
 # Configure Flash Attention
 use_flash_attention = configure_flash_attention()
@@ -660,40 +680,6 @@ except Exception as e:
 
 # %% [markdown]
 """
-## Quantization Selection
-"""
-
-# %%
-def select_quantization() -> Literal["bfloat16", "int8", "int4"]:
-    """
-    Select quantization level for the model.
-    Returns one of: "bfloat16", "int8", "int4"
-    """
-    print("\nAvailable quantization options:")
-    print("1. bfloat16 (full precision, 93GB VRAM)")
-    print("2. int8 (8-bit, 46GB VRAM)")
-    print("3. int4 (4-bit, 23GB VRAM)")
-    
-    while True:
-        try:
-            choice = int(input("\nSelect quantization (1-3): "))
-            if choice == 1:
-                return "bfloat16"
-            elif choice == 2:
-                return "int8"
-            elif choice == 3:
-                return "int4"
-            else:
-                print("Invalid choice. Please select 1, 2, or 3.")
-        except ValueError:
-            print("Please enter a number between 1 and 3.")
-
-# Select quantization
-quantization = select_quantization()
-logger.info(f"Selected quantization: {quantization}")
-
-# %% [markdown]
-"""
 ## Model Download
 """
 
@@ -754,11 +740,6 @@ def download_llama_model(model_id: str = "meta-llama/Llama-3.2-11B-Vision",
                     bnb_4bit_quant_type="nf4"
                 )
             
-            # Add flash attention if configured
-            if use_flash_attention:
-                model_kwargs["use_flash_attention_2"] = True
-                model_kwargs["attn_implementation"] = "flash_attention_2"
-            
             # Download model and processor
             model = LlavaForConditionalGeneration.from_pretrained(model_id, **model_kwargs)
             processor = AutoProcessor.from_pretrained(model_id)
@@ -813,7 +794,7 @@ def run_single_image_test():
     image_path = str(image_files[0])
     
     # Load and process image
-    image = load_and_process_image(image_path)
+    image = process_image(Image.open(image_path))
     
     # Create a display version of the image with a max size of 800x800
     display_image = image.copy()
@@ -879,94 +860,6 @@ Run the model on all images and save results.
 """
 
 # %%
-def process_all_images(results_file: Path) -> list:
-    """Process all images in the data/images directory and collect responses."""
-    results = []
-    image_dir = Path("data/images")
-    image_files = list(image_dir.glob("*.jpg"))
-    
-    if not image_files:
-        raise FileNotFoundError("No .jpg files found in data/images directory")
-    
-    for image_path in tqdm(image_files, desc="Processing images"):
-        try:
-            # Load and process image
-            image = load_and_process_image(str(image_path))
-            
-            # Format the prompt
-            prompt_text = SELECTED_PROMPT['prompts'][0]['text']
-            formatted_prompt = format_prompt(prompt_text)
-            
-            # Prepare model inputs
-            inputs = processor(
-                text=formatted_prompt,
-                images=[image],
-                return_tensors="pt"
-            )
-            
-            # Move inputs to the correct device and dtype
-            inputs = {k: v.to(model.device) for k, v in inputs.items()}
-            
-            # Convert inputs to the correct dtype based on quantization
-            if quantization == "bfloat16":
-                inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
-            elif quantization in ["int8", "int4"]:
-                # For quantized models, convert to float16
-                inputs = {k: v.to(torch.float16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
-            
-            # Generate response
-            with torch.no_grad():
-                outputs = model.generate(
-                    **inputs,
-                    **INFERENCE_PARAMS
-                )
-            
-            # Decode response
-            response = processor.decode(outputs[0], skip_special_tokens=True)
-            
-            # Extract and parse JSON
-            parsed_json, error_message = extract_json_from_response(response)
-            
-            # Create result entry
-            result = {
-                "image_name": image_path.name,
-                "status": "completed" if parsed_json else "error",
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            if parsed_json:
-                result["extracted_data"] = parsed_json
-            else:
-                result["error"] = {
-                    "message": error_message,
-                    "raw_response": response
-                }
-            
-            # Add to results
-            results.append(result)
-            
-            # Save incremental results
-            save_incremental_results(results_file, results)
-            
-            logger.info(f"Processed image: {image_path.name}")
-            
-        except Exception as e:
-            logger.error(f"Error processing image {image_path.name}: {str(e)}")
-            result = {
-                "image_name": image_path.name,
-                "status": "error",
-                "error": {
-                    "message": str(e),
-                    "type": "processing_error"
-                },
-                "timestamp": datetime.now().isoformat()
-            }
-            results.append(result)
-            # Save incremental results even on error
-            save_incremental_results(results_file, results)
-    
-    return results
-
 def run_batch_test():
     """Run the model on all images and save results."""
     try:
@@ -975,7 +868,7 @@ def run_batch_test():
         results_file = results_dir / f"test_results_{test_id}.json"
         
         # Process all images with incremental saving
-        results = process_all_images(results_file)
+        results = process_batch()
         
         logger.info(f"Batch test completed. Results saved to: {results_file}")
         return str(results_file)
@@ -984,135 +877,16 @@ def run_batch_test():
         logger.error(f"Error during batch test: {str(e)}")
         raise
 
-# Run batch test
+# Run the batch test
 run_batch_test()
 
 # %% [markdown]
 """
-## Analysis Functions
-Functions for analyzing model performance and generating analysis reports.
+## Analysis
+Generate and display analysis of model performance.
 """
 
 # %%
-def analyze_results(results_file: str) -> Dict[str, Any]:
-    """
-    Analyze model performance and generate analysis report.
-    
-    Args:
-        results_file: Path to results file
-        
-    Returns:
-        Dict containing analysis results
-    """
-    # Load results
-    with open(results_file, 'r') as f:
-        results = json.load(f)
-    
-    # Initialize analysis structure
-    analysis = {
-        "metadata": results["metadata"],
-        "summary": {
-            "total_images": len(results["results"]),
-            "completed": 0,
-            "errors": 0,
-            "work_order_accuracy": 0,
-            "total_cost_accuracy": 0,
-            "average_cer": 0
-        },
-        "error_categories": {
-            "work_order": {},
-            "total_cost": {}
-        },
-        "results": []
-    }
-    
-    # Process each result
-    total_cer = 0
-    work_order_matches = 0
-    total_cost_matches = 0
-    
-    for result in results["results"]:
-        if "error" in result:
-            analysis["summary"]["errors"] += 1
-            continue
-            
-        analysis["summary"]["completed"] += 1
-        
-        # Extract JSON from response
-        try:
-            # Find JSON in response
-            response = result["response"]
-            json_start = response.find("{")
-            json_end = response.rfind("}") + 1
-            if json_start >= 0 and json_end > json_start:
-                json_str = response[json_start:json_end]
-                extracted_data = json.loads(json_str)
-                
-                # Analyze work order
-                work_order_error = categorize_work_order_error(
-                    extracted_data.get("work_order_number", ""),
-                    result.get("ground_truth", {}).get("work_order_number", "")
-                )
-                
-                # Analyze total cost
-                total_cost_error = categorize_total_cost_error(
-                    normalize_total_cost(extracted_data.get("total_cost", "")),
-                    normalize_total_cost(result.get("ground_truth", {}).get("total_cost", ""))
-                )
-                
-                # Update statistics
-                if work_order_error == "Exact Match":
-                    work_order_matches += 1
-                if total_cost_error == "Numeric Match":
-                    total_cost_matches += 1
-                
-                # Update error categories
-                analysis["error_categories"]["work_order"][work_order_error] = \
-                    analysis["error_categories"]["work_order"].get(work_order_error, 0) + 1
-                analysis["error_categories"]["total_cost"][total_cost_error] = \
-                    analysis["error_categories"]["total_cost"].get(total_cost_error, 0) + 1
-                
-                # Calculate CER
-                cer = calculate_cer(
-                    extracted_data.get("work_order_number", ""),
-                    result.get("ground_truth", {}).get("work_order_number", "")
-                )
-                total_cer += cer
-                
-                # Add to results
-                analysis["results"].append({
-                    "image_path": result["image_path"],
-                    "status": "completed",
-                    "work_order": {
-                        "predicted": extracted_data.get("work_order_number", ""),
-                        "ground_truth": result.get("ground_truth", {}).get("work_order_number", ""),
-                        "error_category": work_order_error,
-                        "cer": cer
-                    },
-                    "total_cost": {
-                        "predicted": extracted_data.get("total_cost", ""),
-                        "ground_truth": result.get("ground_truth", {}).get("total_cost", ""),
-                        "error_category": total_cost_error
-                    }
-                })
-                
-        except Exception as e:
-            logger.error(f"Error analyzing result: {str(e)}")
-            analysis["results"].append({
-                "image_path": result["image_path"],
-                "status": "error",
-                "error": str(e)
-            })
-    
-    # Calculate summary statistics
-    total_images = analysis["summary"]["total_images"]
-    if total_images > 0:
-        analysis["summary"]["work_order_accuracy"] = work_order_matches / total_images
-        analysis["summary"]["total_cost_accuracy"] = total_cost_matches / total_images
-        analysis["summary"]["average_cer"] = total_cer / total_images
-    
-    return analysis
-
 def run_analysis():
     """Run the model and analyze its performance."""
     try:
