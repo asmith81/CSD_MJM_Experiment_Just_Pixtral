@@ -794,8 +794,7 @@ def run_single_image_test():
             "do_sample": INFERENCE_PARAMS["do_sample"],
             "temperature": INFERENCE_PARAMS["temperature"],
             "top_k": INFERENCE_PARAMS["top_k"],
-            "top_p": INFERENCE_PARAMS["top_p"],
-            "repetition_penalty": 1.2,  # Add repetition penalty to avoid loops
+            "repetition_penalty": INFERENCE_PARAMS["repetition_penalty"],
             "pad_token_id": processor.tokenizer.pad_token_id,
             "eos_token_id": processor.tokenizer.eos_token_id
         }
@@ -806,9 +805,12 @@ def run_single_image_test():
             "attention_mask": inputs["attention_mask"]
         }
         
-        # Add pixel_values if they exist
+        # Process the image through the model's vision encoder first
         if "pixel_values" in inputs:
-            model_inputs["pixel_values"] = inputs["pixel_values"]
+            # Forward pass through the vision encoder
+            vision_outputs = model.model.vision_tower(inputs["pixel_values"])
+            # Add the vision outputs to the model inputs
+            model_inputs["vision_outputs"] = vision_outputs
         
         outputs = model.generate(
             **model_inputs,
