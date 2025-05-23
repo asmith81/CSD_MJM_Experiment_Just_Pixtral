@@ -669,7 +669,7 @@ def download_llama_model(model_id: str = "meta-llama/Llama-3.2-11B-Vision",
     Raises:
         RuntimeError: If download fails after max retries
     """
-    from transformers import AutoProcessor, LlavaForConditionalGeneration, BitsAndBytesConfig
+    from transformers import AutoProcessor, AutoModelForCausalLM, BitsAndBytesConfig
     import time
     import psutil
     
@@ -709,7 +709,7 @@ def download_llama_model(model_id: str = "meta-llama/Llama-3.2-11B-Vision",
                 )
             
             # Download model and processor
-            model = LlavaForConditionalGeneration.from_pretrained(model_id, **model_kwargs)
+            model = AutoModelForCausalLM.from_pretrained(model_id, **model_kwargs)
             processor = AutoProcessor.from_pretrained(model_id)
             
             # Log final memory usage
