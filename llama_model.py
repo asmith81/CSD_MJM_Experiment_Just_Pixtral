@@ -139,6 +139,47 @@ logger.info(f"Results will be saved to: {results_dir}")
 """
 
 # %%
+def install_dependencies():
+    """Install required dependencies with progress tracking."""
+    # First install tqdm if not already installed
+    try:
+        import tqdm
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
+        import tqdm
+    
+    # Update pip first
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
+    
+    # Install base requirements
+    base_requirements = [
+        ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements_llama.txt")]),
+        ("PyTorch", [
+            sys.executable, "-m", "pip", "install", "-q",
+            "torch==2.1.0",
+            "torchvision==0.16.0",
+            "torchaudio==2.1.0",
+            "--index-url", "https://download.pytorch.org/whl/cu118"
+        ])
+    ]
+    
+    for step_name, command in tqdm.tqdm(base_requirements, desc="Installing base dependencies"):
+        try:
+            subprocess.check_call(command)
+            logger.info(f"Successfully installed {step_name}")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Error installing {step_name}: {e}")
+            raise
+
+# Install dependencies
+install_dependencies()
+
+# %% [markdown]
+"""
+## Flash Attention Configuration
+"""
+
+# %%
 def configure_flash_attention() -> bool:
     """
     Check if Flash Attention is available and configure it.
@@ -168,56 +209,23 @@ def configure_flash_attention() -> bool:
         logger.warning("Flash Attention not installed. Please install with: pip install flash-attn")
         return False
 
-def install_dependencies():
-    """Install required dependencies with progress tracking."""
-    # First install tqdm if not already installed
-    try:
-        import tqdm
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
-        import tqdm
-    
-    # Update pip first
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
-    
-    # Install base requirements without flash-attn
-    base_requirements = [
-        ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements_llama.txt")]),
-        ("PyTorch", [
-            sys.executable, "-m", "pip", "install", "-q",
-            "torch==2.1.0",
-            "torchvision==0.16.0",
-            "torchaudio==2.1.0",
-            "--index-url", "https://download.pytorch.org/whl/cu118"
-        ])
-    ]
-    
-    for step_name, command in tqdm.tqdm(base_requirements, desc="Installing base dependencies"):
-        try:
-            subprocess.check_call(command)
-            logger.info(f"Successfully installed {step_name}")
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Error installing {step_name}: {e}")
-            raise
-    
-    # Try to install flash-attn separately
-    try:
-        logger.info("Attempting to install flash-attn...")
-        subprocess.check_call([
-            sys.executable, "-m", "pip", "install", "-q",
-            "flash-attn==2.3.6",  # Using an older, more stable version
-            "--no-build-isolation"
-        ])
-        logger.info("Successfully installed flash-attn")
-    except subprocess.CalledProcessError as e:
-        logger.warning(f"Could not install flash-attn: {e}")
-        logger.warning("Continuing without flash-attn. Some features may be limited.")
+# Try to install flash-attn
+try:
+    logger.info("Attempting to install flash-attn...")
+    subprocess.check_call([
+        sys.executable, "-m", "pip", "install", "-q",
+        "flash-attn==2.3.6",  # Using an older, more stable version
+        "--no-build-isolation",
+        "--use-pep517"  # Use PEP 517 build interface
+    ])
+    logger.info("Successfully installed flash-attn")
+except subprocess.CalledProcessError as e:
+    logger.warning(f"Could not install flash-attn: {e}")
+    logger.warning("Continuing without flash-attn. Some features may be limited.")
 
 # Configure Flash Attention
 use_flash_attention = configure_flash_attention()
 logger.info(f"Flash Attention Status: {'Enabled' if use_flash_attention else 'Disabled'}")
-
-install_dependencies()
 
 # %% [markdown]
 """
@@ -652,155 +660,340 @@ except Exception as e:
 
 # %% [markdown]
 """
-## Testing and Analysis
-Functions for testing the model and analyzing results.
+## Quantization Selection
 """
 
 # %%
-def run_single_image_test(image_path: str = None) -> Dict[str, Any]:
+def select_quantization() -> Literal["bfloat16", "int8", "int4"]:
     """
-    Run the model on a single image using the selected prompt.
+    Select quantization level for the model.
+    Returns one of: "bfloat16", "int8", "int4"
+    """
+    print("\nAvailable quantization options:")
+    print("1. bfloat16 (full precision, 93GB VRAM)")
+    print("2. int8 (8-bit, 46GB VRAM)")
+    print("3. int4 (4-bit, 23GB VRAM)")
     
-    Args:
-        image_path: Optional path to image. If None, uses first .jpg from data/images
-        
-    Returns:
-        Dict containing test results
-    """
-    try:
-        # Get image path if not provided
-        if not image_path:
-            image_dir = Path("data/images")
-            image_files = list(image_dir.glob("*.jpg"))
-            if not image_files:
-                raise FileNotFoundError("No .jpg files found in data/images directory")
-            image_path = str(image_files[0])
-        
-        # Load and process image
-        image = Image.open(image_path)
-        processed_image = process_image(image)
-        
-        # Create a display version of the image
-        display_image = processed_image.copy()
-        max_display_size = (800, 800)
-        display_image.thumbnail(max_display_size, Image.Resampling.LANCZOS)
-        
-        # Format the prompt
-        prompt_text = SELECTED_PROMPT['prompts'][0]['text']
-        formatted_prompt = format_prompt(prompt_text)
-        
-        # Display the image and prompt
-        print("\nInput Image (resized for display):")
-        display(display_image)
-        
-        print("\nFormatted Prompt:")
-        print("-" * 50)
-        print(formatted_prompt)
-        print("-" * 50)
-        
-        # Prepare model inputs
-        inputs = processor(
-            text=formatted_prompt,
-            images=[processed_image],
-            return_tensors="pt"
-        )
-        
-        # Move inputs to the correct device and dtype
-        inputs = {k: v.to(model.device) for k, v in inputs.items()}
-        
-        # Generate response
-        with torch.no_grad():
-            outputs = model.generate(
-                **inputs,
-                **INFERENCE_PARAMS
-            )
-        
-        # Decode and display response
-        response = processor.decode(outputs[0], skip_special_tokens=True)
-        print("\nModel Response:")
-        print("-" * 50)
-        print(response)
-        print("-" * 50)
-        
-        return {
-            "image_path": image_path,
-            "prompt": formatted_prompt,
-            "response": response,
-            "timestamp": datetime.now().isoformat()
-        }
-        
-    except Exception as e:
-        logger.error(f"Error during single image test: {str(e)}")
-        raise
+    while True:
+        try:
+            choice = int(input("\nSelect quantization (1-3): "))
+            if choice == 1:
+                return "bfloat16"
+            elif choice == 2:
+                return "int8"
+            elif choice == 3:
+                return "int4"
+            else:
+                print("Invalid choice. Please select 1, 2, or 3.")
+        except ValueError:
+            print("Please enter a number between 1 and 3.")
 
-def process_batch(image_dir: str = "data/images") -> List[Dict[str, Any]]:
+# Select quantization
+quantization = select_quantization()
+logger.info(f"Selected quantization: {quantization}")
+
+# %% [markdown]
+"""
+## Model Download
+"""
+
+# %%
+def download_llama_model(model_id: str = "meta-llama/Llama-3.2-11B-Vision", 
+                        max_retries: int = 2,
+                        retry_delay: int = 5) -> tuple:
     """
-    Process all images in the directory and collect responses.
+    Download the Llama Vision model with retry logic and memory monitoring.
     
     Args:
-        image_dir: Directory containing images to process
+        model_id: HuggingFace model ID
+        max_retries: Maximum number of download attempts
+        retry_delay: Delay between retries in seconds
         
     Returns:
-        List of dictionaries containing results for each image
+        tuple: (model, processor) if successful
+        
+    Raises:
+        RuntimeError: If download fails after max retries
     """
+    from transformers import AutoProcessor, LlavaForConditionalGeneration, BitsAndBytesConfig
+    import time
+    import psutil
+    
+    def log_memory_usage(stage: str):
+        """Log current memory usage"""
+        gpu_mem = torch.cuda.memory_allocated() / (1024**3) if torch.cuda.is_available() else 0
+        ram = psutil.virtual_memory().used / (1024**3)
+        logger.info(f"Memory usage at {stage}: GPU={gpu_mem:.2f}GB, RAM={ram:.2f}GB")
+    
+    # Log initial memory usage
+    log_memory_usage("start")
+    
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"Download attempt {attempt + 1}/{max_retries}")
+            
+            # Configure model loading based on selected quantization
+            model_kwargs = {
+                "device_map": device_map,
+                "trust_remote_code": True,
+                "use_auth_token": True  # Required for Llama
+            }
+            
+            if quantization == "bfloat16":
+                model_kwargs["torch_dtype"] = torch.bfloat16
+            elif quantization == "int8":
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_8bit=True,
+                    bnb_4bit_compute_dtype=torch.float16
+                )
+            elif quantization == "int4":
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4"
+                )
+            
+            # Add flash attention if configured
+            if use_flash_attention:
+                model_kwargs["use_flash_attention_2"] = True
+                model_kwargs["attn_implementation"] = "flash_attention_2"
+            
+            # Download model and processor
+            model = LlavaForConditionalGeneration.from_pretrained(model_id, **model_kwargs)
+            processor = AutoProcessor.from_pretrained(model_id)
+            
+            # Log final memory usage
+            log_memory_usage("complete")
+            
+            logger.info("Model and processor downloaded successfully")
+            return model, processor
+            
+        except Exception as e:
+            logger.error(f"Download attempt {attempt + 1} failed: {str(e)}")
+            if attempt < max_retries - 1:
+                logger.info(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                raise RuntimeError(f"Failed to download model after {max_retries} attempts: {str(e)}")
+
+# Download model and processor
+model, processor = download_llama_model()
+logger.info("Model and processor ready for use")
+
+# %% [markdown]
+"""
+## Prompt Selection
+Select a prompt type for the model evaluation.
+"""
+
+# %%
+# Run the prompt selection
+selected_prompt_type = select_prompt()
+logger.info(f"Selected prompt type: {selected_prompt_type}")
+
+# The selected prompt is now stored in the global variable SELECTED_PROMPT
+# This can be accessed in subsequent cells for model evaluation
+
+# %% [markdown]
+"""
+## Single Image Test
+Run the model on a single image using the selected prompt.
+"""
+
+# %%
+def run_single_image_test():
+    """Run the model on a single image with the selected prompt."""
+    # Get the first .jpg file from data/images
+    image_dir = Path("data/images")
+    image_files = list(image_dir.glob("*.jpg"))
+    if not image_files:
+        raise FileNotFoundError("No .jpg files found in data/images directory")
+    
+    image_path = str(image_files[0])
+    
+    # Load and process image
+    image = load_and_process_image(image_path)
+    
+    # Create a display version of the image with a max size of 800x800
+    display_image = image.copy()
+    max_display_size = (800, 800)
+    display_image.thumbnail(max_display_size, Image.Resampling.LANCZOS)
+    
+    # Format the prompt
+    prompt_text = SELECTED_PROMPT['prompts'][0]['text']
+    formatted_prompt = format_prompt(prompt_text)
+    
+    # Display the image
+    print("\nInput Image (resized for display):")
+    display(display_image)
+    
+    # Display the prompt
+    print("\nFormatted Prompt:")
+    print("-" * 50)
+    print(formatted_prompt)
+    print("-" * 50)
+    
+    # Prepare model inputs
+    inputs = processor(
+        text=formatted_prompt,
+        images=[image],
+        return_tensors="pt"
+    )
+    
+    # Move inputs to the correct device and dtype
+    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    
+    # Convert inputs to the correct dtype based on quantization
+    if quantization == "bfloat16":
+        inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+    elif quantization in ["int8", "int4"]:
+        # For quantized models, convert to float16
+        inputs = {k: v.to(torch.float16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+    
+    # Generate response
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            **INFERENCE_PARAMS
+        )
+    
+    # Decode and display response
+    response = processor.decode(outputs[0], skip_special_tokens=True)
+    print("\nModel Response:")
+    print("-" * 50)
+    print(response)
+    print("-" * 50)
+
+# Run the single image test
+try:
+    run_single_image_test()
+except Exception as e:
+    logger.error(f"Error during single image test: {str(e)}")
+    raise
+
+# %% [markdown]
+"""
+## Batch Test
+Run the model on all images and save results.
+"""
+
+# %%
+def process_all_images(results_file: Path) -> list:
+    """Process all images in the data/images directory and collect responses."""
     results = []
-    image_files = list(Path(image_dir).glob("*.jpg"))
+    image_dir = Path("data/images")
+    image_files = list(image_dir.glob("*.jpg"))
     
     if not image_files:
-        raise FileNotFoundError(f"No .jpg files found in {image_dir}")
+        raise FileNotFoundError("No .jpg files found in data/images directory")
     
     for image_path in tqdm(image_files, desc="Processing images"):
         try:
-            result = run_single_image_test(str(image_path))
+            # Load and process image
+            image = load_and_process_image(str(image_path))
+            
+            # Format the prompt
+            prompt_text = SELECTED_PROMPT['prompts'][0]['text']
+            formatted_prompt = format_prompt(prompt_text)
+            
+            # Prepare model inputs
+            inputs = processor(
+                text=formatted_prompt,
+                images=[image],
+                return_tensors="pt"
+            )
+            
+            # Move inputs to the correct device and dtype
+            inputs = {k: v.to(model.device) for k, v in inputs.items()}
+            
+            # Convert inputs to the correct dtype based on quantization
+            if quantization == "bfloat16":
+                inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+            elif quantization in ["int8", "int4"]:
+                # For quantized models, convert to float16
+                inputs = {k: v.to(torch.float16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+            
+            # Generate response
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    **INFERENCE_PARAMS
+                )
+            
+            # Decode response
+            response = processor.decode(outputs[0], skip_special_tokens=True)
+            
+            # Extract and parse JSON
+            parsed_json, error_message = extract_json_from_response(response)
+            
+            # Create result entry
+            result = {
+                "image_name": image_path.name,
+                "status": "completed" if parsed_json else "error",
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            if parsed_json:
+                result["extracted_data"] = parsed_json
+            else:
+                result["error"] = {
+                    "message": error_message,
+                    "raw_response": response
+                }
+            
+            # Add to results
             results.append(result)
             
             # Save incremental results
-            save_incremental_results(results)
+            save_incremental_results(results_file, results)
+            
+            logger.info(f"Processed image: {image_path.name}")
             
         except Exception as e:
             logger.error(f"Error processing image {image_path.name}: {str(e)}")
-            results.append({
-                "image_path": str(image_path),
-                "error": str(e),
+            result = {
+                "image_name": image_path.name,
+                "status": "error",
+                "error": {
+                    "message": str(e),
+                    "type": "processing_error"
+                },
                 "timestamp": datetime.now().isoformat()
-            })
+            }
+            results.append(result)
             # Save incremental results even on error
-            save_incremental_results(results)
+            save_incremental_results(results_file, results)
     
     return results
 
-def save_incremental_results(results: List[Dict[str, Any]]):
-    """Save results incrementally to a file."""
-    results_file = results_dir / f"test_results_{generate_test_id()}.json"
-    
-    # Create results data structure
-    data = {
-        "metadata": {
-            "test_id": generate_test_id(),
-            "timestamp": datetime.now().isoformat(),
-            "model_info": {
-                "name": MODEL_CONFIG["name"],
-                "version": "1.0",
-                "model_id": MODEL_CONFIG["repo_id"],
-                "quantization": QUANTIZATION_CONFIG,
-                "parameters": MODEL_LOADING_PARAMS
-            },
-            "prompt_type": selected_prompt_type,
-            "system_resources": check_memory_resources()
-        },
-        "prompt": {
-            "raw_text": SELECTED_PROMPT['prompts'][0]['text'],
-            "formatted": format_prompt(SELECTED_PROMPT['prompts'][0]['text'])
-        },
-        "results": results
-    }
-    
-    # Save to file
-    with open(results_file, 'w') as f:
-        json.dump(data, f, indent=2)
-    
-    logger.info(f"Results saved to: {results_file}")
+def run_batch_test():
+    """Run the model on all images and save results."""
+    try:
+        # Generate unique filename
+        test_id = generate_test_id()
+        results_file = results_dir / f"test_results_{test_id}.json"
+        
+        # Process all images with incremental saving
+        results = process_all_images(results_file)
+        
+        logger.info(f"Batch test completed. Results saved to: {results_file}")
+        return str(results_file)
+        
+    except Exception as e:
+        logger.error(f"Error during batch test: {str(e)}")
+        raise
 
+# Run batch test
+run_batch_test()
+
+# %% [markdown]
+"""
+## Analysis Functions
+Functions for analyzing model performance and generating analysis reports.
+"""
+
+# %%
 def analyze_results(results_file: str) -> Dict[str, Any]:
     """
     Analyze model performance and generate analysis report.
@@ -963,3 +1156,6 @@ def run_analysis():
     except Exception as e:
         logger.error(f"Error during analysis: {str(e)}")
         raise
+
+# Run the analysis
+analysis_results = run_analysis()
