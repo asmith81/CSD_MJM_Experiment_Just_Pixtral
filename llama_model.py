@@ -804,12 +804,9 @@ def run_single_image_test():
             "attention_mask": inputs["attention_mask"]
         }
         
-        # Process the image through the model's vision encoder first
+        # Add pixel values directly to model inputs
         if "pixel_values" in inputs:
-            # Forward pass through the vision encoder
-            vision_outputs = model.model.vision_tower(inputs["pixel_values"])
-            # Add the vision outputs to the model inputs
-            model_inputs["vision_outputs"] = vision_outputs
+            model_inputs["pixel_values"] = inputs["pixel_values"]
         
         outputs = model.generate(
             **model_inputs,
