@@ -593,9 +593,7 @@ def format_prompt(prompt_text: str) -> str:
     prompt_params = get_prompt_formatting_params()
     
     # Format the prompt with special tokens and image token
-    formatted_prompt = prompt_params["format"].format(
-        prompt_text=prompt_text
-    )
+    formatted_prompt = f"<s>[INST]\n<<SYS>>\n{prompt_params['system_prompt']}\n<</SYS>>\n\n{prompt_text}\n[/INST]"
     
     return formatted_prompt
 
@@ -621,18 +619,6 @@ def process_image(image: Image.Image) -> Image.Image:
             image.thumbnail(img_params["max_size"], Image.Resampling.LANCZOS)
         else:
             image = image.resize(img_params["max_size"], Image.Resampling.LANCZOS)
-    
-    # Normalize if configured
-    if img_params["normalize"]:
-        # Convert to tensor for normalization
-        import torchvision.transforms as T
-        transform = T.Compose([
-            T.ToTensor(),
-            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-        image = transform(image)
-        # Convert back to PIL
-        image = T.ToPILImage()(image)
     
     return image
 
@@ -802,9 +788,31 @@ def run_single_image_test():
     
     # Generate response
     with torch.no_grad():
+        # Only pass the parameters that the model expects
+        generation_params = {
+            "max_new_tokens": INFERENCE_PARAMS["max_new_tokens"],
+            "do_sample": INFERENCE_PARAMS["do_sample"],
+            "temperature": INFERENCE_PARAMS["temperature"],
+            "top_k": INFERENCE_PARAMS["top_k"],
+            "top_p": INFERENCE_PARAMS["top_p"],
+            "repetition_penalty": 1.2,  # Add repetition penalty to avoid loops
+            "pad_token_id": processor.tokenizer.pad_token_id,
+            "eos_token_id": processor.tokenizer.eos_token_id
+        }
+        
+        # For AutoModelForCausalLM, we need to pass the input_ids and attention_mask
+        model_inputs = {
+            "input_ids": inputs["input_ids"],
+            "attention_mask": inputs["attention_mask"]
+        }
+        
+        # Add pixel_values if they exist
+        if "pixel_values" in inputs:
+            model_inputs["pixel_values"] = inputs["pixel_values"]
+        
         outputs = model.generate(
-            **inputs,
-            **INFERENCE_PARAMS
+            **model_inputs,
+            **generation_params
         )
     
     # Decode and display response
