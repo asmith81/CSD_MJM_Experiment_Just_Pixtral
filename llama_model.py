@@ -6,6 +6,16 @@ This notebook evaluates the Llama-3.2-11B-Vision model's performance on invoice 
 It follows the project's notebook handling rules and functional programming approach.
 """
 
+# %%
+# Install tqdm first if not present
+import subprocess
+import sys
+try:
+    import tqdm
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
+    import tqdm
+
 # %% [markdown]
 """
 ## Setup and Configuration
@@ -14,8 +24,6 @@ It follows the project's notebook handling rules and functional programming appr
 
 # %%
 import os
-import sys
-import subprocess
 from pathlib import Path
 import logging
 import json
@@ -24,7 +32,6 @@ import torch
 from PIL import Image
 from typing import Union, Dict, Any, List, Literal
 import yaml
-import tqdm  # Import tqdm at the top level
 
 # %% [markdown]
 """
