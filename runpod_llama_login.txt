@@ -1,0 +1,10 @@
+bash
+huggingface-cli login
+
+hf username
+aldensmith1981
+
+hf token name
+asmith_read_public_gated_repos
+
+see passwords and tokens stored separately

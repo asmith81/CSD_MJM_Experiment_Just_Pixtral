@@ -1,0 +1,113 @@
+# Llama-3.2-11B-Vision Model Configuration
+
+# Basic model information
+name: "llama-3.2-11b-vision"
+repo_id: "meta-llama/Llama-3.2-11B-Vision"
+description: "Llama 3.2 11B vision-language model for invoice processing"
+model_type: "LlavaForConditionalGeneration"
+processor_type: "AutoProcessor"
+
+# Hardware requirements
+hardware:
+  gpu_required: true
+  gpu_memory_min: "16GB"  # Lower memory requirement than Pixtral
+  recommended_gpu: "A4000 or better"
+  minimum_compute_capability: "7.5"
+
+# Loading configuration
+loading:
+  default_strategy: "optimized"
+  default_params:
+    torch_dtype: "bfloat16"
+    device_map: "cuda:0"
+    use_auth_token: true  # Llama requires auth token
+    use_flash_attention_2: true  # Llama supports flash attention
+    attn_implementation: "flash_attention_2"
+  lora_support: true  # Enable LoRA support
+  lora_params:
+    adapter_name: "invoice_extraction"
+    r: 8
+    alpha: 16
+    dropout: 0.1
+    target_modules: ["q_proj", "v_proj"]
+
+# Quantization options
+quantization:
+  default: "bfloat16"
+  options:
+    bfloat16:
+      torch_dtype: "bfloat16"
+      device_map: "cuda:0"
+      use_flash_attention_2: true
+      attn_implementation: "flash_attention_2"
+    
+    int8:
+      load_in_8bit: true
+      device_map: "auto"
+      use_flash_attention_2: true
+      attn_implementation: "flash_attention_2"
+      bnb_8bit_quant_type: "fp8"
+    
+    int4:
+      load_in_4bit: true
+      bnb_4bit_compute_dtype: "bfloat16"
+      bnb_4bit_quant_type: "nf4"
+      device_map: "auto"
+      use_flash_attention_2: true
+      attn_implementation: "flash_attention_2"
+
+# Prompt configuration
+prompt:
+  format: |
+    <s>[INST]
+    <<SYS>>
+    You are a helpful assistant that extracts information from invoices.
+    <</SYS>>
+    
+    {prompt_text}
+    
+    Return the information in JSON format with these exact keys:
+    {{
+      "work_order_number": "extracted value",
+      "total_cost": "extracted value"
+    }}
+    [/INST]
+  image_placeholder: "[IMG]"
+  system_prompt: "You are a helpful assistant that extracts information from invoices."
+  response_format: "json"
+  field_mapping:
+    work_order_number: ["work order", "wo", "work order number"]
+    total_cost: ["total", "amount due", "total cost"]
+
+# Image preprocessing
+image_preprocessing:
+  max_size: [1120, 1120]  # From documentation
+  convert_to_rgb: true
+  normalize: true
+  resize_strategy: "maintain_aspect_ratio"
+
+# Inference parameters
+inference:
+  max_new_tokens: 2048  # Updated from documentation
+  do_sample: false
+  temperature: 1.0
+  top_k: 50
+  top_p: 0.95
+  batch_size: 1
+  max_batch_memory_gb: 16  # Adjusted for lower memory requirement
+
+# Performance monitoring
+performance:
+  expected_accuracy: 0.75  # Slightly higher expected accuracy
+  inference_timeout_seconds: 25  # Faster expected inference
+  gpu_utilization_threshold: 0.85  # Higher utilization threshold
+
+# Error handling
+error_handling:
+  retry_attempts: 3  # More retries due to auth token requirements
+  fallback_strategy: "minimal_params"
+  critical_error_fields:
+    - device_map
+    - torch_dtype
+    - trust_remote_code
+    - use_auth_token  # Added due to auth requirement 

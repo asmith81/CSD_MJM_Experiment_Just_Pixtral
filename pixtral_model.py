@@ -98,13 +98,13 @@ try:
     current_file = Path(__file__)
     ROOT_DIR = current_file.parent
     # Verify both required files exist
-    if not (ROOT_DIR / "pixtral_model.py").exists() or not (ROOT_DIR / "requirements.txt").exists():
-        raise RuntimeError("Could not find both pixtral_model.py and requirements.txt in the same directory")
+    if not (ROOT_DIR / "pixtral_model.py").exists() or not (ROOT_DIR / "requirements_pixtral.txt").exists():
+        raise RuntimeError("Could not find both pixtral_model.py and requirements_pixtral.txt in the same directory")
 except NameError:
     # When running in a notebook, look for the files in current directory
     current_dir = Path.cwd()
-    if not (current_dir / "pixtral_model.py").exists() or not (current_dir / "requirements.txt").exists():
-        raise RuntimeError("Could not find both pixtral_model.py and requirements.txt in the current directory")
+    if not (current_dir / "pixtral_model.py").exists() or not (current_dir / "requirements_pixtral.txt").exists():
+        raise RuntimeError("Could not find both pixtral_model.py and requirements_pixtral.txt in the current directory")
     ROOT_DIR = current_dir
 
 sys.path.append(str(ROOT_DIR))
@@ -127,7 +127,7 @@ from tqdm import tqdm
 def install_dependencies():
     """Install required dependencies with progress tracking."""
     steps = [
-        ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements.txt")]),
+        ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements_pixtral.txt")]),
         ("PyTorch", [
             sys.executable, "-m", "pip", "install", "-q",
             "torch==2.1.0",
