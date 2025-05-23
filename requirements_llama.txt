@@ -47,7 +47,7 @@ myst-parser==2.0.0
 
 # Llama Vision Specific Dependencies
 bitsandbytes==0.43.2  # For 4-bit quantization
-huggingface_hub[hf_xet]==0.20.3  # Required for model access
+huggingface_hub>=0.20.3  # Required for model access
 flash-attn==2.5.0  # Required for Llama's attention mechanism
 sentencepiece==0.1.99  # Required for Llama tokenizer
 protobuf==4.25.1  # Required for model loading
