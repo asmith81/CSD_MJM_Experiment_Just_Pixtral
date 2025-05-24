@@ -812,15 +812,129 @@ Run the model on all images and save results.
 """
 
 # %%
+def save_incremental_results(results_file: Path, results: list):
+    """Save results incrementally to avoid losing progress."""
+    # Create a complete results structure
+    complete_results = {
+        "metadata": {
+            "test_id": results_file.stem.split("_")[-1],
+            "timestamp": datetime.now().isoformat(),
+            "model_info": {
+                "name": MODEL_CONFIG["name"],
+                "version": "1.0",
+                "model_id": MODEL_CONFIG["repo_id"],
+                "quantization": quantization,
+                "parameters": {
+                    "use_flash_attention": use_flash_attention,
+                    "device_map": device_map
+                }
+            },
+            "prompt_type": selected_prompt_type
+        },
+        "results": results
+    }
+    
+    # Save to file
+    with open(results_file, 'w') as f:
+        json.dump(complete_results, f, indent=2)
+    
+    logger.info(f"Saved incremental results to {results_file}")
+
+def process_batch() -> list:
+    """Process all images in the data/images directory and collect responses."""
+    results = []
+    image_dir = Path("data/images")
+    image_files = list(image_dir.glob("*.jpg"))
+    
+    if not image_files:
+        raise FileNotFoundError("No .jpg files found in data/images directory")
+    
+    # Generate unique filename for results
+    test_id = generate_test_id()
+    results_file = results_dir / f"test_results_{test_id}.json"
+    
+    logger.info(f"Starting batch processing of {len(image_files)} images")
+    logger.info(f"Results will be saved to: {results_file}")
+    
+    for image_path in image_files:
+        try:
+            # Load and process image
+            image = process_image(Image.open(str(image_path)))
+            
+            # Format the prompt
+            prompt_text = SELECTED_PROMPT['prompts'][0]['text']
+            formatted_prompt = format_prompt(prompt_text)
+            
+            # Prepare model inputs
+            inputs = processor(image, formatted_prompt, return_tensors="pt").to(model.device)
+            
+            # Convert inputs to the correct dtype based on quantization
+            if quantization == "bfloat16":
+                inputs = {k: v.to(torch.bfloat16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+            elif quantization in ["int8", "int4"]:
+                # For quantized models, convert to float16
+                inputs = {k: v.to(torch.float16) if v.dtype == torch.float32 else v for k, v in inputs.items()}
+            
+            # Generate response
+            with torch.no_grad():
+                generation_params = {
+                    "max_new_tokens": INFERENCE_PARAMS["max_new_tokens"],
+                    "do_sample": INFERENCE_PARAMS["do_sample"],
+                    "temperature": INFERENCE_PARAMS["temperature"],
+                    "top_k": INFERENCE_PARAMS["top_k"],
+                    "top_p": INFERENCE_PARAMS["top_p"]
+                }
+                
+                # Generate response
+                generated_ids = model.generate(**inputs, **generation_params)
+            
+            # Decode response
+            response = processor.decode(generated_ids[0], skip_special_tokens=True)
+            
+            # Create result entry
+            result = {
+                "image_name": image_path.name,
+                "status": "completed",
+                "timestamp": datetime.now().isoformat(),
+                "extracted_data": {
+                    "raw_response": response
+                }
+            }
+            
+            # Add to results
+            results.append(result)
+            
+            # Save incremental results
+            save_incremental_results(results_file, results)
+            
+            logger.info(f"Processed image: {image_path.name}")
+            
+        except Exception as e:
+            logger.error(f"Error processing image {image_path.name}: {str(e)}")
+            result = {
+                "image_name": image_path.name,
+                "status": "error",
+                "error": {
+                    "message": str(e),
+                    "type": "processing_error"
+                },
+                "timestamp": datetime.now().isoformat()
+            }
+            results.append(result)
+            # Save incremental results even on error
+            save_incremental_results(results_file, results)
+    
+    logger.info(f"Batch processing completed. Processed {len(results)} images")
+    return results
+
 def run_batch_test():
     """Run the model on all images and save results."""
     try:
-        # Generate unique filename
-        test_id = generate_test_id()
-        results_file = results_dir / f"test_results_{test_id}.json"
-        
         # Process all images with incremental saving
         results = process_batch()
+        
+        # Get the results file path from the first result's metadata
+        results_file = results_dir / f"test_results_{results[0]['metadata']['test_id']}.json"
         
         logger.info(f"Batch test completed. Results saved to: {results_file}")
         return str(results_file)
@@ -830,7 +944,12 @@ def run_batch_test():
         raise
 
 # Run the batch test
-run_batch_test()
+try:
+    results_file = run_batch_test()
+    logger.info(f"Batch test completed successfully. Results saved to: {results_file}")
+except Exception as e:
+    logger.error(f"Batch test failed: {str(e)}")
+    raise
 
 # %% [markdown]
 """
