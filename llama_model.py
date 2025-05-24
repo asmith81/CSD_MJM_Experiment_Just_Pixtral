@@ -593,8 +593,8 @@ def format_prompt(prompt_text: str) -> str:
     # Remove any existing [INST] or [IMG] tags
     prompt_text = prompt_text.replace("[INST]", "").replace("[/INST]", "").replace("[IMG]", "").replace("[/IMG]", "")
     
-    # Add the Llama Vision tokens
-    return f"<|image|><|begin_of_text|>{prompt_text}<|end_of_text|>"
+    # Add the Llama Vision tokens with clearer separation
+    return f"<|image|>\n<|begin_of_text|>\n{prompt_text}\n<|end_of_text|>\n<|response|>"
 
 def process_image(image: Image.Image) -> Image.Image:
     """
