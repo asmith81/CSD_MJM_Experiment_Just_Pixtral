@@ -801,7 +801,9 @@ def run_single_image_test():
         
         # Generate response
         generated_ids = model.generate(
-            **inputs,
+            input_ids=inputs["input_ids"],
+            attention_mask=inputs["attention_mask"],
+            pixel_values=inputs["pixel_values"],
             **generation_params
         )
     
