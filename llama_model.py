@@ -593,7 +593,7 @@ def format_prompt(prompt_text: str) -> str:
     prompt_params = get_prompt_formatting_params()
     
     # Format the prompt with special tokens and image token
-    formatted_prompt = f"<s>[INST]\n<<SYS>>\n{prompt_params['system_prompt']}\n<</SYS>>\n\n{prompt_text}\n[/INST]"
+    formatted_prompt = f"<s>[INST] <<SYS>>\n{prompt_params['system_prompt']}\n<</SYS>>\n\n{prompt_text}\n[/INST]"
     
     return formatted_prompt
 
@@ -794,17 +794,14 @@ def run_single_image_test():
             "do_sample": INFERENCE_PARAMS["do_sample"],
             "temperature": INFERENCE_PARAMS["temperature"],
             "top_k": INFERENCE_PARAMS["top_k"],
+            "top_p": INFERENCE_PARAMS["top_p"],
             "pad_token_id": processor.tokenizer.pad_token_id,
             "eos_token_id": processor.tokenizer.eos_token_id
         }
         
-        # First, get the model outputs from a forward pass
-        outputs = model(**inputs)
-        
-        # Then use the outputs for generation
+        # Generate response
         generated_ids = model.generate(
-            input_ids=inputs["input_ids"],
-            attention_mask=inputs["attention_mask"],
+            **inputs,
             **generation_params
         )
     
