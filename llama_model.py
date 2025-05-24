@@ -588,14 +588,9 @@ def format_prompt(prompt_text: str) -> str:
         prompt_text: The base prompt text
         
     Returns:
-        str: Formatted prompt with system message and response format
+        str: Formatted prompt with image token and begin of text token
     """
-    prompt_params = get_prompt_formatting_params()
-    
-    # Format the prompt with special tokens and image token
-    formatted_prompt = f"<s>[INST] <<SYS>>\n{prompt_params['system_prompt']}\n<</SYS>>\n\n{prompt_text}\n[/INST]"
-    
-    return formatted_prompt
+    return f"<|image|><|begin_of_text|>{prompt_text}"
 
 def process_image(image: Image.Image) -> Image.Image:
     """
@@ -655,7 +650,7 @@ def download_llama_model(model_id: str = "meta-llama/Llama-3.2-11B-Vision",
     Raises:
         RuntimeError: If download fails after max retries
     """
-    from transformers import AutoProcessor, AutoModelForCausalLM, BitsAndBytesConfig
+    from transformers import MllamaForConditionalGeneration, AutoProcessor, BitsAndBytesConfig
     import time
     import psutil
     
@@ -695,7 +690,7 @@ def download_llama_model(model_id: str = "meta-llama/Llama-3.2-11B-Vision",
                 )
             
             # Download model and processor
-            model = AutoModelForCausalLM.from_pretrained(model_id, **model_kwargs)
+            model = MllamaForConditionalGeneration.from_pretrained(model_id, **model_kwargs)
             processor = AutoProcessor.from_pretrained(model_id)
             
             # Log final memory usage
@@ -770,14 +765,7 @@ def run_single_image_test():
     print("-" * 50)
     
     # Prepare model inputs
-    inputs = processor(
-        text=formatted_prompt,
-        images=[image],
-        return_tensors="pt"
-    )
-    
-    # Move inputs to the correct device and dtype
-    inputs = {k: v.to(model.device) for k, v in inputs.items()}
+    inputs = processor(image, formatted_prompt, return_tensors="pt").to(model.device)
     
     # Convert inputs to the correct dtype based on quantization
     if quantization == "bfloat16":
@@ -788,30 +776,16 @@ def run_single_image_test():
     
     # Generate response
     with torch.no_grad():
-        # First, get the model outputs
-        outputs = model(
-            input_ids=inputs["input_ids"],
-            attention_mask=inputs["attention_mask"],
-            pixel_values=inputs["pixel_values"]
-        )
-        
-        # Then generate using the outputs
         generation_params = {
             "max_new_tokens": INFERENCE_PARAMS["max_new_tokens"],
             "do_sample": INFERENCE_PARAMS["do_sample"],
             "temperature": INFERENCE_PARAMS["temperature"],
             "top_k": INFERENCE_PARAMS["top_k"],
-            "top_p": INFERENCE_PARAMS["top_p"],
-            "pad_token_id": processor.tokenizer.pad_token_id,
-            "eos_token_id": processor.tokenizer.eos_token_id
+            "top_p": INFERENCE_PARAMS["top_p"]
         }
         
-        # Generate response using the model outputs
-        generated_ids = model.generate(
-            input_ids=inputs["input_ids"],
-            attention_mask=inputs["attention_mask"],
-            **generation_params
-        )
+        # Generate response
+        generated_ids = model.generate(**inputs, **generation_params)
     
     # Decode and display response
     response = processor.decode(generated_ids[0], skip_special_tokens=True)
