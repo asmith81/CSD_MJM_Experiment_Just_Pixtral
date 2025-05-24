@@ -844,7 +844,7 @@ def save_incremental_results(results_file: Path, results: list):
     
     logger.info(f"Saved incremental results to {results_file}")
 
-def process_batch() -> list:
+def process_batch(test_id: str = None) -> list:
     """Process all images in the data/images directory and collect responses."""
     results = []
     image_dir = Path("data/images")
@@ -853,8 +853,9 @@ def process_batch() -> list:
     if not image_files:
         raise FileNotFoundError("No .jpg files found in data/images directory")
     
-    # Generate unique filename for results
-    test_id = generate_test_id()
+    # Use provided test_id or generate new one
+    if test_id is None:
+        test_id = generate_test_id()
     results_file = results_dir / f"test_results_{test_id}.json"
     
     logger.info(f"Starting batch processing of {len(image_files)} images")
@@ -934,11 +935,12 @@ def process_batch() -> list:
 def run_batch_test():
     """Run the model on all images and save results."""
     try:
-        # Process all images with incremental saving
-        results = process_batch()
+        # Generate test ID first
+        test_id = generate_test_id()
+        results_file = results_dir / f"test_results_{test_id}.json"
         
-        # Get the results file path from the first result's metadata
-        results_file = results_dir / f"test_results_{results[0]['metadata']['test_id']}.json"
+        # Process all images with incremental saving
+        results = process_batch(test_id)
         
         logger.info(f"Batch test completed. Results saved to: {results_file}")
         return str(results_file)
