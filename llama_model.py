@@ -788,7 +788,14 @@ def run_single_image_test():
     
     # Generate response
     with torch.no_grad():
-        # Only pass the parameters that the model expects
+        # First, get the model outputs
+        outputs = model(
+            input_ids=inputs["input_ids"],
+            attention_mask=inputs["attention_mask"],
+            pixel_values=inputs["pixel_values"]
+        )
+        
+        # Then generate using the outputs
         generation_params = {
             "max_new_tokens": INFERENCE_PARAMS["max_new_tokens"],
             "do_sample": INFERENCE_PARAMS["do_sample"],
@@ -799,11 +806,10 @@ def run_single_image_test():
             "eos_token_id": processor.tokenizer.eos_token_id
         }
         
-        # Generate response
+        # Generate response using the model outputs
         generated_ids = model.generate(
             input_ids=inputs["input_ids"],
             attention_mask=inputs["attention_mask"],
-            pixel_values=inputs["pixel_values"],
             **generation_params
         )
     
