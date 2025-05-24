@@ -812,6 +812,10 @@ Run the model on all images and save results.
 """
 
 # %%
+def generate_test_id() -> str:
+    """Generate a unique test identifier using timestamp."""
+    return datetime.now().strftime("%Y%m%d_%H%M%S")
+
 def save_incremental_results(results_file: Path, results: list):
     """Save results incrementally to avoid losing progress."""
     # Create a complete results structure
