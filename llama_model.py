@@ -964,6 +964,121 @@ Generate and display analysis of model performance.
 """
 
 # %%
+def analyze_results(results_file: str) -> dict:
+    """Analyze model performance and generate analysis report."""
+    # Load results
+    with open(results_file, 'r') as f:
+        results = json.load(f)
+    
+    # Initialize analysis structure
+    analysis = {
+        "metadata": results["metadata"],
+        "summary": {
+            "total_images": len(results["results"]),
+            "completed": 0,
+            "errors": 0,
+            "success_rate": 0.0,
+            "work_order_accuracy": 0.0,
+            "total_cost_accuracy": 0.0,
+            "average_cer": 0.0
+        },
+        "error_categories": {},
+        "results": []
+    }
+    
+    # Process each result
+    total_cer = 0
+    work_order_matches = 0
+    total_cost_matches = 0
+    
+    for result in results["results"]:
+        # Add to results list
+        analysis["results"].append(result)
+        
+        # Update summary
+        if result["status"] == "completed":
+            analysis["summary"]["completed"] += 1
+            
+            # Extract work order and total cost from response
+            try:
+                response_text = result["extracted_data"]["raw_response"]
+                
+                # Try to parse the response text to extract work order and total cost
+                # Look for patterns like "Work Order: 12345" or "Total Cost: $123.45"
+                import re
+                
+                # Look for work order number
+                work_order_match = re.search(r'work order (?:number|#)?[:\s]+(\d+)', response_text.lower())
+                work_order = work_order_match.group(1) if work_order_match else ""
+                
+                # Look for total cost
+                cost_match = re.search(r'total cost[:\s]+\$?(\d+(?:\.\d{2})?)', response_text.lower())
+                total_cost = cost_match.group(1) if cost_match else ""
+                
+                # For now, we'll just count successful extractions
+                if work_order:
+                    work_order_matches += 1
+                if total_cost:
+                    total_cost_matches += 1
+                    
+                # Log the extracted values for debugging
+                logger.info(f"Image {result['image_name']}:")
+                logger.info(f"  Work Order: {work_order}")
+                logger.info(f"  Total Cost: {total_cost}")
+                    
+            except Exception as e:
+                logger.warning(f"Error parsing response for {result['image_name']}: {str(e)}")
+                logger.debug(f"Raw response: {response_text}")
+        else:
+            analysis["summary"]["errors"] += 1
+            # Track error categories
+            error_type = result["error"]["type"]
+            analysis["error_categories"][error_type] = analysis["error_categories"].get(error_type, 0) + 1
+    
+    # Calculate metrics
+    total_completed = analysis["summary"]["completed"]
+    if total_completed > 0:
+        analysis["summary"]["work_order_accuracy"] = work_order_matches / total_completed
+        analysis["summary"]["total_cost_accuracy"] = total_cost_matches / total_completed
+        analysis["summary"]["average_cer"] = total_cer / total_completed if total_cer > 0 else 0
+    
+    # Calculate success rate
+    analysis["summary"]["success_rate"] = analysis["summary"]["completed"] / analysis["summary"]["total_images"]
+    
+    # Add timestamp
+    analysis["analysis_timestamp"] = datetime.now().isoformat()
+    
+    return analysis
+
+def select_test_results_file() -> Path:
+    """Allow user to select a test results file for analysis."""
+    # Get all test result files
+    result_files = list(results_dir.glob("test_results_*.json"))
+    
+    if not result_files:
+        raise FileNotFoundError("No test result files found in results directory")
+    
+    # Sort files by modification time (newest first)
+    result_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+    
+    print("\nAvailable test result files:")
+    for i, file in enumerate(result_files, 1):
+        # Get file modification time
+        mod_time = datetime.fromtimestamp(file.stat().st_mtime)
+        print(f"{i}. {file.name} (Modified: {mod_time.strftime('%Y-%m-%d %H:%M:%S')})")
+    
+    while True:
+        try:
+            choice = int(input("\nSelect a test result file (1-{}): ".format(len(result_files))))
+            if 1 <= choice <= len(result_files):
+                selected_file = result_files[choice - 1]
+                print(f"\nSelected file: {selected_file.name}")
+                return selected_file
+            else:
+                print(f"Invalid choice. Please select a number between 1 and {len(result_files)}.")
+        except ValueError:
+            print("Please enter a valid number.")
+
 def run_analysis():
     """Run the model and analyze its performance."""
     try:
@@ -988,17 +1103,14 @@ def run_analysis():
         print(f"Total Images: {analysis['summary']['total_images']}")
         print(f"Completed: {analysis['summary']['completed']}")
         print(f"Errors: {analysis['summary']['errors']}")
+        print(f"Success Rate: {analysis['summary']['success_rate']:.2%}")
         print(f"Work Order Accuracy: {analysis['summary']['work_order_accuracy']:.2%}")
         print(f"Total Cost Accuracy: {analysis['summary']['total_cost_accuracy']:.2%}")
-        print(f"Average CER: {analysis['summary']['average_cer']:.3f}")
         
-        print("\nWork Order Error Categories:")
-        for category, count in analysis['error_categories']['work_order'].items():
-            print(f"- {category}: {count}")
-        
-        print("\nTotal Cost Error Categories:")
-        for category, count in analysis['error_categories']['total_cost'].items():
-            print(f"- {category}: {count}")
+        if analysis['error_categories']:
+            print("\nError Categories:")
+            for category, count in analysis['error_categories'].items():
+                print(f"- {category}: {count}")
         
         print(f"\nAnalysis saved to: {analysis_file}")
         
@@ -1009,4 +1121,8 @@ def run_analysis():
         raise
 
 # Run the analysis
-analysis_results = run_analysis()
+try:
+    analysis_results = run_analysis()
+except Exception as e:
+    logger.error(f"Analysis failed: {str(e)}")
+    raise
