@@ -226,6 +226,9 @@ def load_model_config(config_path: str = None) -> dict:
         logger.error(f"Error loading config: {e}")
         raise
 
+# Load the configuration
+config = load_model_config()
+
 # %% [markdown]
 """
 ### Device Configuration
