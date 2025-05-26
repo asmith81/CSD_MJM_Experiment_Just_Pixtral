@@ -297,6 +297,7 @@ def select_architecture() -> str:
         str: Selected architecture name
     """
     architectures = get_available_architectures()
+    current_arch = config["model"]["detection"]["name"]
     
     # Print available options in a clear format
     print("\nAvailable Detection Model Architectures:")
@@ -308,13 +309,11 @@ def select_architecture() -> str:
         print(f"   Use Case: {info['use_case']}")
         print("-" * 80)
     
-    # Get current selection from config
-    current_arch = config["model"]["detection"]["name"]
     print(f"\nCurrent selection: {current_arch}")
     
     while True:
         print("\nPlease select an architecture:")
-        print("1. Enter the number (1-7) of your choice")
+        print(f"1. Enter the number (1-{len(architectures)}) of your choice")
         print("2. Enter the exact architecture name")
         print("3. Press Enter to keep current selection")
         selection = input("> ").strip()
@@ -326,16 +325,17 @@ def select_architecture() -> str:
         
         # Handle numeric selection
         if selection.isdigit() and 1 <= int(selection) <= len(architectures):
-            selected_arch = list(architectures.keys())[int(selection) - 1]
-            print(f"\nSelected architecture: {selected_arch}")
-            print(f"Description: {architectures[selected_arch]['description']}")
-            return selected_arch
+            selected_architecture = list(architectures.keys())[int(selection) - 1]
+            print(f"\nSelected architecture: {selected_architecture}")
+            print(f"Description: {architectures[selected_architecture]['description']}")
+            return selected_architecture
         
         # Handle name selection
         if selection in architectures:
-            print(f"\nSelected architecture: {selection}")
-            print(f"Description: {architectures[selection]['description']}")
-            return selection
+            selected_architecture = selection
+            print(f"\nSelected architecture: {selected_architecture}")
+            print(f"Description: {architectures[selected_architecture]['description']}")
+            return selected_architecture
         
         print(f"\nInvalid selection: {selection}")
         print("Please enter a valid number or architecture name.")
