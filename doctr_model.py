@@ -32,7 +32,7 @@ requirements_file = ROOT_DIR / "requirements_doctr.txt"
 # Install requirements if file exists
 if requirements_file.exists():
     print(f"Installing dependencies from {requirements_file}...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(requirements_file)])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "-r", str(requirements_file)])
 else:
     raise FileNotFoundError(f"Requirements file not found at {requirements_file}")
 
@@ -55,7 +55,8 @@ from PIL import Image
 # docTR specific imports
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
-from doctr.transforms import Resize, Normalize, Compose
+from doctr.transforms import Resize, Compose
+from doctr.transforms.base import Normalize
 
 # GPU support
 import torch
