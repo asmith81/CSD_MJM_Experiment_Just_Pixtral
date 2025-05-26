@@ -574,6 +574,80 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         logger.error(f"Error initializing detection model: {e}")
         raise
 
+# %%
+# Initialize detection model
+detection_model, detection_info = initialize_detection_model(config, device)
+
+# %% [markdown]
+"""
+### Initialize Recognition Model
+"""
+
+# %%
+def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
+    """
+    Initialize docTR recognition model with specific configuration.
+    
+    Args:
+        config (dict): Model configuration
+        device (torch.device): Device to use for model execution
+    
+    Returns:
+        tuple: (recognition_model, model_info)
+    """
+    try:
+        # Get recognition model configuration
+        reco_config = config["model"]["recognition"]
+        model_name = reco_config["name"]
+        
+        # Log model initialization
+        logger.info(f"Initializing recognition model: {model_name}")
+        logger.info(f"Using device: {device}")
+        
+        # Initialize recognition model with specific architecture
+        recognition_model = ocr_predictor(
+            det_arch=None,  # We'll use the detection model separately
+            reco_arch=model_name,
+            pretrained=reco_config["pretrained"],
+            device=device
+        )
+        
+        # Get model information
+        model_info = {
+            "name": model_name,
+            "pretrained": reco_config["pretrained"],
+            "device": str(device),
+            "vocab": reco_config["vocab"]
+        }
+        
+        # Log model details
+        logger.info(f"Model architecture: {model_name}")
+        logger.info(f"Pretrained: {reco_config['pretrained']}")
+        logger.info(f"Vocabulary size: {len(reco_config['vocab'])}")
+        
+        # Log memory usage if using CUDA
+        if device.type == "cuda":
+            memory_allocated = torch.cuda.memory_allocated(device) / (1024**2)  # Convert to MB
+            memory_reserved = torch.cuda.memory_reserved(device) / (1024**2)    # Convert to MB
+            logger.info(f"GPU Memory allocated: {memory_allocated:.2f} MB")
+            logger.info(f"GPU Memory reserved: {memory_reserved:.2f} MB")
+        
+        return recognition_model, model_info
+        
+    except Exception as e:
+        logger.error(f"Error initializing recognition model: {e}")
+        raise
+
+# %%
+# Initialize recognition model
+recognition_model, recognition_info = initialize_recognition_model(config, device)
+
+# %% [markdown]
+"""
+### Model Warm-up
+"""
+
+# %%
 def warm_up_model(model: ocr_predictor, config: dict) -> None:
     """
     Warm up the model with a dummy input to ensure proper initialization.
@@ -608,14 +682,13 @@ def warm_up_model(model: ocr_predictor, config: dict) -> None:
         raise
 
 # %%
-# Initialize detection model
-detection_model, model_info = initialize_detection_model(config, device)
-
-# Warm up the model
+# Warm up both models
 warm_up_model(detection_model, config)
+warm_up_model(recognition_model, config)
 
-# Print model summary
-print_model_summary(model_info)
+# Print model summaries
+print_model_summary(detection_info)
+print_model_summary(recognition_info)
 
 # %% [markdown]
 """
@@ -734,70 +807,6 @@ def test_preprocessing_pipeline(pipeline: transforms.Compose) -> None:
 
 # Test the pipeline
 test_preprocessing_pipeline(preprocessing_pipeline)
-
-# %% [markdown]
-"""
-### Initialize Recognition Model
-"""
-
-# %%
-def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
-    """
-    Initialize docTR recognition model with specific configuration.
-    
-    Args:
-        config (dict): Model configuration
-        device (torch.device): Device to use for model execution
-    
-    Returns:
-        tuple: (recognition_model, model_info)
-    """
-    try:
-        # Get recognition model configuration
-        reco_config = config["model"]["recognition"]
-        model_name = reco_config["name"]
-        
-        # Log model initialization
-        logger.info(f"Initializing recognition model: {model_name}")
-        logger.info(f"Using device: {device}")
-        
-        # Initialize recognition model with specific architecture
-        recognition_model = ocr_predictor(
-            det_arch=None,  # We'll use the detection model separately
-            reco_arch=model_name,
-            pretrained=reco_config["pretrained"],
-            device=device
-        )
-        
-        # Get model information
-        model_info = {
-            "name": model_name,
-            "pretrained": reco_config["pretrained"],
-            "device": str(device),
-            "vocab": reco_config["vocab"]
-        }
-        
-        # Log model details
-        logger.info(f"Model architecture: {model_name}")
-        logger.info(f"Pretrained: {reco_config['pretrained']}")
-        logger.info(f"Vocabulary size: {len(reco_config['vocab'])}")
-        
-        # Log memory usage if using CUDA
-        if device.type == "cuda":
-            memory_allocated = torch.cuda.memory_allocated(device) / (1024**2)  # Convert to MB
-            memory_reserved = torch.cuda.memory_reserved(device) / (1024**2)    # Convert to MB
-            logger.info(f"GPU Memory allocated: {memory_allocated:.2f} MB")
-            logger.info(f"GPU Memory reserved: {memory_reserved:.2f} MB")
-        
-        return recognition_model, model_info
-        
-    except Exception as e:
-        logger.error(f"Error initializing recognition model: {e}")
-        raise
-
-# %%
-# Initialize recognition model
-recognition_model, recognition_info = initialize_recognition_model(config, device)
 
 # %% [markdown]
 """
