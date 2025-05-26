@@ -55,8 +55,8 @@ from PIL import Image
 # docTR specific imports
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
-from doctr.transforms import Resize, Compose
-from doctr.transforms.base import Normalize
+from doctr.transforms.base import Resize, Normalize
+from torchvision import transforms
 
 # GPU support
 import torch
@@ -468,8 +468,11 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         # Initialize detection model with specific architecture
         detection_model = ocr_predictor(
             det_arch=model_name,
+            reco_arch=None,  # We'll use recognition model separately
             pretrained=det_config["pretrained"],
-            device=device
+            device=device,
+            assume_straight_pages=True,  # Optimize for straight document pages
+            export_as_straight_boxes=True  # Export boxes as straight rectangles
         )
         
         # Get model information
@@ -523,9 +526,12 @@ def warm_up_model(model: ocr_predictor, config: dict) -> None:
             config["model"]["detection"]["min_size"]
         ).to(next(model.parameters()).device)
         
+        # Convert to DocumentFile format
+        dummy_doc = DocumentFile.from_tensor(dummy_input)
+        
         # Warm up forward pass
         with torch.no_grad():
-            _ = model(dummy_input)
+            _ = model(dummy_doc)
         
         logger.info("Model warm-up completed successfully")
         
@@ -569,7 +575,7 @@ print_model_summary(model_info)
 """
 
 # %%
-def create_preprocessing_pipeline(config: dict) -> Compose:
+def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
     """
     Create preprocessing pipeline for document images.
     
@@ -577,30 +583,35 @@ def create_preprocessing_pipeline(config: dict) -> Compose:
         config (dict): Model configuration
     
     Returns:
-        Compose: Preprocessing pipeline
+        transforms.Compose: Preprocessing pipeline
     """
     try:
         # Get preprocessing configuration
         preprocess_config = config["preprocessing"]
         
         # Create transforms
-        transforms = [
-            # Resize transform
+        transform_list = [
+            # Convert PIL Image to tensor
+            transforms.ToTensor(),
+            
+            # Resize transform with preserve_aspect_ratio
             Resize(
                 min_size=preprocess_config["resize"]["min_size"],
                 max_size=preprocess_config["resize"]["max_size"],
-                preserve_aspect_ratio=True
+                preserve_aspect_ratio=True,
+                symmetric_pad=True  # Add padding to maintain aspect ratio
             ),
             
-            # Normalize transform
+            # Normalize transform with proper mean/std values
             Normalize(
                 mean=preprocess_config["normalize"]["mean"],
-                std=preprocess_config["normalize"]["std"]
+                std=preprocess_config["normalize"]["std"],
+                inplace=True  # Perform normalization in-place for efficiency
             )
         ]
         
-        # Create pipeline
-        pipeline = Compose(transforms)
+        # Create pipeline using torchvision's Compose
+        pipeline = transforms.Compose(transform_list)
         
         # Log pipeline configuration
         logger.info("\nPreprocessing Pipeline Configuration:")
@@ -613,19 +624,19 @@ def create_preprocessing_pipeline(config: dict) -> Compose:
         logger.error(f"Error creating preprocessing pipeline: {e}")
         raise
 
-def process_image(image: Image.Image, pipeline: Compose) -> torch.Tensor:
+def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Tensor:
     """
     Process a single image using the preprocessing pipeline.
     
     Args:
         image (Image.Image): Input image
-        pipeline (Compose): Preprocessing pipeline
+        pipeline (transforms.Compose): Preprocessing pipeline
     
     Returns:
         torch.Tensor: Processed image tensor
     """
     try:
-        # Convert PIL Image to tensor
+        # Apply transforms
         processed = pipeline(image)
         
         # Add batch dimension if needed
@@ -648,12 +659,12 @@ preprocessing_pipeline = create_preprocessing_pipeline(config)
 """
 
 # %%
-def test_preprocessing_pipeline(pipeline: Compose) -> None:
+def test_preprocessing_pipeline(pipeline: transforms.Compose) -> None:
     """
     Test the preprocessing pipeline with a sample image.
     
     Args:
-        pipeline (Compose): Preprocessing pipeline
+        pipeline (transforms.Compose): Preprocessing pipeline
     """
     try:
         # Create a sample image (white background with black text)
@@ -840,7 +851,9 @@ def create_postprocessing_pipeline() -> dict:
                 blocks.append({
                     'text': text,
                     'bbox': block['geometry'],  # [x1, y1, x2, y2]
-                    'confidence': block['confidence']
+                    'confidence': block['confidence'],
+                    'line_id': block.get('line_id', -1),  # Get line ID if available
+                    'block_id': block.get('block_id', -1)  # Get block ID if available
                 })
         
         # Sort blocks by vertical position (top to bottom)
@@ -869,12 +882,14 @@ def create_postprocessing_pipeline() -> dict:
                         if any(keyword in text for keyword in ['work order', 'wo', 'order']):
                             extracted_data['work_order'] = value
                             extracted_data['work_order_confidence'] = confidence
+                            extracted_data['work_order_line_id'] = current_block.get('line_id', -1)
                         elif any(keyword in text for keyword in ['total', 'amount', 'cost']):
                             try:
                                 # Convert to float, handling different decimal separators
                                 value = float(value.replace('$', '').replace(',', '.').strip())
                                 extracted_data['total_cost'] = value
                                 extracted_data['total_cost_confidence'] = confidence
+                                extracted_data['total_cost_line_id'] = current_block.get('line_id', -1)
                             except ValueError:
                                 logger.warning(f"Could not convert cost value: {value}")
             
@@ -895,8 +910,10 @@ def create_postprocessing_pipeline() -> dict:
         return {
             "work_order": extracted_data.get("work_order", ""),
             "work_order_confidence": extracted_data.get("work_order_confidence", 0.0),
+            "work_order_line_id": extracted_data.get("work_order_line_id", -1),
             "total_cost": extracted_data.get("total_cost", 0.0),
             "total_cost_confidence": extracted_data.get("total_cost_confidence", 0.0),
+            "total_cost_line_id": extracted_data.get("total_cost_line_id", -1),
             "timestamp": datetime.now().isoformat(),
             "raw_blocks": extracted_data.get("raw_blocks", [])
         }
@@ -977,7 +994,7 @@ test_postprocessing_pipeline(postprocessing_pipeline)
 def test_single_image(
     image_path: str,
     detection_model: ocr_predictor,
-    preprocessing_pipeline: Compose,
+    preprocessing_pipeline: transforms.Compose,
     postprocessing_pipeline: dict,
     max_display_size: tuple = (800, 600)
 ) -> dict:
@@ -1091,7 +1108,7 @@ else:
 def process_batch(
     image_dir: str,
     detection_model: ocr_predictor,
-    preprocessing_pipeline: Compose,
+    preprocessing_pipeline: transforms.Compose,
     postprocessing_pipeline: dict,
     output_dir: str = None,
     batch_size: int = 10,
