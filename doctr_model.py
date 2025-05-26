@@ -266,48 +266,15 @@ device = configure_device()
 # %%
 def get_available_architectures() -> dict:
     """
-    Get available detection model architectures with their descriptions.
+    Get available detection model architectures with their descriptions from config.
     
     Returns:
         dict: Dictionary of available architectures and their descriptions
     """
-    return {
-        "db_resnet50": {
-            "description": "DBNet with ResNet-50 backbone",
-            "characteristics": "Good balance of accuracy and speed",
-            "use_case": "General purpose document detection"
-        },
-        "db_mobilenet_v3_large": {
-            "description": "DBNet with MobileNetV3-Large backbone",
-            "characteristics": "Faster, optimized for mobile/edge devices",
-            "use_case": "Mobile applications, edge devices"
-        },
-        "linknet_resnet18": {
-            "description": "LinkNet with ResNet-18 backbone",
-            "characteristics": "Fast, lightweight",
-            "use_case": "Real-time applications with moderate accuracy needs"
-        },
-        "linknet_resnet34": {
-            "description": "LinkNet with ResNet-34 backbone",
-            "characteristics": "Better accuracy than ResNet-18, still relatively fast",
-            "use_case": "Real-time applications with higher accuracy needs"
-        },
-        "fast_tiny": {
-            "description": "FAST with tiny configuration",
-            "characteristics": "Very fast, lowest accuracy",
-            "use_case": "Real-time applications with basic detection needs"
-        },
-        "fast_small": {
-            "description": "FAST with small configuration",
-            "characteristics": "Fast, moderate accuracy",
-            "use_case": "Real-time applications with moderate accuracy needs"
-        },
-        "fast_base": {
-            "description": "FAST with base configuration",
-            "characteristics": "Fast, good accuracy",
-            "use_case": "Real-time applications with good accuracy needs"
-        }
-    }
+    if not config or "model" not in config or "detection" not in config["model"] or "available_architectures" not in config["model"]["detection"]:
+        raise ValueError("Configuration missing available architectures")
+    
+    return config["model"]["detection"]["available_architectures"]
 
 def print_architecture_options() -> None:
     """Print available architectures with their descriptions."""
