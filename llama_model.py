@@ -1054,16 +1054,36 @@ def calculate_cer(str1: str, str2: str) -> float:
 def extract_json_from_response(raw_response: str) -> dict:
     """Extract JSON data from the raw response string."""
     try:
-        # Find the first occurrence of a JSON object
-        start_idx = raw_response.find('{')
-        end_idx = raw_response.find('}', start_idx) + 1
+        # Find all JSON objects in the response
+        json_objects = []
+        start_idx = 0
+        while True:
+            start_idx = raw_response.find('{', start_idx)
+            if start_idx == -1:
+                break
+            end_idx = raw_response.find('}', start_idx) + 1
+            if end_idx == 0:
+                break
+            json_str = raw_response[start_idx:end_idx]
+            try:
+                json_obj = json.loads(json_str)
+                json_objects.append(json_obj)
+            except json.JSONDecodeError:
+                pass
+            start_idx = end_idx
         
-        if start_idx == -1 or end_idx == 0:
+        # The second JSON object should be the actual results
+        # (first one is the prompt template)
+        if len(json_objects) >= 2:
+            return json_objects[1]
+        elif len(json_objects) == 1:
+            # If only one JSON object found, use it
+            return json_objects[0]
+        else:
+            logger.warning("No valid JSON objects found in response")
             return None
             
-        json_str = raw_response[start_idx:end_idx]
-        return json.loads(json_str)
-    except (json.JSONDecodeError, ValueError) as e:
+    except Exception as e:
         logger.error(f"Failed to parse JSON from response: {e}")
         return None
 
