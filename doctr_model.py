@@ -13,34 +13,49 @@ It follows the project's notebook handling rules and functional programming appr
 """
 
 # %%
-# Install tqdm first if not present
+# Install dependencies from requirements file
 import subprocess
 import sys
+from pathlib import Path
+
+# Determine root directory and requirements file path
 try:
-    import tqdm
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
-    import tqdm
+    # When running as a script
+    current_file = Path(__file__)
+    ROOT_DIR = current_file.parent
+except NameError:
+    # When running in a notebook
+    ROOT_DIR = Path.cwd()
+
+requirements_file = ROOT_DIR / "requirements_doctr.txt"
+
+# Install requirements if file exists
+if requirements_file.exists():
+    print(f"Installing dependencies from {requirements_file}...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(requirements_file)])
+else:
+    raise FileNotFoundError(f"Requirements file not found at {requirements_file}")
 
 # %%
-# Standard imports
+# Built-in Python modules
 import os
-from pathlib import Path
-import logging
-import json
-from datetime import datetime
-import yaml
 import re
 import time
+import json
+import logging
+from datetime import datetime
+
+# External dependencies
+import yaml
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from PIL import Image
 
 # docTR specific imports
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
 from doctr.transforms import Resize, Normalize, Compose
-
-# Image handling
-from PIL import Image
 
 # GPU support
 import torch
