@@ -536,10 +536,14 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
             det_arch=model_name,
             reco_arch=reco_name,  # Use selected recognition model
             pretrained=det_config["pretrained"],
-            device=device,
             assume_straight_pages=True,  # Optimize for straight document pages
             export_as_straight_boxes=True  # Export boxes as straight rectangles
         )
+        
+        # Move model to specified device
+        if device.type == "cuda":
+            detection_model.det_predictor.to(device)
+            detection_model.reco_predictor.to(device)
         
         # Get model information
         model_info = {
