@@ -407,7 +407,7 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         # Initialize detection model with specific architecture
         detection_model = ocr_predictor(
             det_arch=model_name,
-            reco_arch=None,  # We'll use recognition model separately
+            reco_arch="crnn_vgg16_bn",  # Use default recognition model
             pretrained=det_config["pretrained"],
             device=device,
             assume_straight_pages=True,  # Optimize for straight document pages
