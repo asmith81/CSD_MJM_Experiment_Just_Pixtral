@@ -312,10 +312,7 @@ def select_architecture() -> str:
     print(f"\nCurrent selection: {current_arch}")
     
     while True:
-        print("\nPlease select an architecture:")
-        print(f"1. Enter the number (1-{len(architectures)}) of your choice")
-        print("2. Enter the exact architecture name")
-        print("3. Press Enter to keep current selection")
+        print(f"\nEnter the number (1-{len(architectures)}) of your choice:")
         selection = input("> ").strip()
         
         # Handle empty input (keep current)
@@ -330,15 +327,8 @@ def select_architecture() -> str:
             print(f"Description: {architectures[selected_architecture]['description']}")
             return selected_architecture
         
-        # Handle name selection
-        if selection in architectures:
-            selected_architecture = selection
-            print(f"\nSelected architecture: {selected_architecture}")
-            print(f"Description: {architectures[selected_architecture]['description']}")
-            return selected_architecture
-        
         print(f"\nInvalid selection: {selection}")
-        print("Please enter a valid number or architecture name.")
+        print(f"Please enter a number between 1 and {len(architectures)}.")
 
 def update_config_with_architecture(config: dict, architecture: str) -> dict:
     """
@@ -375,13 +365,17 @@ def update_config_with_architecture(config: dict, architecture: str) -> dict:
 
 # %%
 # Allow user to select architecture and update config
-print("\nWould you like to select a different architecture? (y/n)")
-if input("> ").strip().lower() == 'y':
-    selected_architecture = select_architecture()
-    config = update_config_with_architecture(config, selected_architecture)
-    logger.info("\nConfiguration updated with selected architecture.")
-    logger.info(f"New detection model: {config['model']['detection']['name']}")
-    logger.info(f"Input size range: {config['model']['detection']['min_size']} - {config['model']['detection']['max_size']}")
+print("\n=== Detection Model Architecture Selection ===")
+print("The detection model is responsible for finding text regions in your documents.")
+print("Different architectures offer different trade-offs between speed and accuracy.")
+print("Please select the architecture that best fits your needs:")
+print("=" * 80)
+
+selected_architecture = select_architecture()
+config = update_config_with_architecture(config, selected_architecture)
+logger.info("\nConfiguration updated with selected architecture.")
+logger.info(f"New detection model: {config['model']['detection']['name']}")
+logger.info(f"Input size range: {config['model']['detection']['min_size']} - {config['model']['detection']['max_size']}")
 
 # %% [markdown]
 """
