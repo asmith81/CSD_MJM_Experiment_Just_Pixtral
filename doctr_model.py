@@ -55,7 +55,7 @@ from PIL import Image
 # docTR specific imports
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
-from doctr.transforms.base import Resize, Normalize
+from doctr.transforms import Resize
 from torchvision import transforms
 
 # GPU support
@@ -603,7 +603,7 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
             ),
             
             # Normalize transform with proper mean/std values
-            Normalize(
+            transforms.Normalize(
                 mean=preprocess_config["normalize"]["mean"],
                 std=preprocess_config["normalize"]["std"],
                 inplace=True  # Perform normalization in-place for efficiency
