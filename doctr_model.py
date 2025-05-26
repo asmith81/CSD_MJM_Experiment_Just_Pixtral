@@ -331,20 +331,47 @@ def select_architecture() -> str:
     """
     architectures = get_available_architectures()
     
-    # Print available options
-    print_architecture_options()
+    # Print available options in a clear format
+    print("\nAvailable Detection Model Architectures:")
+    print("=" * 80)
+    for i, (arch, info) in enumerate(architectures.items(), 1):
+        print(f"\n{i}. {arch}")
+        print(f"   Description: {info['description']}")
+        print(f"   Characteristics: {info['characteristics']}")
+        print(f"   Use Case: {info['use_case']}")
+        print("-" * 80)
+    
+    # Get current selection from config
+    current_arch = config["model"]["detection"]["name"]
+    print(f"\nCurrent selection: {current_arch}")
     
     while True:
-        print("\nPlease select an architecture (enter the exact name):")
+        print("\nPlease select an architecture:")
+        print("1. Enter the number (1-7) of your choice")
+        print("2. Enter the exact architecture name")
+        print("3. Press Enter to keep current selection")
         selection = input("> ").strip()
         
+        # Handle empty input (keep current)
+        if not selection:
+            print(f"\nKeeping current selection: {current_arch}")
+            return current_arch
+        
+        # Handle numeric selection
+        if selection.isdigit() and 1 <= int(selection) <= len(architectures):
+            selected_arch = list(architectures.keys())[int(selection) - 1]
+            print(f"\nSelected architecture: {selected_arch}")
+            print(f"Description: {architectures[selected_arch]['description']}")
+            return selected_arch
+        
+        # Handle name selection
         if selection in architectures:
-            logger.info(f"\nSelected architecture: {selection}")
-            logger.info(f"Description: {architectures[selection]['description']}")
+            print(f"\nSelected architecture: {selection}")
+            print(f"Description: {architectures[selection]['description']}")
             return selection
-        else:
-            logger.warning(f"Invalid selection: {selection}")
-            logger.info("Please enter one of the available architecture names exactly as shown.")
+        
+        print(f"\nInvalid selection: {selection}")
+        print("Please enter a valid number or architecture name.")
 
 def update_config_with_architecture(config: dict, architecture: str) -> dict:
     """
