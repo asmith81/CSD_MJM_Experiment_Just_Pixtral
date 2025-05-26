@@ -966,13 +966,22 @@ Generate and display analysis of model performance.
 # %%
 def normalize_total_cost(cost_str: str) -> float:
     """Convert a cost string to a float by removing currency symbols and commas."""
-    if not cost_str:
+    if not cost_str or cost_str == "extracted value":
         return None
+        
     # If already a float, return as is
     if isinstance(cost_str, (int, float)):
         return float(cost_str)
-    # Remove $ and commas, then convert to float
-    return float(cost_str.replace('$', '').replace(',', '').strip())
+        
+    try:
+        # Remove $ and commas, then convert to float
+        cleaned_str = cost_str.replace('$', '').replace(',', '').strip()
+        if not cleaned_str:  # Handle empty string after cleaning
+            return None
+        return float(cleaned_str)
+    except (ValueError, TypeError):
+        logger.warning(f"Failed to normalize cost value: {cost_str}")
+        return None
 
 def categorize_work_order_error(predicted: str, ground_truth: str) -> str:
     """Categorize the type of error in work order number prediction."""
