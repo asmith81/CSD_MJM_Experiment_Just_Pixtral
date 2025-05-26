@@ -364,7 +364,7 @@ def update_config_with_architecture(config: dict, architecture: str) -> dict:
     return updated_config
 
 # %%
-# Allow user to select architecture and update config
+# Allow user to select detection model architecture
 print("\n=== Detection Model Architecture Selection ===")
 print("The detection model is responsible for finding text regions in your documents.")
 print("Different architectures offer different trade-offs between speed and accuracy.")
@@ -376,6 +376,18 @@ config = update_config_with_architecture(config, selected_architecture)
 logger.info("\nConfiguration updated with selected architecture.")
 logger.info(f"New detection model: {config['model']['detection']['name']}")
 logger.info(f"Input size range: {config['model']['detection']['min_size']} - {config['model']['detection']['max_size']}")
+
+# Allow user to select recognition model architecture
+print("\n=== Recognition Model Architecture Selection ===")
+print("The recognition model is responsible for reading the text in the detected regions.")
+print("Different architectures offer different trade-offs between speed and accuracy.")
+print("Please select the architecture that best fits your needs:")
+print("=" * 80)
+
+selected_recognition = select_recognition_model()
+config["model"]["recognition"]["name"] = selected_recognition
+logger.info("\nConfiguration updated with selected recognition model.")
+logger.info(f"New recognition model: {config['model']['recognition']['name']}")
 
 # %% [markdown]
 """
@@ -398,16 +410,19 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
     try:
         # Get detection model configuration
         det_config = config["model"]["detection"]
+        reco_config = config["model"]["recognition"]
         model_name = det_config["name"]
+        reco_name = reco_config["name"]
         
         # Log model initialization
         logger.info(f"Initializing detection model: {model_name}")
+        logger.info(f"Using recognition model: {reco_name}")
         logger.info(f"Using device: {device}")
         
         # Initialize detection model with specific architecture
         detection_model = ocr_predictor(
             det_arch=model_name,
-            reco_arch="crnn_vgg16_bn",  # Use default recognition model
+            reco_arch=reco_name,  # Use selected recognition model
             pretrained=det_config["pretrained"],
             device=device,
             assume_straight_pages=True,  # Optimize for straight document pages
@@ -417,6 +432,7 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         # Get model information
         model_info = {
             "name": model_name,
+            "recognition_model": reco_name,
             "pretrained": det_config["pretrained"],
             "device": str(device),
             "min_size": det_config["min_size"],
@@ -425,6 +441,7 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         
         # Log model details
         logger.info(f"Model architecture: {model_name}")
+        logger.info(f"Recognition model: {reco_name}")
         logger.info(f"Pretrained: {det_config['pretrained']}")
         logger.info(f"Input size range: {det_config['min_size']} - {det_config['max_size']}")
         
@@ -441,68 +458,12 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         logger.error(f"Error initializing detection model: {e}")
         raise
 
-# %% [markdown]
-"""
-### Model Warm-up
-"""
-
-# %%
-def warm_up_model(model: ocr_predictor, config: dict) -> None:
-    """
-    Warm up the model with a dummy input to ensure proper initialization.
-    
-    Args:
-        model: The initialized detection model
-        config (dict): Model configuration
-    """
-    try:
-        logger.info("Warming up model...")
-        
-        # Create dummy input
-        dummy_input = torch.randn(
-            1, 3, 
-            config["model"]["detection"]["min_size"],
-            config["model"]["detection"]["min_size"]
-        ).to(next(model.parameters()).device)
-        
-        # Convert to DocumentFile format
-        dummy_doc = DocumentFile.from_tensor(dummy_input)
-        
-        # Warm up forward pass
-        with torch.no_grad():
-            _ = model(dummy_doc)
-        
-        logger.info("Model warm-up completed successfully")
-        
-    except Exception as e:
-        logger.error(f"Error during model warm-up: {e}")
-        raise
-
 # %%
 # Initialize detection model
 detection_model, model_info = initialize_detection_model(config, device)
 
 # Warm up the model
 warm_up_model(detection_model, config)
-
-# %% [markdown]
-"""
-### Model Configuration Summary
-"""
-
-# %%
-def print_model_summary(model_info: dict) -> None:
-    """
-    Print a summary of the model configuration.
-    
-    Args:
-        model_info (dict): Model information dictionary
-    """
-    logger.info("\nModel Configuration Summary:")
-    logger.info("=" * 50)
-    for key, value in model_info.items():
-        logger.info(f"{key}: {value}")
-    logger.info("=" * 50)
 
 # Print model summary
 print_model_summary(model_info)
@@ -633,34 +594,273 @@ test_preprocessing_pipeline(preprocessing_pipeline)
 # %%
 def get_available_recognition_models() -> dict:
     """
-    Get available recognition model architectures with their descriptions.
+    Get available recognition model architectures with their descriptions from config.
     
     Returns:
         dict: Dictionary of available recognition models and their descriptions
     """
-    return {
-        "crnn_vgg16_bn": {
-            "description": "CRNN with VGG16-BN backbone",
-            "characteristics": "Good balance of accuracy and speed",
-            "use_case": "General purpose text recognition"
-        },
-        "crnn_mobilenet_v3_small": {
-            "description": "CRNN with MobileNetV3-Small backbone",
-            "characteristics": "Faster, optimized for mobile/edge devices",
-            "use_case": "Mobile applications, edge devices"
-        },
-        "sar_resnet31": {
-            "description": "SAR with ResNet-31 backbone",
-            "characteristics": "High accuracy, slower than CRNN",
-            "use_case": "High accuracy requirements"
-        },
-        "master": {
-            "description": "MASTER architecture",
-            "characteristics": "State-of-the-art accuracy, slower",
-            "use_case": "High accuracy requirements, complex text"
-        }
-    }
+    if not config or "model" not in config or "recognition" not in config["model"] or "available_architectures" not in config["model"]["recognition"]:
+        raise ValueError("Configuration missing available recognition architectures")
+    
+    return config["model"]["recognition"]["available_architectures"]
 
+def select_recognition_model() -> str:
+    """
+    Allow user to select the recognition model architecture.
+    
+    Returns:
+        str: Selected architecture name
+    """
+    models = get_available_recognition_models()
+    current_model = config["model"]["recognition"]["name"]
+    
+    # Print available options in a clear format
+    print("\nAvailable Recognition Model Architectures:")
+    print("=" * 80)
+    for i, (model, info) in enumerate(models.items(), 1):
+        print(f"\n{i}. {model}")
+        print(f"   Description: {info['description']}")
+        print(f"   Characteristics: {info['characteristics']}")
+        print(f"   Use Case: {info['use_case']}")
+        print("-" * 80)
+    
+    print(f"\nCurrent selection: {current_model}")
+    
+    while True:
+        print(f"\nEnter the number (1-{len(models)}) of your choice:")
+        selection = input("> ").strip()
+        
+        # Handle empty input (keep current)
+        if not selection:
+            print(f"\nKeeping current selection: {current_model}")
+            return current_model
+        
+        # Handle numeric selection
+        if selection.isdigit() and 1 <= int(selection) <= len(models):
+            selected_model = list(models.keys())[int(selection) - 1]
+            print(f"\nSelected model: {selected_model}")
+            print(f"Description: {models[selected_model]['description']}")
+            return selected_model
+        
+        print(f"\nInvalid selection: {selection}")
+        print(f"Please enter a number between 1 and {len(models)}.")
+
+# %%
+# Allow user to select recognition model architecture
+print("\n=== Recognition Model Architecture Selection ===")
+print("The recognition model is responsible for reading the text in the detected regions.")
+print("Different architectures offer different trade-offs between speed and accuracy.")
+print("Please select the architecture that best fits your needs:")
+print("=" * 80)
+
+selected_recognition = select_recognition_model()
+config["model"]["recognition"]["name"] = selected_recognition
+logger.info("\nConfiguration updated with selected recognition model.")
+logger.info(f"New recognition model: {config['model']['recognition']['name']}")
+
+# %% [markdown]
+"""
+## Model Initialization
+### Initialize Detection Model
+"""
+
+# %%
+def initialize_detection_model(config: dict, device: torch.device) -> tuple:
+    """
+    Initialize docTR detection model with specific configuration.
+    
+    Args:
+        config (dict): Model configuration
+        device (torch.device): Device to use for model execution
+    
+    Returns:
+        tuple: (detection_model, model_info)
+    """
+    try:
+        # Get detection model configuration
+        det_config = config["model"]["detection"]
+        reco_config = config["model"]["recognition"]
+        model_name = det_config["name"]
+        reco_name = reco_config["name"]
+        
+        # Log model initialization
+        logger.info(f"Initializing detection model: {model_name}")
+        logger.info(f"Using recognition model: {reco_name}")
+        logger.info(f"Using device: {device}")
+        
+        # Initialize detection model with specific architecture
+        detection_model = ocr_predictor(
+            det_arch=model_name,
+            reco_arch=reco_name,  # Use selected recognition model
+            pretrained=det_config["pretrained"],
+            device=device,
+            assume_straight_pages=True,  # Optimize for straight document pages
+            export_as_straight_boxes=True  # Export boxes as straight rectangles
+        )
+        
+        # Get model information
+        model_info = {
+            "name": model_name,
+            "recognition_model": reco_name,
+            "pretrained": det_config["pretrained"],
+            "device": str(device),
+            "min_size": det_config["min_size"],
+            "max_size": det_config["max_size"]
+        }
+        
+        # Log model details
+        logger.info(f"Model architecture: {model_name}")
+        logger.info(f"Recognition model: {reco_name}")
+        logger.info(f"Pretrained: {det_config['pretrained']}")
+        logger.info(f"Input size range: {det_config['min_size']} - {det_config['max_size']}")
+        
+        # Log memory usage if using CUDA
+        if device.type == "cuda":
+            memory_allocated = torch.cuda.memory_allocated(device) / (1024**2)  # Convert to MB
+            memory_reserved = torch.cuda.memory_reserved(device) / (1024**2)    # Convert to MB
+            logger.info(f"GPU Memory allocated: {memory_allocated:.2f} MB")
+            logger.info(f"GPU Memory reserved: {memory_reserved:.2f} MB")
+        
+        return detection_model, model_info
+        
+    except Exception as e:
+        logger.error(f"Error initializing detection model: {e}")
+        raise
+
+# %%
+# Initialize detection model
+detection_model, model_info = initialize_detection_model(config, device)
+
+# Warm up the model
+warm_up_model(detection_model, config)
+
+# Print model summary
+print_model_summary(model_info)
+
+# %% [markdown]
+"""
+## Image Processing Configuration
+### Define Preprocessing Pipeline
+"""
+
+# %%
+def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
+    """
+    Create preprocessing pipeline for document images.
+    
+    Args:
+        config (dict): Model configuration
+    
+    Returns:
+        transforms.Compose: Preprocessing pipeline
+    """
+    try:
+        # Get preprocessing configuration
+        preprocess_config = config["preprocessing"]
+        
+        # Create transforms
+        transform_list = [
+            # Convert PIL Image to tensor
+            transforms.ToTensor(),
+            
+            # Resize transform with preserve_aspect_ratio
+            Resize(
+                min_size=preprocess_config["resize"]["min_size"],
+                max_size=preprocess_config["resize"]["max_size"],
+                preserve_aspect_ratio=True,
+                symmetric_pad=True  # Add padding to maintain aspect ratio
+            ),
+            
+            # Normalize transform with proper mean/std values
+            transforms.Normalize(
+                mean=preprocess_config["normalize"]["mean"],
+                std=preprocess_config["normalize"]["std"],
+                inplace=True  # Perform normalization in-place for efficiency
+            )
+        ]
+        
+        # Create pipeline using torchvision's Compose
+        pipeline = transforms.Compose(transform_list)
+        
+        # Log pipeline configuration
+        logger.info("\nPreprocessing Pipeline Configuration:")
+        logger.info(f"Resize: {preprocess_config['resize']['min_size']} - {preprocess_config['resize']['max_size']}")
+        logger.info(f"Normalize: mean={preprocess_config['normalize']['mean']}, std={preprocess_config['normalize']['std']}")
+        
+        return pipeline
+        
+    except Exception as e:
+        logger.error(f"Error creating preprocessing pipeline: {e}")
+        raise
+
+def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Tensor:
+    """
+    Process a single image using the preprocessing pipeline.
+    
+    Args:
+        image (Image.Image): Input image
+        pipeline (transforms.Compose): Preprocessing pipeline
+    
+    Returns:
+        torch.Tensor: Processed image tensor
+    """
+    try:
+        # Apply transforms
+        processed = pipeline(image)
+        
+        # Add batch dimension if needed
+        if len(processed.shape) == 3:
+            processed = processed.unsqueeze(0)
+        
+        return processed
+        
+    except Exception as e:
+        logger.error(f"Error processing image: {e}")
+        raise
+
+# %%
+# Create preprocessing pipeline
+preprocessing_pipeline = create_preprocessing_pipeline(config)
+
+# %% [markdown]
+"""
+### Test Preprocessing Pipeline
+"""
+
+# %%
+def test_preprocessing_pipeline(pipeline: transforms.Compose) -> None:
+    """
+    Test the preprocessing pipeline with a sample image.
+    
+    Args:
+        pipeline (transforms.Compose): Preprocessing pipeline
+    """
+    try:
+        # Create a sample image (white background with black text)
+        sample_image = Image.new('RGB', (800, 600), color='white')
+        
+        # Process the image
+        processed = process_image(sample_image, pipeline)
+        
+        # Log results
+        logger.info("\nPreprocessing Pipeline Test:")
+        logger.info(f"Input image size: {sample_image.size}")
+        logger.info(f"Processed tensor shape: {processed.shape}")
+        logger.info(f"Processed tensor range: [{processed.min():.3f}, {processed.max():.3f}]")
+        
+    except Exception as e:
+        logger.error(f"Error testing preprocessing pipeline: {e}")
+        raise
+
+# Test the pipeline
+test_preprocessing_pipeline(preprocessing_pipeline)
+
+# %% [markdown]
+"""
+### Initialize Recognition Model
+"""
+
+# %%
 def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
     """
     Initialize docTR recognition model with specific configuration.
@@ -716,29 +916,6 @@ def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
         raise
 
 # %%
-# Allow user to select recognition model
-print("\nWould you like to select a different recognition model? (y/n)")
-if input("> ").strip().lower() == 'y':
-    recognition_models = get_available_recognition_models()
-    print("\nAvailable Recognition Models:")
-    print("=" * 80)
-    for model, info in recognition_models.items():
-        print(f"\nModel: {model}")
-        print(f"Description: {info['description']}")
-        print(f"Characteristics: {info['characteristics']}")
-        print(f"Use Case: {info['use_case']}")
-        print("-" * 80)
-    
-    while True:
-        print("\nPlease select a recognition model (enter the exact name):")
-        selection = input("> ").strip()
-        if selection in recognition_models:
-            config["model"]["recognition"]["name"] = selection
-            logger.info(f"\nSelected recognition model: {selection}")
-            break
-        else:
-            logger.warning(f"Invalid selection: {selection}")
-
 # Initialize recognition model
 recognition_model, recognition_info = initialize_recognition_model(config, device)
 
