@@ -255,6 +255,9 @@ def configure_device() -> torch.device:
     
     return device
 
+# Configure the device
+device = configure_device()
+
 # %% [markdown]
 """
 ## Model Architecture Selection
