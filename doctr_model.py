@@ -508,6 +508,22 @@ logger.info(f"New recognition model: {config['model']['recognition']['name']}")
 """
 
 # %%
+def print_model_summary(model_info: dict) -> None:
+    """
+    Print a summary of the model configuration and details.
+    
+    Args:
+        model_info (dict): Dictionary containing model information
+    """
+    logger.info("\nModel Summary:")
+    logger.info("=" * 80)
+    for key, value in model_info.items():
+        if key == "vocab":
+            logger.info(f"Vocabulary size: {len(value)}")
+        else:
+            logger.info(f"{key}: {value}")
+    logger.info("=" * 80)
+
 def initialize_detection_model(config: dict, device: torch.device) -> tuple:
     """
     Initialize docTR detection model with specific configuration.
