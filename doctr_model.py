@@ -574,6 +574,39 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         logger.error(f"Error initializing detection model: {e}")
         raise
 
+def warm_up_model(model: ocr_predictor, config: dict) -> None:
+    """
+    Warm up the model with a dummy input to ensure proper initialization.
+    
+    Args:
+        model: Initialized OCR predictor model
+        config (dict): Model configuration
+    """
+    try:
+        logger.info("Warming up model...")
+        
+        # Create a dummy input image (white background)
+        dummy_image = Image.new('RGB', (config["model"]["detection"]["min_size"], 
+                                      config["model"]["detection"]["min_size"]), 
+                              color='white')
+        
+        # Convert to tensor and add batch dimension
+        dummy_tensor = transforms.ToTensor()(dummy_image).unsqueeze(0)
+        
+        # Move to device if using CUDA
+        if torch.cuda.is_available():
+            dummy_tensor = dummy_tensor.cuda()
+        
+        # Run inference
+        with torch.no_grad():
+            _ = model(dummy_tensor)
+        
+        logger.info("Model warm-up completed successfully")
+        
+    except Exception as e:
+        logger.error(f"Error during model warm-up: {e}")
+        raise
+
 # %%
 # Initialize detection model
 detection_model, model_info = initialize_detection_model(config, device)
