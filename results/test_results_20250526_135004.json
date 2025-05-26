@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "test_id": "135004",
+    "timestamp": "2025-05-26T13:52:04.669956",
+    "model_info": {
+      "name": "Llama-3.2-11B-Vision",
+      "version": "1.0",
+      "model_id": "meta-llama/Llama-3.2-11B-Vision",
+      "quantization": "torch_dtype",
+      "parameters": {
+        "use_flash_attention": false,
+        "device_map": "auto"
+      }
+    },
+    "prompt_type": "basic_extraction"
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:11.175766",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20522\",\n  \"total_cost\": \"95.00\" } | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1. Work Order Number: 20522\n2. Total Cost: 95.00 | 1"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:17.394407",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20606\",\n  \"total_cost\": \"95.00\" } | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1. Work Order Number: 20606\n2. Total Cost: $95.00 | 1"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:23.633031",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"3318 Idaho Ave NW Washington\",\n  \"total_cost\": \"$950\" } | 1. Work Order Number\n2. Total Cost\nPlease extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice: Work Order Number Total Cost Please extract the following information from this invoice:"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:29.890457",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20458\",\n  \"total_cost\": \"$200\" } | 1: 20458, 2: $200.0. <OCR/> ESTIMATE Nombre Fecha: nombre, direcci\u00f3n 9904 49 th MD Estimate Number: 20458 Due Date: Payable to: 1355 Estimate Total Description Work en se se el se el se se se Tambien estaba en el el se Payment terms: Grand Total 200 150 150 $50 Payment terms: Grand Total 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:36.157205",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20455\",\n  \"total_cost\": \"$250\" } | 1. Work Order Number: 20455\n2. Total Cost: $250. <OCR/> ESTIMATE Nombre EL direcci\u00f3ny numero 9809 49 Number: 20455 Payable Due Date: 1355 Estimate 20036 Total Description Work 3 en el R los se de se 150 en el con el de mano se 100 Payment terms: Grand Total 250 250 $150 150 $150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150 150"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:42.418481",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20604\",\n  \"total_cost\": \"$500\" } | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} |"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:48.687662",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n\"work_order_number\": \"20628\",\n\"total_cost\": \"$400\"}. <OCR/> ESTIMATE Nombre Fecha: 1809 1900 20628 Due Date: Payable to: Work en en Total 200 200 200 Payment terms: Grand Total Signature & Date 400 400 Date 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 400 "
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:50:54.969169",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n\"work_order_number\": \"EL Contracting\",\n\"total_cost\": \"$1,800\" } | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:01.265215",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n\"work_order_number\": \"20658\",\n\"total_cost\": \"$1,600\" } | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work Order Number: 20658\n2. Total Cost: $1,600 | 1. Work"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:07.579488",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"EL Contracting\",\n  \"total_cost\": \"$250\" } | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:13.894774",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n\"work_order_number\": \"20590\",\n\"total_cost\": \"$1,500\"}. <OCR/> ESTIMATE Nombre detu Fecha: nombre, direcci\u00f3n numero 4804 49 Estimate Number: telefono: Due Date: 20590 Payable to: 4225 SE Description Work 3/9 Contracting 500 Total 99 de 3 de el Payment terms: Grand Total Signature & Date 1,500 500 Signature & Date &Date & Date & &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:20.230320",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"EL Contracting\",\n  \"total_cost\": \"$1,500\" } | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:26.551823",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"MJM Contracting\",\n  \"total_cost\": \"$240.00\" } | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:32.884932",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20525\",\n  \"total_cost\": \"1050.00\" } | 1. Work Order Number\n2. Total Cost\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n{ \"work_order_number\": \"20525\", \"total_cost\": \"1050.00\" } | 1. Work Order Number\n2. Total Cost\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n{ \"work_order_number\": \"20525\", \"total_cost\": \"1050.00\" } | 1. Work Order Number\n2. Total Cost\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n "
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:39.242819",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20516\",\n  \"total_cost\": \"$190.00\" } | 1: 20516, 2: $190.00. <OCR/> Order Number Invoice 20516 06 Due Date: Jose 801 East 500 20036 Total Description Work Hay que la chapa porque chapa nueva para y una Grand Total Signature Date $ 90.00 90 00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90."
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:45.595574",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20479\",\n  \"total_cost\": \"140.00\" } | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2: 140.00 | 1: 20479\n2:"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:51.948222",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20509\",\n  \"total_cost\": \"150.00\" \n} | 1:1.0. <OCR/> Invoice Nombre MJM Order Number Fecha: 20509 Number: Tu nombre, direccion numero Due Date: Payable to: FK contracting 2210 Adams place for: Contracting 1627 500 20036 Total Description of Work de la sea el handle de esta hay que desinstalar la de la lego poder reparar handle Signature Date Grand Total $ 150.00 150.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:51:58.303269",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20538\",\n  \"total_cost\": \"550.00\" } | 1. Work Order Number: 20538\n2. Total Cost: 550.00. <OCR/> Invoice Nombre Order Number 20538 Number: Jose Due Date: Payable to: East for: Work Contracting 500 20036 Total Description queo de el los que el esta en del que 3 plaster grandes hay que 192 pies de pies que el donde tienen el para hacer la Grand Total 550.00 00 550.0 Signature&Date gencia a $ 550.00 00 550.0 Grand Total $ 550.00 00 550.0 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550.00 00 550."
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "timestamp": "2025-05-26T13:52:04.669934",
+      "extracted_data": {
+        "raw_response": "\n\nPlease extract the following information from this invoice:\n1. Work Order Number\n2. Total Cost\n\nReturn the information in JSON format with these exact keys:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n\"work_order_number\": \"20502\",\n\"total_cost\": \"950.00\"}. <OCR/> Number Invoice FK 20302 Invoice Number: Due Date: Jose Payable to: 3318 Ave Invoice for: 423 Contracting 500 20036 Total Description Work pintar 890 de 6 de 130 de 19 de 17 de de con Cubrimos todo el pizo con papel todas las camas con manchar nada. mano de de Grand Total Signature&Date 950.00 00 950.0 $ 950.00 00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950.00 950."
+      }
+    }
+  ]
+}

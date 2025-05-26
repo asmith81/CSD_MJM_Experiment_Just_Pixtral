@@ -1,0 +1,419 @@
+{
+  "metadata": {
+    "test_id": "140649",
+    "timestamp": "2025-05-26T14:08:49.805793",
+    "model_info": {
+      "name": "Llama-3.2-11B-Vision",
+      "version": "1.0",
+      "model_id": "meta-llama/Llama-3.2-11B-Vision",
+      "quantization": "torch_dtype",
+      "parameters": {
+        "use_flash_attention": false,
+        "device_map": "auto"
+      }
+    },
+    "prompt_type": "locational"
+  },
+  "summary": {
+    "total_images": 19,
+    "completed": 19,
+    "errors": 0,
+    "work_order_accuracy": 0.3684210526315789,
+    "total_cost_accuracy": 0.5263157894736842,
+    "average_cer": 0.5828947368421052
+  },
+  "error_categories": {
+    "work_order": {
+      "Exact Match": 7,
+      "Date Confusion": 1,
+      "Completely Wrong": 10,
+      "Partial Match": 1
+    },
+    "total_cost": {
+      "Numeric Match": 10,
+      "No Extraction": 9
+    }
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20522\",\n  \"total_cost\": \"95.00\" } | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2.",
+      "processed_data": {
+        "work_order_number": "20522",
+        "total_cost": "95.00"
+      },
+      "work_order": {
+        "predicted": "20522",
+        "ground_truth": "20522",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 95.0,
+        "ground_truth": 95.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20606\",\n  \"total_cost\": \"95.00\" } | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2.",
+      "processed_data": {
+        "work_order_number": "20606",
+        "total_cost": "95.00"
+      },
+      "work_order": {
+        "predicted": "20606",
+        "ground_truth": "20606",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 95.0,
+        "ground_truth": 95.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"10-16-24\",\n  \"total_cost\": \"$950\" } |. <OCR/> Fecha: ESTIMATE Nombre de EL direcci\u00f3ny numero 4804 99 Estimate Number: Due Date: 20501 Payable to: 3318 Estimate for: 1627K 500 20036 Description Work en de Total 300 de de 10 de alto de 2 $500 Payment terms: Grand Total 950 Signature Date for ofi' man luefor lue for olied offt' efor e for. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor. efor",
+      "processed_data": {
+        "work_order_number": "10-16-24",
+        "total_cost": "$950"
+      },
+      "work_order": {
+        "predicted": "10-16-24",
+        "ground_truth": "20501",
+        "error_category": "Date Confusion",
+        "cer": 0.875
+      },
+      "total_cost": {
+        "predicted": 950.0,
+        "ground_truth": 950.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20458\",\n  \"total_cost\": \"$200\" } | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost",
+      "processed_data": {
+        "work_order_number": "20458",
+        "total_cost": "$200"
+      },
+      "work_order": {
+        "predicted": "20458",
+        "ground_truth": "20458",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 200.0,
+        "ground_truth": 200.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20455\",\n  \"total_cost\": \"$250\" } | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost",
+      "processed_data": {
+        "work_order_number": "20455",
+        "total_cost": "$250"
+      },
+      "work_order": {
+        "predicted": "20455",
+        "ground_truth": "20455",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 250.0,
+        "ground_truth": 250.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"20604\", \"$500\" | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604, $500 | 20604",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20604",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 500.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"20628\",\n\"total_cost\": \"$400\" | 1. Work Order Number:\n2. Total Cost: $400\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"extracted value\",\n\"total_cost\": \"extracted value\" | 1. Work Order Number:\n2. Total Cost: $400\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"extracted value\",\n\"total_cost\": \"extracted value\" | 1. Work Order Number:\n2. Total Cost: $400\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"extracted value\",\n\"total_cost\": \"extracted value\" | 1. Work Order Number:\n2. Total Cost: $400\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"extracted value\",\n\"total_cost\": \"extracted value\" | 1. Work Order Number:\n2. Total Cost: $400\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"extracted value\",\n\"total_cost\":",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20628",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 400.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"20677\",\n\"total_cost\": \"$1,800\" | 1. Work Order Number:\n2. Total Cost: $1,800\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,800\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,800\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,800\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,800\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20677",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 1800.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"20658\",\n\"total_cost\": \"$1,600\" | 1. Work Order Number:\n2. Total Cost: $1,600\n```\n\n\nPlease use the following format to answer the question:.\\n\"the answer to the question is: [answer]\". <OCR/> ESTIMATE Nombre Fecha: 4809 49 Estimate Number: 20658 Due Date: Payable to: 4225 Description of Work 410. Estimate for: MJM Contracting 1627K 20036 Total de 23x13 299 Dies de de de el de de de de que Grand Total Payment terms: 500 Signature & Date 100 $1,600 600 $1,600 $1, 600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600 $1,600",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20658",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 1600.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"EL Contracting\",\n  \"total_cost\": \"$250\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </",
+      "processed_data": {
+        "work_order_number": "EL Contracting",
+        "total_cost": "$250"
+      },
+      "work_order": {
+        "predicted": "EL Contracting",
+        "ground_truth": "20633",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": 250.0,
+        "ground_truth": 250.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20590\",\n  \"total_cost\": \"$1,500\" } | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2.",
+      "processed_data": {
+        "work_order_number": "20590",
+        "total_cost": "$1,500"
+      },
+      "work_order": {
+        "predicted": "20590",
+        "ground_truth": "20590",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1500.0,
+        "ground_truth": 1500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"10-21-24\",\n\"total_cost\": \"$1,500\" | 1. Work Order Number:\n2. Total Cost: $1,500\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,500\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,500\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,500\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\" | 1. Work Order Number:\n2. Total Cost: $1,500\n```\n\n\nPlease use the following format to answer the question:.\\n\"work_order_number\": \"value\", \"total_cost\": \"value\"",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20570",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 1500.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"MJM Contracting\",\n\"total_cost\": \"$240.00\" | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20548",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 240.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"20525\",\n\"total_cost\": \"1050.00\" | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20525",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 1050.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"20516\", \"total_cost\": \"$190.00\" | 1. Work Order Number: 20516\n2. Total Cost: $190.00. <OCR/> Order Number Invoice 20516 06 Due Date: Jose 801 East 500 20036 Total Description Work Hay que la chapa porque chapa nueva para y una Grand Total Signature Date $ 90.00 90 00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 90.00 ",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20516",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 190.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> \"work_order_number\": \"20479\", \"total_cost\": \"$140.00\" | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number: 20479\n2. Total Cost: $140.00 | 1. Work Order Number",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20479",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 140.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20509\",\n  \"total_cost\": \"$150.00\" } |. <OCR/> Invoice Nombre MJM Order Number Fecha: 20509 Number: Tu nombre, direccion numero Due Date: Payable to: FK contracting 2210 Adams place for: Contracting 1627 500 20036 Total Description of Work de la sea el handle de esta hay que desinstalar la de la lego poder reparar handle Signature Date Grand Total $ 150.00 150.00 50.00 50.0 00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 50.00 ",
+      "processed_data": {
+        "work_order_number": "20509",
+        "total_cost": "$150.00"
+      },
+      "work_order": {
+        "predicted": "20509",
+        "ground_truth": "20509",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 150.0,
+        "ground_truth": 150.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20538\",\n  \"total_cost\": \"550.00\" } |. <OCR/> Invoice Nombre Order Number 20538 Number: Jose Due Date: Payable to: East for: Work Contracting 500 20036 Total Description queo de el los que el esta en del que 3 plaster grandes hay que 192 pies de pies que el donde tienen el para hacer la Grand Total 550.00 00 550.0 00 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 ",
+      "processed_data": {
+        "work_order_number": "20538",
+        "total_cost": "550.00"
+      },
+      "work_order": {
+        "predicted": "20538",
+        "ground_truth": "20558",
+        "error_category": "Partial Match",
+        "cer": 0.2
+      },
+      "total_cost": {
+        "predicted": 550.0,
+        "ground_truth": 550.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease analyze this invoice with attention to field locations:\n\n1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20502\",\n  \"total_cost\": \"$950.00\" } | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2. Total Cost:\n   - Usually in the bottom right section\n   - Often in a \"Total\" or \"Amount Due\" box\n   - May be the last line item\n\nExtract these values and return them in JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n} | 1. Work Order Number:\n   - Typically found in upper right portion of image\n   - May be in a box or labeled section\n\n2.",
+      "processed_data": {
+        "work_order_number": "20502",
+        "total_cost": "$950.00"
+      },
+      "work_order": {
+        "predicted": "20502",
+        "ground_truth": "20502",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 950.0,
+        "ground_truth": 950.0,
+        "error_category": "Numeric Match"
+      }
+    }
+  ]
+}

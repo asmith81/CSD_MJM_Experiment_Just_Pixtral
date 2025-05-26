@@ -1,0 +1,418 @@
+{
+  "metadata": {
+    "test_id": "143626",
+    "timestamp": "2025-05-26T14:38:28.878270",
+    "model_info": {
+      "name": "Llama-3.2-11B-Vision",
+      "version": "1.0",
+      "model_id": "meta-llama/Llama-3.2-11B-Vision",
+      "quantization": "load_in_8bit",
+      "parameters": {
+        "use_flash_attention": false,
+        "device_map": "auto"
+      }
+    },
+    "prompt_type": "detailed"
+  },
+  "summary": {
+    "total_images": 19,
+    "completed": 19,
+    "errors": 0,
+    "work_order_accuracy": 0.5263157894736842,
+    "total_cost_accuracy": 0.8947368421052632,
+    "average_cer": 0.3828947368421053
+  },
+  "error_categories": {
+    "work_order": {
+      "Exact Match": 10,
+      "Partial Match": 4,
+      "Completely Wrong": 5
+    },
+    "total_cost": {
+      "Numeric Match": 17,
+      "No Extraction": 2
+    }
+  },
+  "results": [
+    {
+      "image_name": "1095.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20522\",\n  \"total_cost\": \"95.00\" \n} \n<|end_of_response|> 20522 95.00. <OCR/> Invoice 20522 3 Due 801 East con tracting a comprar nueva la que rota Total y la Grand Total 95.00 95.00 95. 00 9.00 9.0 00 9.5.00 9.5. 5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 9.5.00 ",
+      "processed_data": {
+        "work_order_number": "20522",
+        "total_cost": "95.00"
+      },
+      "work_order": {
+        "predicted": "20522",
+        "ground_truth": "20522",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 95.0,
+        "ground_truth": 95.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1094.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20606\",\n  \"total_cost\": \"95.00\" \n} \n<|end_of_response|> 20606 95.00. <OCR/> MJM Order Invoice Nombre de 20606 6 Number: 12 Due Date: Payable to: 5004 D SE for: Contracting 500 20036 Total Description of Work a una seat nueva porque la que no se la seat y la Grand Total Signature&Date 95.00 5.00 9 Date Signature&Date Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &Date &",
+      "processed_data": {
+        "work_order_number": "20606",
+        "total_cost": "95.00"
+      },
+      "work_order": {
+        "predicted": "20606",
+        "ground_truth": "20606",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 95.0,
+        "ground_truth": 95.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1092.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"3318 Idaho Ave NW Washington\",\n  \"total_cost\": \"$950\" } </div> <div> <p> Please carefully analyze this invoice and extract the following information: </p> <ul> <li> Work Order Number: </li> <li> Total Cost: </li> </ul> <p> Return the extracted information in this exact JSON format: </p> <div> { \"work_order_number\": \"extracted value\", \"total_cost\": \"extracted value\" } </div> <div> <p> Please provide a brief and informative answer to the following question. Respond only with the correct answer. 1. Work Order Number: This is a unique identifier for the service request. It may appear as \"Work Order\", \"WO\", \"Order #\", or similar. Look for it in the header or top section. It's typically a combination of numbers and/or letters. Make sure to capture the complete identifier. 2. Total Cost: This is the final amount to be paid. It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc. Usually found at the bottom of the invoice. Include any currency symbols and decimal points. Ensure you",
+      "processed_data": {
+        "work_order_number": "3318 Idaho Ave NW Washington",
+        "total_cost": "$950"
+      },
+      "work_order": {
+        "predicted": "3318 Idaho Ave NW Washington",
+        "ground_truth": "20501",
+        "error_category": "Partial Match",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": 950.0,
+        "ground_truth": 950.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1043.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20458\",\n  \"total_cost\": \"$200\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div",
+      "processed_data": {
+        "work_order_number": "20458",
+        "total_cost": "$200"
+      },
+      "work_order": {
+        "predicted": "20458",
+        "ground_truth": "20458",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 200.0,
+        "ground_truth": 200.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1042.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20455\",\n  \"total_cost\": \"$250\" } </div> <div> <p> Please carefully analyze this invoice and extract the following information: </p> <ul> <li> Work Order Number: </li> <li> Total Cost: </li> </ul> <p> Return the extracted information in this exact JSON format: </p> <div> { \"work_order_number\": \"extracted value\", \"total_cost\": \"extracted value\" } </div> <div> <p> Please provide a brief and informative answer to the following question. Respond only with the correct answer. 1. Work Order Number: This is a unique identifier for the service request. It may appear as \"Work Order\", \"WO\", \"Order #\", or similar. Look for it in the header or top section. It's typically a combination of numbers and/or letters. Make sure to capture the complete identifier. 2. Total Cost: This is the final amount to be paid. It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc. Usually found at the bottom of the invoice. Include any currency symbols and decimal points. Ensure you capture the complete amount",
+      "processed_data": {
+        "work_order_number": "20455",
+        "total_cost": "$250"
+      },
+      "work_order": {
+        "predicted": "20455",
+        "ground_truth": "20455",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 250.0,
+        "ground_truth": 250.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1031.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20604\",\n  \"total_cost\": \"$500\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div",
+      "processed_data": {
+        "work_order_number": "20604",
+        "total_cost": "$500"
+      },
+      "work_order": {
+        "predicted": "20604",
+        "ground_truth": "20604",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 500.0,
+        "ground_truth": 500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1030.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20628\",\n  \"total_cost\": \"$400\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div",
+      "processed_data": {
+        "work_order_number": "20628",
+        "total_cost": "$400"
+      },
+      "work_order": {
+        "predicted": "20628",
+        "ground_truth": "20628",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 400.0,
+        "ground_truth": 400.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1029.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"EL Contracting\",\n  \"total_cost\": \"$1,800\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div",
+      "processed_data": {
+        "work_order_number": "EL Contracting",
+        "total_cost": "$1,800"
+      },
+      "work_order": {
+        "predicted": "EL Contracting",
+        "ground_truth": "20677",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": 1800.0,
+        "ground_truth": 1800.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1028.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20658\",\n  \"total_cost\": \"$1,600\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div>",
+      "processed_data": {
+        "work_order_number": "20658",
+        "total_cost": "$1,600"
+      },
+      "work_order": {
+        "predicted": "20658",
+        "ground_truth": "20658",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1600.0,
+        "ground_truth": 1600.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1027.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"EL Contracting\",\n  \"total_cost\": \"$250\" } </s> 1. Work Order Number: EL Contracting\n2. Total Cost: $250. <OCR/> Invoice ESTIMATE Nombre de compa\u00f1ia: EL Fecha: Due Date: 20633 Payable to: 4225 Description of Work en el Total el el 250 en y Signature Date Grand Total $ 250 2.50 2.50 $250 $ 250 Grand Total $ 250 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 2.50 ",
+      "processed_data": {
+        "work_order_number": "EL Contracting",
+        "total_cost": "$250"
+      },
+      "work_order": {
+        "predicted": "EL Contracting",
+        "ground_truth": "20633",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": 250.0,
+        "ground_truth": 250.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1026.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20590\",\n  \"total_cost\": \"$1,500\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div>",
+      "processed_data": {
+        "work_order_number": "20590",
+        "total_cost": "$1,500"
+      },
+      "work_order": {
+        "predicted": "20590",
+        "ground_truth": "20590",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1500.0,
+        "ground_truth": 1500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1025.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"EL Contracting\",\n  \"total_cost\": \"$1,500\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div",
+      "processed_data": {
+        "work_order_number": "EL Contracting",
+        "total_cost": "$1,500"
+      },
+      "work_order": {
+        "predicted": "EL Contracting",
+        "ground_truth": "20570",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": 1500.0,
+        "ground_truth": 1500.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1023.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"801 East\",\n  \"total_cost\": \"$240.00\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div>",
+      "processed_data": {
+        "work_order_number": "801 East",
+        "total_cost": "$240.00"
+      },
+      "work_order": {
+        "predicted": "801 East",
+        "ground_truth": "20548",
+        "error_category": "Partial Match",
+        "cer": 0.875
+      },
+      "total_cost": {
+        "predicted": 240.0,
+        "ground_truth": 240.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1022.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20525\",\n  \"total_cost\": \"1050.00\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div",
+      "processed_data": {
+        "work_order_number": "20525",
+        "total_cost": "1050.00"
+      },
+      "work_order": {
+        "predicted": "20525",
+        "ground_truth": "20525",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 1050.0,
+        "ground_truth": 1050.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1021.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> Invoice\nNombre de tu compa. A:\nFK Contracting Services\nTu nombre, direcci. N y numero de telefono:\nJose Villanueva\nDireccion del Proyecto:\n801 East\nDescription of Work\nHay que desinstalar la chapa Vieja porque esta da. Ada y ir. A comprar una chapa nueva para el electrical room y instalarla. Es una chapa comercial.\nGrand Total $190.00\nSignature & Date\nSignature & Date\nM.J.M Order Number 20516\nInvoice Number: 06\nFecha: 10/17/24\nDue Date: FK Contracting\nInvoice for: M.J.M Contracting\n1627 K Street NW Suite 500 Washington, D.C. 20036\nTotal\nTotal\nSignature & Date\nSignature & Date\nGrand Total $190.00\nTotal\nTotal\nSignature & Date\nSignature & Date\nGrand Total $190.00\nTotal\nTotal\nSignature & Date\nSignature & Date\nGrand Total $190.00\nTotal\nTotal\nSignature & Date\nSignature & Date\nGrand Total $190.00\nTotal\nTotal\nSignature & Date\nSignature & Date\nGrand Total $190.00\nTotal\nTotal\nSignature &",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20516",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 190.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1020.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20479\",\n  \"total_cost\": \"$140.00\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div>",
+      "processed_data": {
+        "work_order_number": "20479",
+        "total_cost": "$140.00"
+      },
+      "work_order": {
+        "predicted": "20479",
+        "ground_truth": "20479",
+        "error_category": "Exact Match",
+        "cer": 0.0
+      },
+      "total_cost": {
+        "predicted": 140.0,
+        "ground_truth": 140.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1019.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> Invoice\nNombre de tu compa. A:\nFK contracting services\nTu nombre, direcci. N y numero de telefono:\nJose Villanueva\nDireccion del Proyecto:\n2210 Adams place\nDescription of Work\nLa puerta de la lavadora se a quedada Laqueada porque el handle de la puerta esta roto hay que desinstalar la puerta de la lavadora para lego poder reparar o comprar un handle nuevo\nGrand Total $ 150.00\nSignature & Date\nEsteban\n10/17/24\n04\nPayable to:\nFK contracting\nInvoice for:\nMJM Contracting\n1627 K Street NW Suite 500\nWashington, D.C. 20036\nInvoice Number:\n20509\nDue Date: 10/17/24\nPayable to: FK contracting\nInvoice for: MJM Contracting\n1627 K Street NW Suite 500\nWashington, D.C. 20036\nInvoice Number: 20509\nDue Date: 10/17/24\nPayable to: FK contracting\nInvoice for: MJM Contracting\n1627 K Street NW Suite 500\nWashington, D.C. 20036\nInvoice Number: 20509\n",
+      "processed_data": {
+        "work_order_number": "extracted value",
+        "total_cost": "extracted value"
+      },
+      "work_order": {
+        "predicted": "extracted value",
+        "ground_truth": "20509",
+        "error_category": "Completely Wrong",
+        "cer": 1.0
+      },
+      "total_cost": {
+        "predicted": null,
+        "ground_truth": 150.0,
+        "error_category": "No Extraction"
+      }
+    },
+    {
+      "image_name": "1018.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20538\",\n  \"total_cost\": \"$550.00\" } </div> <div> <p>Invoice</p> <p>Nombre de tu compa. A:</p> <p>FK Contracting Services</p> <p>Tu nombre, direcci. N y numero de telefono:</p> <p>Jose Villanueva</p> <p>Direcci. N del Proyecto:</p> <p>801 East</p> <p>Description of Work</p> <p>El liquido problema de el shaver de los discapacitados devido a que todo el silicone de las paredes y del pizo esta danado hay que poner silicono nuevo en todo el shaver del segundo pizo tambien hay que reparar el Ceilling danado por el liquido son 3 reparacione de plaster grandes</p> <p>Y hay que pintar 192 pies cuadrados de Ceilling flat y lo pies cuadrados de pared</p> <p>Hay que cubrir con plastico el escultor donde tienen computadoras y cubrir el pizo para poder hacer la reparacion</p> <p",
+      "processed_data": {
+        "work_order_number": "20538",
+        "total_cost": "$550.00"
+      },
+      "work_order": {
+        "predicted": "20538",
+        "ground_truth": "20558",
+        "error_category": "Partial Match",
+        "cer": 0.2
+      },
+      "total_cost": {
+        "predicted": 550.0,
+        "ground_truth": 550.0,
+        "error_category": "Numeric Match"
+      }
+    },
+    {
+      "image_name": "1017.jpg",
+      "status": "completed",
+      "raw_response": "\n\nPlease carefully analyze this invoice and extract the following information:\n\n1. Work Order Number:\n   - This is a unique identifier for the service request\n   - It may appear as \"Work Order\", \"WO\", \"Order #\", or similar\n   - Look for it in the header or top section\n   - It's typically a combination of numbers and/or letters\n   - Make sure to capture the complete identifier\n\n2. Total Cost:\n   - This is the final amount to be paid\n   - It may be labeled as \"Total\", \"Amount Due\", \"Grand Total\", etc.\n   - Usually found at the bottom of the invoice\n   - Include any currency symbols and decimal points\n   - Ensure you capture the complete amount\n\nReturn the extracted information in this exact JSON format:\n{\n  \"work_order_number\": \"extracted value\",\n  \"total_cost\": \"extracted value\"\n}\n\n\n<|response|>\n<|end_of_response|> {\n  \"work_order_number\": \"20302\",\n  \"total_cost\": \"$950.00\" } </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div> </div>",
+      "processed_data": {
+        "work_order_number": "20302",
+        "total_cost": "$950.00"
+      },
+      "work_order": {
+        "predicted": "20302",
+        "ground_truth": "20502",
+        "error_category": "Partial Match",
+        "cer": 0.2
+      },
+      "total_cost": {
+        "predicted": 950.0,
+        "ground_truth": 950.0,
+        "error_category": "Numeric Match"
+      }
+    }
+  ]
+}

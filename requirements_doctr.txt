@@ -1,0 +1,31 @@
+# Core docTR package with PyTorch backend
+python-doctr[torch]>=0.11.0
+
+# Deep Learning Framework
+torch>=2.1.0
+torchvision>=0.16.0
+torchaudio>=2.1.0
+
+# Image Processing
+Pillow>=9.3.0
+numpy>=1.21.0
+
+# Optional but recommended for visualization and HTML output
+python-doctr[viz,html]
+
+# Additional useful packages
+tqdm>=4.65.0  # for progress bars
+PyYAML>=6.0   # for configuration files
+pandas>=1.5.0  # for data handling
+matplotlib>=3.5.0  # for visualization
+opencv-python>=4.5.0  # for additional image processing
+
+# For API integration (if needed)
+fastapi>=0.68.0
+uvicorn>=0.15.0
+python-multipart>=0.0.5
+
+# For development and testing
+pytest>=7.0.0
+black>=22.0.0
+flake8>=4.0.0 
