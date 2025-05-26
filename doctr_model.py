@@ -605,12 +605,15 @@ def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
         logger.info(f"Using device: {device}")
         
         # Initialize recognition model with specific architecture
-        recognition_model = ocr_predictor(
-            det_arch=None,  # We'll use the detection model separately
-            reco_arch=model_name,
-            pretrained=reco_config["pretrained"],
-            device=device
+        from doctr.models import recognition_predictor
+        recognition_model = recognition_predictor(
+            arch=model_name,
+            pretrained=reco_config["pretrained"]
         )
+        
+        # Move model to device
+        if device.type == "cuda":
+            recognition_model.to(device)
         
         # Get model information
         model_info = {
