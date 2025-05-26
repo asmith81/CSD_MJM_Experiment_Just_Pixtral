@@ -37,6 +37,23 @@ model:
     name: "crnn_vgg16_bn"
     pretrained: true
     vocab: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    available_architectures:
+      crnn_vgg16_bn:
+        description: "CRNN with VGG16-BN backbone"
+        characteristics: "Good accuracy, moderate speed"
+        use_case: "General purpose text recognition"
+      crnn_mobilenet_v3_small:
+        description: "CRNN with MobileNetV3-Small backbone"
+        characteristics: "Fast, optimized for mobile/edge devices"
+        use_case: "Mobile applications, edge devices"
+      crnn_mobilenet_v3_large:
+        description: "CRNN with MobileNetV3-Large backbone"
+        characteristics: "Better accuracy than small version, still fast"
+        use_case: "Mobile applications requiring better accuracy"
+      sar_resnet31:
+        description: "SAR with ResNet-31 backbone"
+        characteristics: "High accuracy, slower speed"
+        use_case: "Applications requiring high accuracy"
 
 preprocessing:
   resize:
