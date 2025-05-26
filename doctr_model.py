@@ -128,61 +128,6 @@ def check_cuda_availability() -> bool:
 
 # %% [markdown]
 """
-## Install Dependencies
-"""
-
-# %%
-def install_dependencies():
-    """Install required dependencies with progress tracking."""
-    # First install tqdm if not already installed
-    try:
-        import tqdm
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "tqdm"])
-        import tqdm
-    
-    # Update pip first
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
-    
-    # Check CUDA availability
-    has_cuda = check_cuda_availability()
-    
-    # Install base requirements
-    base_requirements = [
-        ("Base requirements", [sys.executable, "-m", "pip", "install", "-q", "-r", str(ROOT_DIR / "requirements_doctr.txt")]),
-    ]
-    
-    # Add PyTorch installation with appropriate CUDA version
-    if has_cuda:
-        base_requirements.append(("PyTorch with CUDA", [
-            sys.executable, "-m", "pip", "install", "-q",
-            "torch==2.1.0",
-            "torchvision==0.16.0",
-            "torchaudio==2.1.0",
-            "--index-url", "https://download.pytorch.org/whl/cu118"
-        ]))
-    else:
-        base_requirements.append(("PyTorch CPU", [
-            sys.executable, "-m", "pip", "install", "-q",
-            "torch==2.1.0",
-            "torchvision==0.16.0",
-            "torchaudio==2.1.0",
-            "--index-url", "https://download.pytorch.org/whl/cpu"
-        ]))
-    
-    for step_name, command in tqdm.tqdm(base_requirements, desc="Installing base dependencies"):
-        try:
-            subprocess.check_call(command)
-            logger.info(f"Successfully installed {step_name}")
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Error installing {step_name}: {e}")
-            raise
-
-# Install dependencies
-install_dependencies()
-
-# %% [markdown]
-"""
 ## Verify Installation
 """
 
