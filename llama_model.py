@@ -964,11 +964,99 @@ Generate and display analysis of model performance.
 """
 
 # %%
-def analyze_results(results_file: str) -> dict:
+def normalize_total_cost(cost_str: str) -> float:
+    """Convert a cost string to a float by removing currency symbols and commas."""
+    if not cost_str:
+        return None
+    # If already a float, return as is
+    if isinstance(cost_str, (int, float)):
+        return float(cost_str)
+    # Remove $ and commas, then convert to float
+    return float(cost_str.replace('$', '').replace(',', '').strip())
+
+def categorize_work_order_error(predicted: str, ground_truth: str) -> str:
+    """Categorize the type of error in work order number prediction."""
+    if not predicted or not ground_truth:
+        return "No Extraction"
+    if predicted == ground_truth:
+        return "Exact Match"
+    # Check if prediction looks like a date (contains - or /)
+    if '-' in predicted or '/' in predicted:
+        return "Date Confusion"
+    # Check for partial match (some digits match)
+    if any(digit in ground_truth for digit in predicted):
+        return "Partial Match"
+    return "Completely Wrong"
+
+def categorize_total_cost_error(predicted: float, ground_truth: float) -> str:
+    """Categorize the type of error in total cost prediction."""
+    if predicted is None or ground_truth is None:
+        return "No Extraction"
+    if predicted == ground_truth:
+        return "Numeric Match"
+    
+    # Convert to strings for digit comparison
+    pred_str = str(int(predicted))
+    truth_str = str(int(ground_truth))
+    
+    # Check for digit reversal
+    if pred_str[::-1] == truth_str:
+        return "Digit Reversal"
+    
+    # Check for missing digit
+    if len(pred_str) == len(truth_str) - 1 and all(d in truth_str for d in pred_str):
+        return "Missing Digit"
+    
+    # Check for extra digit
+    if len(pred_str) == len(truth_str) + 1 and all(d in pred_str for d in truth_str):
+        return "Extra Digit"
+    
+    return "Completely Wrong"
+
+def calculate_cer(str1: str, str2: str) -> float:
+    """Calculate Character Error Rate between two strings."""
+    if not str1 or not str2:
+        return 1.0  # Return maximum error if either string is empty
+    
+    # Convert to strings and remove whitespace
+    str1 = str(str1).strip()
+    str2 = str(str2).strip()
+    
+    # Calculate Levenshtein distance
+    if len(str1) < len(str2):
+        str1, str2 = str2, str1
+    
+    if len(str2) == 0:
+        return 1.0
+    
+    previous_row = range(len(str2) + 1)
+    for i, c1 in enumerate(str1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(str2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    
+    # Return CER as distance divided by length of longer string
+    return previous_row[-1] / len(str1)
+
+def analyze_results(results_file: str, ground_truth_file: str = "data/ground_truth.csv") -> dict:
     """Analyze model performance and generate analysis report."""
-    # Load results
+    import pandas as pd
+    
+    # Load results and ground truth
     with open(results_file, 'r') as f:
         results = json.load(f)
+    
+    # Read ground truth with explicit string type for Invoice column
+    ground_truth = pd.read_csv(ground_truth_file, dtype={'Invoice': str})
+    
+    # Debug ground truth data
+    logger.info(f"Ground truth columns: {ground_truth.columns.tolist()}")
+    logger.info(f"Ground truth shape: {ground_truth.shape}")
+    logger.info(f"Sample of ground truth Invoice values: {ground_truth['Invoice'].head().tolist()}")
     
     # Initialize analysis structure
     analysis = {
@@ -977,12 +1065,14 @@ def analyze_results(results_file: str) -> dict:
             "total_images": len(results["results"]),
             "completed": 0,
             "errors": 0,
-            "success_rate": 0.0,
-            "work_order_accuracy": 0.0,
-            "total_cost_accuracy": 0.0,
-            "average_cer": 0.0
+            "work_order_accuracy": 0,
+            "total_cost_accuracy": 0,
+            "average_cer": 0
         },
-        "error_categories": {},
+        "error_categories": {
+            "work_order": {},
+            "total_cost": {}
+        },
         "results": []
     }
     
@@ -992,61 +1082,90 @@ def analyze_results(results_file: str) -> dict:
     total_cost_matches = 0
     
     for result in results["results"]:
-        # Add to results list
-        analysis["results"].append(result)
+        # Get ground truth for this image - remove .jpg extension for matching
+        image_id = result["image_name"].replace(".jpg", "")
         
-        # Update summary
+        # Debug image matching
+        logger.info(f"Looking for image_id: {image_id}")
+        logger.info(f"Available Invoice values: {ground_truth['Invoice'].tolist()}")
+        
+        gt_row = ground_truth[ground_truth["Invoice"] == image_id]
+        
+        if gt_row.empty:
+            logger.warning(f"No ground truth found for image {image_id}")
+            continue
+            
+        gt_work_order = str(gt_row["Work Order Number/Numero de Orden"].iloc[0]).strip()
+        gt_total_cost = normalize_total_cost(str(gt_row["Total"].iloc[0]))
+        
+        # Initialize result analysis
+        result_analysis = {
+            "image_name": result["image_name"],
+            "status": result["status"],
+            "raw_response": result.get("raw_response", ""),  # Store raw response
+            "processed_data": {}  # Store processed data
+        }
+        
         if result["status"] == "completed":
             analysis["summary"]["completed"] += 1
             
-            # Extract work order and total cost from response
-            try:
-                response_text = result["extracted_data"]["raw_response"]
-                
-                # Try to parse the response text to extract work order and total cost
-                # Look for patterns like "Work Order: 12345" or "Total Cost: $123.45"
-                import re
-                
-                # Look for work order number
-                work_order_match = re.search(r'work order (?:number|#)?[:\s]+(\d+)', response_text.lower())
-                work_order = work_order_match.group(1) if work_order_match else ""
-                
-                # Look for total cost
-                cost_match = re.search(r'total cost[:\s]+\$?(\d+(?:\.\d{2})?)', response_text.lower())
-                total_cost = cost_match.group(1) if cost_match else ""
-                
-                # For now, we'll just count successful extractions
-                if work_order:
-                    work_order_matches += 1
-                if total_cost:
-                    total_cost_matches += 1
-                    
-                # Log the extracted values for debugging
-                logger.info(f"Image {result['image_name']}:")
-                logger.info(f"  Work Order: {work_order}")
-                logger.info(f"  Total Cost: {total_cost}")
-                    
-            except Exception as e:
-                logger.warning(f"Error parsing response for {result['image_name']}: {str(e)}")
-                logger.debug(f"Raw response: {response_text}")
+            # Store raw response if available
+            if "raw_response" in result:
+                result_analysis["raw_response"] = result["raw_response"]
+            
+            # Store processed data
+            result_analysis["processed_data"] = result["extracted_data"]
+            
+            # Analyze work order
+            pred_work_order = result["extracted_data"]["work_order_number"]
+            work_order_error = categorize_work_order_error(pred_work_order, gt_work_order)
+            work_order_cer = calculate_cer(pred_work_order, gt_work_order)
+            
+            if work_order_error == "Exact Match":
+                work_order_matches += 1
+            
+            # Analyze total cost
+            pred_total_cost = normalize_total_cost(result["extracted_data"]["total_cost"])
+            total_cost_error = categorize_total_cost_error(pred_total_cost, gt_total_cost)
+            
+            if total_cost_error == "Numeric Match":
+                total_cost_matches += 1
+            
+            # Update result analysis
+            result_analysis.update({
+                "work_order": {
+                    "predicted": pred_work_order,
+                    "ground_truth": gt_work_order,
+                    "error_category": work_order_error,
+                    "cer": work_order_cer
+                },
+                "total_cost": {
+                    "predicted": pred_total_cost,
+                    "ground_truth": gt_total_cost,
+                    "error_category": total_cost_error
+                }
+            })
+            
+            # Update error categories
+            analysis["error_categories"]["work_order"][work_order_error] = \
+                analysis["error_categories"]["work_order"].get(work_order_error, 0) + 1
+            analysis["error_categories"]["total_cost"][total_cost_error] = \
+                analysis["error_categories"]["total_cost"].get(total_cost_error, 0) + 1
+            
+            total_cer += work_order_cer
+            
         else:
             analysis["summary"]["errors"] += 1
-            # Track error categories
-            error_type = result["error"]["type"]
-            analysis["error_categories"][error_type] = analysis["error_categories"].get(error_type, 0) + 1
+            result_analysis["error"] = result["error"]
+        
+        analysis["results"].append(result_analysis)
     
-    # Calculate metrics
-    total_completed = analysis["summary"]["completed"]
-    if total_completed > 0:
-        analysis["summary"]["work_order_accuracy"] = work_order_matches / total_completed
-        analysis["summary"]["total_cost_accuracy"] = total_cost_matches / total_completed
-        analysis["summary"]["average_cer"] = total_cer / total_completed if total_cer > 0 else 0
-    
-    # Calculate success rate
-    analysis["summary"]["success_rate"] = analysis["summary"]["completed"] / analysis["summary"]["total_images"]
-    
-    # Add timestamp
-    analysis["analysis_timestamp"] = datetime.now().isoformat()
+    # Calculate summary statistics
+    total_images = analysis["summary"]["total_images"]
+    if total_images > 0:
+        analysis["summary"]["work_order_accuracy"] = work_order_matches / total_images
+        analysis["summary"]["total_cost_accuracy"] = total_cost_matches / total_images
+        analysis["summary"]["average_cer"] = total_cer / total_images
     
     return analysis
 
@@ -1103,14 +1222,17 @@ def run_analysis():
         print(f"Total Images: {analysis['summary']['total_images']}")
         print(f"Completed: {analysis['summary']['completed']}")
         print(f"Errors: {analysis['summary']['errors']}")
-        print(f"Success Rate: {analysis['summary']['success_rate']:.2%}")
         print(f"Work Order Accuracy: {analysis['summary']['work_order_accuracy']:.2%}")
         print(f"Total Cost Accuracy: {analysis['summary']['total_cost_accuracy']:.2%}")
+        print(f"Average CER: {analysis['summary']['average_cer']:.3f}")
         
-        if analysis['error_categories']:
-            print("\nError Categories:")
-            for category, count in analysis['error_categories'].items():
-                print(f"- {category}: {count}")
+        print("\nWork Order Error Categories:")
+        for category, count in analysis['error_categories']['work_order'].items():
+            print(f"- {category}: {count}")
+        
+        print("\nTotal Cost Error Categories:")
+        for category, count in analysis['error_categories']['total_cost'].items():
+            print(f"- {category}: {count}")
         
         print(f"\nAnalysis saved to: {analysis_file}")
         
@@ -1121,8 +1243,4 @@ def run_analysis():
         raise
 
 # Run the analysis
-try:
-    analysis_results = run_analysis()
-except Exception as e:
-    logger.error(f"Analysis failed: {str(e)}")
-    raise
+analysis_results = run_analysis()
