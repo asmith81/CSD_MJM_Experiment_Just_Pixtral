@@ -1042,6 +1042,22 @@ def calculate_cer(str1: str, str2: str) -> float:
     # Return CER as distance divided by length of longer string
     return previous_row[-1] / len(str1)
 
+def extract_json_from_response(raw_response: str) -> dict:
+    """Extract JSON data from the raw response string."""
+    try:
+        # Find the first occurrence of a JSON object
+        start_idx = raw_response.find('{')
+        end_idx = raw_response.find('}', start_idx) + 1
+        
+        if start_idx == -1 or end_idx == 0:
+            return None
+            
+        json_str = raw_response[start_idx:end_idx]
+        return json.loads(json_str)
+    except (json.JSONDecodeError, ValueError) as e:
+        logger.error(f"Failed to parse JSON from response: {e}")
+        return None
+
 def analyze_results(results_file: str, ground_truth_file: str = "data/ground_truth.csv") -> dict:
     """Analyze model performance and generate analysis report."""
     import pandas as pd
@@ -1102,58 +1118,61 @@ def analyze_results(results_file: str, ground_truth_file: str = "data/ground_tru
         result_analysis = {
             "image_name": result["image_name"],
             "status": result["status"],
-            "raw_response": result.get("raw_response", ""),  # Store raw response
+            "raw_response": result["extracted_data"]["raw_response"],  # Store raw response
             "processed_data": {}  # Store processed data
         }
         
         if result["status"] == "completed":
             analysis["summary"]["completed"] += 1
             
-            # Store raw response if available
-            if "raw_response" in result:
-                result_analysis["raw_response"] = result["raw_response"]
+            # Extract JSON data from raw response
+            extracted_data = extract_json_from_response(result["extracted_data"]["raw_response"])
             
-            # Store processed data
-            result_analysis["processed_data"] = result["extracted_data"]
-            
-            # Analyze work order
-            pred_work_order = result["extracted_data"]["work_order_number"]
-            work_order_error = categorize_work_order_error(pred_work_order, gt_work_order)
-            work_order_cer = calculate_cer(pred_work_order, gt_work_order)
-            
-            if work_order_error == "Exact Match":
-                work_order_matches += 1
-            
-            # Analyze total cost
-            pred_total_cost = normalize_total_cost(result["extracted_data"]["total_cost"])
-            total_cost_error = categorize_total_cost_error(pred_total_cost, gt_total_cost)
-            
-            if total_cost_error == "Numeric Match":
-                total_cost_matches += 1
-            
-            # Update result analysis
-            result_analysis.update({
-                "work_order": {
-                    "predicted": pred_work_order,
-                    "ground_truth": gt_work_order,
-                    "error_category": work_order_error,
-                    "cer": work_order_cer
-                },
-                "total_cost": {
-                    "predicted": pred_total_cost,
-                    "ground_truth": gt_total_cost,
-                    "error_category": total_cost_error
-                }
-            })
-            
-            # Update error categories
-            analysis["error_categories"]["work_order"][work_order_error] = \
-                analysis["error_categories"]["work_order"].get(work_order_error, 0) + 1
-            analysis["error_categories"]["total_cost"][total_cost_error] = \
-                analysis["error_categories"]["total_cost"].get(total_cost_error, 0) + 1
-            
-            total_cer += work_order_cer
-            
+            if extracted_data:
+                # Store processed data
+                result_analysis["processed_data"] = extracted_data
+                
+                # Analyze work order
+                pred_work_order = extracted_data.get("work_order_number", "")
+                work_order_error = categorize_work_order_error(pred_work_order, gt_work_order)
+                work_order_cer = calculate_cer(pred_work_order, gt_work_order)
+                
+                if work_order_error == "Exact Match":
+                    work_order_matches += 1
+                
+                # Analyze total cost
+                pred_total_cost = normalize_total_cost(extracted_data.get("total_cost", ""))
+                total_cost_error = categorize_total_cost_error(pred_total_cost, gt_total_cost)
+                
+                if total_cost_error == "Numeric Match":
+                    total_cost_matches += 1
+                
+                # Update result analysis
+                result_analysis.update({
+                    "work_order": {
+                        "predicted": pred_work_order,
+                        "ground_truth": gt_work_order,
+                        "error_category": work_order_error,
+                        "cer": work_order_cer
+                    },
+                    "total_cost": {
+                        "predicted": pred_total_cost,
+                        "ground_truth": gt_total_cost,
+                        "error_category": total_cost_error
+                    }
+                })
+                
+                # Update error categories
+                analysis["error_categories"]["work_order"][work_order_error] = \
+                    analysis["error_categories"]["work_order"].get(work_order_error, 0) + 1
+                analysis["error_categories"]["total_cost"][total_cost_error] = \
+                    analysis["error_categories"]["total_cost"].get(total_cost_error, 0) + 1
+                
+                total_cer += work_order_cer
+            else:
+                logger.warning(f"Failed to extract JSON data for image {image_id}")
+                result_analysis["error"] = "JSON extraction failed"
+                analysis["summary"]["errors"] += 1
         else:
             analysis["summary"]["errors"] += 1
             result_analysis["error"] = result["error"]
