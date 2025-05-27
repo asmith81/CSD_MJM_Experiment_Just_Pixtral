@@ -1066,9 +1066,9 @@ def test_single_image(
         if original_image.mode != 'RGB':
             original_image = original_image.convert('RGB')
             
-        logger.info(f"\nProcessing image: {image_path}")
-        logger.info(f"Original image size: {original_image.size}")
-        logger.info(f"Image mode: {original_image.mode}")
+        print(f"\nImage Processing:")
+        print(f"Original image size: {original_image.size}")
+        print(f"Image mode: {original_image.mode}")
         
         # Create a copy for display
         display_image = original_image.copy()
@@ -1077,43 +1077,61 @@ def test_single_image(
         scale_y = max_display_size[1] / original_image.height
         scale_factor = min(scale_x, scale_y)  # Use the smaller scale to maintain aspect ratio
         
-        logger.debug(f"Original image size: {original_image.size}")
-        logger.debug(f"Scale factors - x: {scale_x:.3f}, y: {scale_y:.3f}, final: {scale_factor:.3f}")
+        print(f"Scale factors - x: {scale_x:.3f}, y: {scale_y:.3f}, final: {scale_factor:.3f}")
         
         # Resize for display while maintaining aspect ratio
         new_width = int(original_image.width * scale_factor)
         new_height = int(original_image.height * scale_factor)
         display_image = display_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        logger.debug(f"Resized image size: {display_image.size}")
+        print(f"Resized image size: {display_image.size}")
         
         # Preprocess image for model
+        print("\nPreprocessing for model:")
         processed_image = preprocessing_pipeline(original_image)
-        logger.info(f"Processed image shape before unsqueeze: {processed_image.shape}")
+        print(f"Processed image shape before unsqueeze: {processed_image.shape}")
+        print(f"Processed image value range: [{processed_image.min():.3f}, {processed_image.max():.3f}]")
         
         # Ensure the processed image has the correct shape [B, C, H, W]
         if len(processed_image.shape) == 3:
             processed_image = processed_image.unsqueeze(0)  # Add batch dimension if needed
-            logger.info(f"Processed image shape after unsqueeze: {processed_image.shape}")
+            print(f"Processed image shape after unsqueeze: {processed_image.shape}")
         
         # Move to device if using CUDA
         if torch.cuda.is_available():
             processed_image = processed_image.cuda()
+            print(f"Image moved to device: {processed_image.device}")
         
         # Run detection and recognition
-        logger.info("Running detection and recognition...")
+        print("\nRunning detection and recognition...")
         start_time = time.time()
         with torch.no_grad():
             detection_result = detection_model(processed_image)
         processing_time = time.time() - start_time
+        
+        # Debug model output
+        print("\nModel Output Structure:")
+        print(f"Number of pages: {len(detection_result.pages)}")
+        for i, page in enumerate(detection_result.pages):
+            print(f"\nPage {i+1}:")
+            print(f"Number of blocks: {len(page.blocks)}")
+            for j, block in enumerate(page.blocks):
+                print(f"\nBlock {j+1}:")
+                print(f"Geometry: {block.geometry}")
+                print(f"Number of lines: {len(block.lines)}")
+                for k, line in enumerate(block.lines):
+                    print(f"Line {k+1}:")
+                    print(f"Number of words: {len(line.words)}")
+                    for word in line.words:
+                        print(f"Word: {word.value}, Confidence: {word.confidence:.2f}, Geometry: {word.geometry}")
         
         # Process results
         extracted_data = postprocessing_pipeline["find_key_value_pairs"](detection_result)
         formatted_output = postprocessing_pipeline["format_output"](extracted_data)
         
         # Log results
-        logger.info(f"\nProcessing time: {processing_time:.2f} seconds")
-        logger.info("\nExtracted Data:")
-        logger.info(json.dumps(formatted_output, indent=2))
+        print(f"\nProcessing time: {processing_time:.2f} seconds")
+        print("\nExtracted Data:")
+        print(json.dumps(formatted_output, indent=2))
         
         # Print results in a more readable format
         print("\n" + "="*50)
@@ -1153,14 +1171,14 @@ def test_single_image(
         
         # Add extracted text as annotation
         text_info = []
-        logger.debug("\nProcessing blocks for visualization:")
+        print("\nProcessing blocks for visualization:")
         for page in detection_result.pages:
             for block in page.blocks:
                 # Get block coordinates
                 # Geometry is in format [x1, y1, x2, y2]
                 if isinstance(block.geometry, (list, tuple)) and len(block.geometry) == 4:
                     x1, y1, x2, y2 = block.geometry
-                    logger.debug(f"Block geometry (direct): {block.geometry}")
+                    print(f"Block geometry (direct): {block.geometry}")
                 else:
                     # If geometry is in a different format, try to get bounding box
                     try:
@@ -1177,20 +1195,20 @@ def test_single_image(
                             y1 = min(coord[1] for coord in word_coords)
                             x2 = max(coord[2] for coord in word_coords)
                             y2 = max(coord[3] for coord in word_coords)
-                            logger.debug(f"Block geometry (calculated): [{x1}, {y1}, {x2}, {y2}]")
-                            logger.debug(f"Word coordinates used: {word_coords}")
+                            print(f"Block geometry (calculated): [{x1}, {y1}, {x2}, {y2}]")
+                            print(f"Word coordinates used: {word_coords}")
                         else:
                             # Skip this block if we can't get coordinates
-                            logger.debug("No word coordinates found for block")
+                            print("No word coordinates found for block")
                             continue
                     except Exception as e:
-                        logger.warning(f"Could not process block geometry: {e}")
+                        print(f"Could not process block geometry: {e}")
                         continue
                 
                 # Scale coordinates to match the resized display image
                 x1_scaled, x2_scaled = x1 * scale_factor, x2 * scale_factor
                 y1_scaled, y2_scaled = y1 * scale_factor, y2 * scale_factor
-                logger.debug(f"Scaled coordinates: [{x1_scaled:.1f}, {y1_scaled:.1f}, {x2_scaled:.1f}, {y2_scaled:.1f}]")
+                print(f"Scaled coordinates: [{x1_scaled:.1f}, {y1_scaled:.1f}, {x2_scaled:.1f}, {y2_scaled:.1f}]")
                 
                 # Draw rectangle
                 rect = plt.Rectangle(
@@ -1205,7 +1223,7 @@ def test_single_image(
                     for word in line.words
                 )
                 text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
-                logger.debug(f"Block text: {block_text}")
+                print(f"Block text: {block_text}")
         
         # Add text box with extracted information
         text_box = "\n".join(text_info)
