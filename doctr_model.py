@@ -1083,24 +1083,28 @@ def test_single_image(
         print(f"Original image size: {original_image.size}")
         print(f"Image mode: {original_image.mode}")
         
-        # Calculate scaling factors for display
+        # Calculate target size for model processing (using model's min_size)
+        min_size = 1024  # Model's minimum size requirement
+        ratio = min_size / min(original_image.width, original_image.height)
+        model_width = int(original_image.width * ratio)
+        model_height = int(original_image.height * ratio)
+        
+        # Create resized image for model processing
+        model_image = original_image.resize((model_width, model_height), Image.Resampling.LANCZOS)
+        print(f"Model image size: {model_image.size}")
+        
+        # Create display version of the image
         scale_x = max_display_size[0] / original_image.width
         scale_y = max_display_size[1] / original_image.height
-        scale_factor = min(scale_x, scale_y)  # Use the smaller scale to maintain aspect ratio
-        
-        print(f"Scale factors - x: {scale_x:.3f}, y: {scale_y:.3f}, final: {scale_factor:.3f}")
-        
-        # Calculate new size for display
-        new_width = int(original_image.width * scale_factor)
-        new_height = int(original_image.height * scale_factor)
-        
-        # Create resized image for both display and model processing
-        resized_image = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        print(f"Resized image size: {resized_image.size}")
+        scale_factor = min(scale_x, scale_y)
+        display_width = int(original_image.width * scale_factor)
+        display_height = int(original_image.height * scale_factor)
+        display_image = original_image.resize((display_width, display_height), Image.Resampling.LANCZOS)
+        print(f"Display image size: {display_image.size}")
         
         # Preprocess image for model
         print("\nPreprocessing for model:")
-        processed_image = preprocessing_pipeline(resized_image)
+        processed_image = preprocessing_pipeline(model_image)
         print(f"Processed image shape before unsqueeze: {processed_image.shape}")
         print(f"Processed image value range: [{processed_image.min():.3f}, {processed_image.max():.3f}]")
         
@@ -1160,9 +1164,9 @@ def test_single_image(
         
         print("\n" + "="*50)
         
-        # Create visualization
+        # Create visualization using display image
         plt.figure(figsize=(12, 8))
-        plt.imshow(resized_image)
+        plt.imshow(display_image)
         plt.axis('off')
         plt.title("Processed Image")
         
@@ -1175,16 +1179,26 @@ def test_single_image(
                 # Geometry is in format [x1, y1, x2, y2]
                 if isinstance(block.geometry, (list, tuple)) and len(block.geometry) == 4:
                     x1, y1, x2, y2 = block.geometry
-                    print(f"Block geometry (direct): {block.geometry}")
+                    # Scale coordinates to display image size
+                    x1 = x1 * display_width / model_width
+                    y1 = y1 * display_height / model_height
+                    x2 = x2 * display_width / model_width
+                    y2 = y2 * display_height / model_height
+                    print(f"Block geometry (scaled): [{x1}, {y1}, {x2}, {y2}]")
                 else:
-                    # If geometry is in a different format, try to get bounding box
                     try:
                         # Get all word coordinates
                         word_coords = []
                         for line in block.lines:
                             for word in line.words:
                                 if isinstance(word.geometry, (list, tuple)) and len(word.geometry) == 4:
-                                    word_coords.append(word.geometry)
+                                    # Scale coordinates to display image size
+                                    x1, y1, x2, y2 = word.geometry
+                                    x1 = x1 * display_width / model_width
+                                    y1 = y1 * display_height / model_height
+                                    x2 = x2 * display_width / model_width
+                                    y2 = y2 * display_height / model_height
+                                    word_coords.append([x1, y1, x2, y2])
                         
                         if word_coords:
                             # Calculate block bounding box from word coordinates
@@ -1193,9 +1207,7 @@ def test_single_image(
                             x2 = max(coord[2] for coord in word_coords)
                             y2 = max(coord[3] for coord in word_coords)
                             print(f"Block geometry (calculated): [{x1}, {y1}, {x2}, {y2}]")
-                            print(f"Word coordinates used: {word_coords}")
                         else:
-                            # Skip this block if we can't get coordinates
                             print("No word coordinates found for block")
                             continue
                     except Exception as e:
