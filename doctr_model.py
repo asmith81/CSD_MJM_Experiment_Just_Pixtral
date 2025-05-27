@@ -734,7 +734,9 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
             # Resize transform with preserve_aspect_ratio
             Resize(
                 preprocess_config["resize"]["min_size"],
-                preprocess_config["resize"]["max_size"]
+                interpolation=2,  # BILINEAR
+                preserve_aspect_ratio=True,
+                symmetric_pad=True
             ),
             
             # Normalize transform with proper mean/std values
@@ -750,7 +752,7 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
         
         # Log pipeline configuration
         logger.info("\nPreprocessing Pipeline Configuration:")
-        logger.info(f"Resize: {preprocess_config['resize']['min_size']} - {preprocess_config['resize']['max_size']}")
+        logger.info(f"Resize: {preprocess_config['resize']['min_size']}")
         logger.info(f"Normalize: mean={preprocess_config['normalize']['mean']}, std={preprocess_config['normalize']['std']}")
         
         return pipeline
