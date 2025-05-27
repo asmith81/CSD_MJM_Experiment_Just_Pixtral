@@ -1072,8 +1072,15 @@ def test_single_image(
         
         # Create a copy for display
         display_image = original_image.copy()
+        # Calculate scaling factors before resizing
+        scale_x = max_display_size[0] / original_image.width
+        scale_y = max_display_size[1] / original_image.height
+        scale_factor = min(scale_x, scale_y)  # Use the smaller scale to maintain aspect ratio
+        
         # Resize for display while maintaining aspect ratio
-        display_image.thumbnail(max_display_size, Image.Resampling.LANCZOS)
+        new_width = int(original_image.width * scale_factor)
+        new_height = int(original_image.height * scale_factor)
+        display_image = display_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         
         # Preprocess image for model
         processed_image = preprocessing_pipeline(original_image)
@@ -1115,14 +1122,35 @@ def test_single_image(
         for page in detection_result.pages:
             for block in page.blocks:
                 # Get block coordinates
-                x1, y1, x2, y2 = block.geometry
+                # Geometry is in format [x1, y1, x2, y2]
+                if isinstance(block.geometry, (list, tuple)) and len(block.geometry) == 4:
+                    x1, y1, x2, y2 = block.geometry
+                else:
+                    # If geometry is in a different format, try to get bounding box
+                    try:
+                        # Get all word coordinates
+                        word_coords = []
+                        for line in block.lines:
+                            for word in line.words:
+                                if isinstance(word.geometry, (list, tuple)) and len(word.geometry) == 4:
+                                    word_coords.append(word.geometry)
+                        
+                        if word_coords:
+                            # Calculate block bounding box from word coordinates
+                            x1 = min(coord[0] for coord in word_coords)
+                            y1 = min(coord[1] for coord in word_coords)
+                            x2 = max(coord[2] for coord in word_coords)
+                            y2 = max(coord[3] for coord in word_coords)
+                        else:
+                            # Skip this block if we can't get coordinates
+                            continue
+                    except Exception as e:
+                        logger.warning(f"Could not process block geometry: {e}")
+                        continue
                 
-                # Scale coordinates to display image size
-                scale_x = display_image.width / original_image.width
-                scale_y = display_image.height / original_image.height
-                
-                x1, x2 = x1 * scale_x, x2 * scale_x
-                y1, y2 = y1 * scale_y, y2 * scale_y
+                # Scale coordinates to match the resized display image
+                x1, x2 = x1 * scale_factor, x2 * scale_factor
+                y1, y2 = y1 * scale_factor, y2 * scale_factor
                 
                 # Draw rectangle
                 rect = plt.Rectangle(
