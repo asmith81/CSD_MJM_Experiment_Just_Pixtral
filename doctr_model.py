@@ -1082,24 +1082,24 @@ def test_single_image(
         print(f"Original image size: {original_image.size}")
         print(f"Image mode: {original_image.mode}")
         
-        # Create a copy for display
-        display_image = original_image.copy()
-        # Calculate scaling factors before resizing
+        # Calculate scaling factors for display
         scale_x = max_display_size[0] / original_image.width
         scale_y = max_display_size[1] / original_image.height
         scale_factor = min(scale_x, scale_y)  # Use the smaller scale to maintain aspect ratio
         
         print(f"Scale factors - x: {scale_x:.3f}, y: {scale_y:.3f}, final: {scale_factor:.3f}")
         
-        # Resize for display while maintaining aspect ratio
+        # Calculate new size for display
         new_width = int(original_image.width * scale_factor)
         new_height = int(original_image.height * scale_factor)
-        display_image = display_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        print(f"Resized image size: {display_image.size}")
+        
+        # Create resized image for both display and model processing
+        resized_image = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        print(f"Resized image size: {resized_image.size}")
         
         # Preprocess image for model
         print("\nPreprocessing for model:")
-        processed_image = preprocessing_pipeline(original_image)
+        processed_image = preprocessing_pipeline(resized_image)
         print(f"Processed image shape before unsqueeze: {processed_image.shape}")
         print(f"Processed image value range: [{processed_image.min():.3f}, {processed_image.max():.3f}]")
         
@@ -1161,9 +1161,9 @@ def test_single_image(
         
         # Create visualization
         plt.figure(figsize=(12, 8))
-        plt.imshow(display_image)
+        plt.imshow(resized_image)
         plt.axis('off')
-        plt.title("Original Image (Resized for Display)")
+        plt.title("Processed Image")
         
         # Add extracted text as annotation
         text_info = []
@@ -1201,14 +1201,9 @@ def test_single_image(
                         print(f"Could not process block geometry: {e}")
                         continue
                 
-                # Scale coordinates to match the resized display image
-                x1_scaled, x2_scaled = x1 * scale_factor, x2 * scale_factor
-                y1_scaled, y2_scaled = y1 * scale_factor, y2 * scale_factor
-                print(f"Scaled coordinates: [{x1_scaled:.1f}, {y1_scaled:.1f}, {x2_scaled:.1f}, {y2_scaled:.1f}]")
-                
                 # Draw rectangle
                 rect = plt.Rectangle(
-                    (x1_scaled, y1_scaled), x2_scaled - x1_scaled, y2_scaled - y1_scaled,
+                    (x1, y1), x2 - x1, y2 - y1,
                     fill=False, color='red', linewidth=2
                 )
                 plt.gca().add_patch(rect)
