@@ -769,6 +769,15 @@ def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Ten
         print(f"Original size: {image.size}")
         print(f"Original mode: {image.mode}")
         
+        # Calculate target size while maintaining aspect ratio
+        max_size = 1024
+        ratio = min(max_size / image.width, max_size / image.height)
+        new_size = (int(image.width * ratio), int(image.height * ratio))
+        print(f"Resizing to: {new_size}")
+        
+        # Resize image while maintaining aspect ratio
+        image = image.resize(new_size, Image.Resampling.LANCZOS)
+        
         # Apply transforms
         processed = pipeline(image)
         
