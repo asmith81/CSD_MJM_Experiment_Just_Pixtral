@@ -543,23 +543,82 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         reco_name = reco_config["name"]
         
         # Log model initialization
-        logger.info(f"Initializing detection model: {model_name}")
-        logger.info(f"Using recognition model: {reco_name}")
-        logger.info(f"Using device: {device}")
+        print(f"\nInitializing detection model: {model_name}")
+        print(f"Using recognition model: {reco_name}")
+        print(f"Using device: {device}")
         
-        # Initialize detection model with specific architecture
+        # Verify model availability
+        from doctr.models import detection_predictor, recognition_predictor
+        print("\nVerifying model availability...")
+        
+        # Check detection model
+        try:
+            det_model = detection_predictor(
+                arch=model_name,
+                pretrained=det_config["pretrained"]
+            )
+            print(f"✓ Detection model '{model_name}' loaded successfully")
+            print(f"Detection model type: {type(det_model)}")
+            print(f"Detection model device: {next(det_model.parameters()).device}")
+        except Exception as e:
+            print(f"Failed to load detection model: {e}")
+            raise
+        
+        # Check recognition model
+        try:
+            reco_model = recognition_predictor(
+                arch=reco_name,
+                pretrained=reco_config["pretrained"]
+            )
+            print(f"✓ Recognition model '{reco_name}' loaded successfully")
+            print(f"Recognition model type: {type(reco_model)}")
+            print(f"Recognition model device: {next(reco_model.parameters()).device}")
+        except Exception as e:
+            print(f"Failed to load recognition model: {e}")
+            raise
+        
+        # Initialize combined OCR model
+        print("\nInitializing combined OCR model...")
         detection_model = ocr_predictor(
             det_arch=model_name,
-            reco_arch=reco_name,  # Use selected recognition model
+            reco_arch=reco_name,
             pretrained=det_config["pretrained"],
-            assume_straight_pages=True,  # Optimize for straight document pages
-            export_as_straight_boxes=True  # Export boxes as straight rectangles
+            assume_straight_pages=True,
+            export_as_straight_boxes=True,
+            det_bs=1,
+            reco_bs=1,
+            det_thresh=0.3,
+            det_box_thresh=0.3,
+            det_min_size=10,
+            det_max_size=2048,
+            det_rotated=False,
+            det_use_polygons=False,
+            reco_thresh=0.3
         )
         
         # Move model to specified device
         if device.type == "cuda":
             detection_model.det_predictor.to(device)
             detection_model.reco_predictor.to(device)
+            print(f"Models moved to {device}")
+        
+        # Verify model state
+        print("\nVerifying model state...")
+        print(f"Detection model device: {next(detection_model.det_predictor.parameters()).device}")
+        print(f"Recognition model device: {next(detection_model.reco_predictor.parameters()).device}")
+        
+        # Test model with a simple input
+        print("\nTesting model with simple input...")
+        test_input = torch.randn(1, 3, 1024, 1024).to(device)
+        with torch.no_grad():
+            try:
+                test_output = detection_model(test_input)
+                print("✓ Model test successful")
+                print(f"Test output type: {type(test_output)}")
+                print(f"Number of pages in test output: {len(test_output.pages)}")
+            except Exception as e:
+                print(f"Model test failed: {e}")
+                raise
         
         # Get model information
         model_info = {
@@ -568,26 +627,33 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
             "pretrained": det_config["pretrained"],
             "device": str(device),
             "min_size": det_config["min_size"],
-            "max_size": det_config["max_size"]
+            "max_size": det_config["max_size"],
+            "det_thresh": 0.3,
+            "det_box_thresh": 0.3,
+            "reco_thresh": 0.3
         }
         
         # Log model details
-        logger.info(f"Model architecture: {model_name}")
-        logger.info(f"Recognition model: {reco_name}")
-        logger.info(f"Pretrained: {det_config['pretrained']}")
-        logger.info(f"Input size range: {det_config['min_size']} - {det_config['max_size']}")
+        print("\nModel Configuration:")
+        print(f"Model architecture: {model_name}")
+        print(f"Recognition model: {reco_name}")
+        print(f"Pretrained: {det_config['pretrained']}")
+        print(f"Input size range: {det_config['min_size']} - {det_config['max_size']}")
+        print(f"Detection threshold: 0.3")
+        print(f"Recognition threshold: 0.3")
         
         # Log memory usage if using CUDA
         if device.type == "cuda":
             memory_allocated = torch.cuda.memory_allocated(device) / (1024**2)  # Convert to MB
             memory_reserved = torch.cuda.memory_reserved(device) / (1024**2)    # Convert to MB
-            logger.info(f"GPU Memory allocated: {memory_allocated:.2f} MB")
-            logger.info(f"GPU Memory reserved: {memory_reserved:.2f} MB")
+            print(f"\nGPU Memory Usage:")
+            print(f"Allocated: {memory_allocated:.2f} MB")
+            print(f"Reserved: {memory_reserved:.2f} MB")
         
         return detection_model, model_info
         
     except Exception as e:
-        logger.error(f"Error initializing detection model: {e}")
+        print(f"Error initializing detection model: {e}")
         raise
 
 # %%
@@ -617,8 +683,8 @@ def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
         model_name = reco_config["name"]
         
         # Log model initialization
-        logger.info(f"Initializing recognition model: {model_name}")
-        logger.info(f"Using device: {device}")
+        print(f"\nInitializing recognition model: {model_name}")
+        print(f"Using device: {device}")
         
         # Initialize recognition model with specific architecture
         from doctr.models import recognition_predictor
@@ -640,21 +706,21 @@ def initialize_recognition_model(config: dict, device: torch.device) -> tuple:
         }
         
         # Log model details
-        logger.info(f"Model architecture: {model_name}")
-        logger.info(f"Pretrained: {reco_config['pretrained']}")
-        logger.info(f"Vocabulary size: {len(reco_config['vocab'])}")
+        print(f"Model architecture: {model_name}")
+        print(f"Pretrained: {reco_config['pretrained']}")
+        print(f"Vocabulary size: {len(reco_config['vocab'])}")
         
         # Log memory usage if using CUDA
         if device.type == "cuda":
             memory_allocated = torch.cuda.memory_allocated(device) / (1024**2)  # Convert to MB
             memory_reserved = torch.cuda.memory_reserved(device) / (1024**2)    # Convert to MB
-            logger.info(f"GPU Memory allocated: {memory_allocated:.2f} MB")
-            logger.info(f"GPU Memory reserved: {memory_reserved:.2f} MB")
+            print(f"GPU Memory allocated: {memory_allocated:.2f} MB")
+            print(f"GPU Memory reserved: {memory_reserved:.2f} MB")
         
         return recognition_model, model_info
         
     except Exception as e:
-        logger.error(f"Error initializing recognition model: {e}")
+        print(f"Error initializing recognition model: {e}")
         raise
 
 # %%
@@ -676,7 +742,7 @@ def warm_up_model(model: ocr_predictor, config: dict) -> None:
         config (dict): Model configuration
     """
     try:
-        logger.info("Warming up model...")
+        print("Warming up model...")
         
         # Create a dummy input image (white background)
         dummy_image = Image.new('RGB', (config["model"]["detection"]["min_size"], 
@@ -694,10 +760,10 @@ def warm_up_model(model: ocr_predictor, config: dict) -> None:
         with torch.no_grad():
             _ = model(dummy_tensor)
         
-        logger.info("Model warm-up completed successfully")
+        print("Model warm-up completed successfully")
         
     except Exception as e:
-        logger.error(f"Error during model warm-up: {e}")
+        print(f"Error during model warm-up: {e}")
         raise
 
 # %%
@@ -878,13 +944,26 @@ def create_postprocessing_pipeline() -> dict:
         """
         # Get all text blocks with their positions
         blocks = []
-        for page in detection_result.pages:
-            for block in page.blocks:
+        print("\nProcessing detection results:")
+        print(f"Number of pages: {len(detection_result.pages)}")
+        
+        for page_idx, page in enumerate(detection_result.pages):
+            print(f"\nProcessing page {page_idx + 1}:")
+            print(f"Number of blocks: {len(page.blocks)}")
+            
+            for block_idx, block in enumerate(page.blocks):
                 # Get all words and their confidences
                 words = []
                 confidences = []
-                for line in block.lines:
-                    for word in line.words:
+                
+                print(f"\nBlock {block_idx + 1}:")
+                print(f"Geometry: {block.geometry}")
+                print(f"Confidence: {block.confidence}")
+                
+                for line_idx, line in enumerate(block.lines):
+                    print(f"  Line {line_idx + 1}:")
+                    for word_idx, word in enumerate(line.words):
+                        print(f"    Word {word_idx + 1}: {word.value} (conf: {word.confidence:.2f})")
                         words.append(word.value)
                         confidences.append(word.confidence)
                 
@@ -903,12 +982,15 @@ def create_postprocessing_pipeline() -> dict:
                         'line_id': getattr(block, 'line_id', -1),  # Get line ID if available
                         'block_id': getattr(block, 'block_id', -1)  # Get block ID if available
                     })
+                    print(f"  Added block with text: {text}")
         
         # Sort blocks by vertical position (top to bottom)
         blocks.sort(key=lambda x: x['bbox'][1])
         
         # Find key-value pairs
-        extracted_data = {}
+        extracted_data = {
+            'raw_blocks': blocks  # Store all blocks for debugging
+        }
         i = 0
         while i < len(blocks):
             current_block = blocks[i]
@@ -931,6 +1013,7 @@ def create_postprocessing_pipeline() -> dict:
                             extracted_data['work_order'] = value
                             extracted_data['work_order_confidence'] = confidence
                             extracted_data['work_order_line_id'] = current_block.get('line_id', -1)
+                            print(f"Found work order: {value} (conf: {confidence:.2f})")
                         elif any(keyword in text for keyword in ['total', 'amount', 'cost']):
                             try:
                                 # Clean the value string by removing currency symbols and handling commas
@@ -940,12 +1023,14 @@ def create_postprocessing_pipeline() -> dict:
                                 extracted_data['total_cost'] = value_float
                                 extracted_data['total_cost_confidence'] = confidence
                                 extracted_data['total_cost_line_id'] = current_block.get('line_id', -1)
+                                print(f"Found total cost: {value_float} (conf: {confidence:.2f})")
                             except ValueError as e:
                                 logger.warning(f"Could not convert cost value '{value}': {str(e)}")
                                 # Store the original string value if conversion fails
                                 extracted_data['total_cost'] = value
                                 extracted_data['total_cost_confidence'] = confidence
                                 extracted_data['total_cost_line_id'] = current_block.get('line_id', -1)
+                                print(f"Found total cost (as string): {value} (conf: {confidence:.2f})")
             
             i += 1
         
@@ -1125,21 +1210,48 @@ def test_single_image(
             detection_result = detection_model(processed_image)
         processing_time = time.time() - start_time
         
+        # Print raw model output
+        print("\n" + "="*50)
+        print("RAW MODEL OUTPUT")
+        print("="*50)
+        print(f"\nNumber of pages detected: {len(detection_result.pages)}")
+        
+        for page_idx, page in enumerate(detection_result.pages):
+            print(f"\nPage {page_idx + 1}:")
+            print(f"Number of blocks: {len(page.blocks)}")
+            
+            for block_idx, block in enumerate(page.blocks):
+                print(f"\nBlock {block_idx + 1}:")
+                print(f"Block confidence: {block.confidence:.3f}")
+                print(f"Block geometry: {block.geometry}")
+                print(f"Number of lines: {len(block.lines)}")
+                
+                for line_idx, line in enumerate(block.lines):
+                    print(f"\n  Line {line_idx + 1}:")
+                    print(f"  Line confidence: {line.confidence:.3f}")
+                    print(f"  Line geometry: {line.geometry}")
+                    print(f"  Number of words: {len(line.words)}")
+                    
+                    for word_idx, word in enumerate(line.words):
+                        print(f"    Word {word_idx + 1}:")
+                        print(f"    Text: {word.value}")
+                        print(f"    Confidence: {word.confidence:.3f}")
+                        print(f"    Geometry: {word.geometry}")
+        
+        print("\n" + "="*50)
+        print("POST-PROCESSING RESULTS")
+        print("="*50)
+        
         # Process results
         extracted_data = postprocessing_pipeline["find_key_value_pairs"](detection_result)
         formatted_output = postprocessing_pipeline["format_output"](extracted_data)
         
-        # Log results
+        # Print results
         print(f"\nProcessing time: {processing_time:.2f} seconds")
         print("\nExtracted Data:")
         print(json.dumps(formatted_output, indent=2))
         
         # Print results in a more readable format
-        print("\n" + "="*50)
-        print("OCR RESULTS")
-        print("="*50)
-        print(f"\nProcessing Time: {processing_time:.2f} seconds")
-        
         print("\nExtracted Fields:")
         print("-"*30)
         if formatted_output.get('work_order'):
@@ -1153,16 +1265,6 @@ def test_single_image(
             print(f"Confidence: {formatted_output.get('total_cost_confidence', 0.0):.2f}")
         else:
             print("\nTotal Cost: Not found")
-            
-        print("\nRaw Blocks:")
-        print("-"*30)
-        for block in formatted_output.get('raw_blocks', []):
-            print(f"Text: {block.get('text', '')}")
-            print(f"Confidence: {block.get('confidence', 0.0):.2f}")
-            print(f"Position: {block.get('bbox', [])}")
-            print("-"*20)
-        
-        print("\n" + "="*50)
         
         # Create visualization using display image
         plt.figure(figsize=(12, 8))
@@ -1176,7 +1278,6 @@ def test_single_image(
         for page in detection_result.pages:
             for block in page.blocks:
                 # Get block coordinates
-                # Geometry is in format [x1, y1, x2, y2]
                 if isinstance(block.geometry, (list, tuple)) and len(block.geometry) == 4:
                     x1, y1, x2, y2 = block.geometry
                     # Scale coordinates to display image size
@@ -1184,50 +1285,20 @@ def test_single_image(
                     y1 = y1 * display_height / model_height
                     x2 = x2 * display_width / model_width
                     y2 = y2 * display_height / model_height
-                    print(f"Block geometry (scaled): [{x1}, {y1}, {x2}, {y2}]")
-                else:
-                    try:
-                        # Get all word coordinates
-                        word_coords = []
-                        for line in block.lines:
-                            for word in line.words:
-                                if isinstance(word.geometry, (list, tuple)) and len(word.geometry) == 4:
-                                    # Scale coordinates to display image size
-                                    x1, y1, x2, y2 = word.geometry
-                                    x1 = x1 * display_width / model_width
-                                    y1 = y1 * display_height / model_height
-                                    x2 = x2 * display_width / model_width
-                                    y2 = y2 * display_height / model_height
-                                    word_coords.append([x1, y1, x2, y2])
-                        
-                        if word_coords:
-                            # Calculate block bounding box from word coordinates
-                            x1 = min(coord[0] for coord in word_coords)
-                            y1 = min(coord[1] for coord in word_coords)
-                            x2 = max(coord[2] for coord in word_coords)
-                            y2 = max(coord[3] for coord in word_coords)
-                            print(f"Block geometry (calculated): [{x1}, {y1}, {x2}, {y2}]")
-                        else:
-                            print("No word coordinates found for block")
-                            continue
-                    except Exception as e:
-                        print(f"Could not process block geometry: {e}")
-                        continue
-                
-                # Draw rectangle
-                rect = plt.Rectangle(
-                    (x1, y1), x2 - x1, y2 - y1,
-                    fill=False, color='red', linewidth=2
-                )
-                plt.gca().add_patch(rect)
-                
-                # Get text from all words in all lines in the block
-                block_text = " ".join(
-                    word.value for line in block.lines 
-                    for word in line.words
-                )
-                text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
-                print(f"Block text: {block_text}")
+                    
+                    # Draw rectangle
+                    rect = plt.Rectangle(
+                        (x1, y1), x2 - x1, y2 - y1,
+                        fill=False, color='red', linewidth=2
+                    )
+                    plt.gca().add_patch(rect)
+                    
+                    # Get text from all words in all lines in the block
+                    block_text = " ".join(
+                        word.value for line in block.lines 
+                        for word in line.words
+                    )
+                    text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
         
         # Add text box with extracted information
         text_box = "\n".join(text_info)
@@ -1243,7 +1314,7 @@ def test_single_image(
         return formatted_output
         
     except Exception as e:
-        logger.error(f"Error processing image: {e}")
+        print(f"Error processing image: {e}")
         raise
 
 # %%
