@@ -1040,8 +1040,13 @@ def test_single_image(
     try:
         # Load and display original image
         original_image = Image.open(image_path)
+        # Convert to RGB if not already
+        if original_image.mode != 'RGB':
+            original_image = original_image.convert('RGB')
+            
         logger.info(f"\nProcessing image: {image_path}")
         logger.info(f"Original image size: {original_image.size}")
+        logger.info(f"Image mode: {original_image.mode}")
         
         # Create a copy for display
         display_image = original_image.copy()
@@ -1050,11 +1055,22 @@ def test_single_image(
         
         # Preprocess image for model
         processed_image = preprocessing_pipeline(original_image)
+        logger.info(f"Processed image shape before unsqueeze: {processed_image.shape}")
+        
+        # Ensure the processed image has the correct shape [B, C, H, W]
+        if len(processed_image.shape) == 3:
+            processed_image = processed_image.unsqueeze(0)  # Add batch dimension if needed
+            logger.info(f"Processed image shape after unsqueeze: {processed_image.shape}")
+        
+        # Move to device if using CUDA
+        if torch.cuda.is_available():
+            processed_image = processed_image.cuda()
         
         # Run detection and recognition
         logger.info("Running detection and recognition...")
         start_time = time.time()
-        detection_result = detection_model(processed_image)
+        with torch.no_grad():
+            detection_result = detection_model(processed_image)
         processing_time = time.time() - start_time
         
         # Process results
@@ -1112,7 +1128,7 @@ def test_single_image(
 
 # %%
 # Test with a sample image
-test_image_path = ROOT_DIR / "test_images" / "sample_invoice.jpg"
+test_image_path = ROOT_DIR / "data" / "images" / "1017.jpg"
 if test_image_path.exists():
     results = test_single_image(
         str(test_image_path),
@@ -1122,7 +1138,7 @@ if test_image_path.exists():
     )
 else:
     logger.warning(f"Test image not found at {test_image_path}")
-    logger.info("Please place a test image in the test_images directory.")
+    logger.info("Please ensure the image file exists at the specified path.")
 
 # %% [markdown]
 """
