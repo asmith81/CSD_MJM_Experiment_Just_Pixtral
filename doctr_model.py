@@ -775,11 +775,13 @@ def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Ten
         new_size = (int(image.width * ratio), int(image.height * ratio))
         print(f"Resizing to: {new_size}")
         
-        # Resize image while maintaining aspect ratio
-        image = image.resize(new_size, Image.Resampling.LANCZOS)
+        # Create a copy and resize it
+        resized_image = image.copy()
+        resized_image = resized_image.resize(new_size, Image.Resampling.LANCZOS)
+        print(f"Resized image size: {resized_image.size}")
         
-        # Apply transforms
-        processed = pipeline(image)
+        # Apply transforms to the resized image
+        processed = pipeline(resized_image)
         
         # Print processed tensor info
         print(f"Processed shape: {processed.shape}")
