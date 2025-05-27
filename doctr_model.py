@@ -853,28 +853,29 @@ def create_postprocessing_pipeline() -> dict:
         text = ' '.join(text.split())
         return text.strip()
 
-    def find_key_value_pairs(detection_result: dict) -> dict:
+    def find_key_value_pairs(detection_result) -> dict:
         """
         Find key-value pairs in the detection result based on spatial relationships.
         
         Args:
-            detection_result (dict): docTR detection model output
+            detection_result: docTR Document object containing detection results
         
         Returns:
             dict: Extracted key-value pairs
         """
         # Get all text blocks with their positions
         blocks = []
-        for block in detection_result['blocks']:
-            text = clean_text(block['text'])
-            if text:  # Only include non-empty blocks
-                blocks.append({
-                    'text': text,
-                    'bbox': block['geometry'],  # [x1, y1, x2, y2]
-                    'confidence': block['confidence'],
-                    'line_id': block.get('line_id', -1),  # Get line ID if available
-                    'block_id': block.get('block_id', -1)  # Get block ID if available
-                })
+        for page in detection_result.pages:
+            for block in page.blocks:
+                text = clean_text(block.text)
+                if text:  # Only include non-empty blocks
+                    blocks.append({
+                        'text': text,
+                        'bbox': block.geometry,  # [x1, y1, x2, y2]
+                        'confidence': block.confidence,
+                        'line_id': getattr(block, 'line_id', -1),  # Get line ID if available
+                        'block_id': getattr(block, 'block_id', -1)  # Get block ID if available
+                    })
         
         # Sort blocks by vertical position (top to bottom)
         blocks.sort(key=lambda x: x['bbox'][1])
