@@ -1077,10 +1077,14 @@ def test_single_image(
         scale_y = max_display_size[1] / original_image.height
         scale_factor = min(scale_x, scale_y)  # Use the smaller scale to maintain aspect ratio
         
+        logger.debug(f"Original image size: {original_image.size}")
+        logger.debug(f"Scale factors - x: {scale_x:.3f}, y: {scale_y:.3f}, final: {scale_factor:.3f}")
+        
         # Resize for display while maintaining aspect ratio
         new_width = int(original_image.width * scale_factor)
         new_height = int(original_image.height * scale_factor)
         display_image = display_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        logger.debug(f"Resized image size: {display_image.size}")
         
         # Preprocess image for model
         processed_image = preprocessing_pipeline(original_image)
@@ -1111,6 +1115,36 @@ def test_single_image(
         logger.info("\nExtracted Data:")
         logger.info(json.dumps(formatted_output, indent=2))
         
+        # Print results in a more readable format
+        print("\n" + "="*50)
+        print("OCR RESULTS")
+        print("="*50)
+        print(f"\nProcessing Time: {processing_time:.2f} seconds")
+        
+        print("\nExtracted Fields:")
+        print("-"*30)
+        if formatted_output.get('work_order'):
+            print(f"Work Order: {formatted_output['work_order']}")
+            print(f"Confidence: {formatted_output.get('work_order_confidence', 0.0):.2f}")
+        else:
+            print("Work Order: Not found")
+            
+        if formatted_output.get('total_cost'):
+            print(f"\nTotal Cost: {formatted_output['total_cost']}")
+            print(f"Confidence: {formatted_output.get('total_cost_confidence', 0.0):.2f}")
+        else:
+            print("\nTotal Cost: Not found")
+            
+        print("\nRaw Blocks:")
+        print("-"*30)
+        for block in formatted_output.get('raw_blocks', []):
+            print(f"Text: {block.get('text', '')}")
+            print(f"Confidence: {block.get('confidence', 0.0):.2f}")
+            print(f"Position: {block.get('bbox', [])}")
+            print("-"*20)
+        
+        print("\n" + "="*50)
+        
         # Create visualization
         plt.figure(figsize=(12, 8))
         plt.imshow(display_image)
@@ -1119,12 +1153,14 @@ def test_single_image(
         
         # Add extracted text as annotation
         text_info = []
+        logger.debug("\nProcessing blocks for visualization:")
         for page in detection_result.pages:
             for block in page.blocks:
                 # Get block coordinates
                 # Geometry is in format [x1, y1, x2, y2]
                 if isinstance(block.geometry, (list, tuple)) and len(block.geometry) == 4:
                     x1, y1, x2, y2 = block.geometry
+                    logger.debug(f"Block geometry (direct): {block.geometry}")
                 else:
                     # If geometry is in a different format, try to get bounding box
                     try:
@@ -1141,20 +1177,24 @@ def test_single_image(
                             y1 = min(coord[1] for coord in word_coords)
                             x2 = max(coord[2] for coord in word_coords)
                             y2 = max(coord[3] for coord in word_coords)
+                            logger.debug(f"Block geometry (calculated): [{x1}, {y1}, {x2}, {y2}]")
+                            logger.debug(f"Word coordinates used: {word_coords}")
                         else:
                             # Skip this block if we can't get coordinates
+                            logger.debug("No word coordinates found for block")
                             continue
                     except Exception as e:
                         logger.warning(f"Could not process block geometry: {e}")
                         continue
                 
                 # Scale coordinates to match the resized display image
-                x1, x2 = x1 * scale_factor, x2 * scale_factor
-                y1, y2 = y1 * scale_factor, y2 * scale_factor
+                x1_scaled, x2_scaled = x1 * scale_factor, x2 * scale_factor
+                y1_scaled, y2_scaled = y1 * scale_factor, y2 * scale_factor
+                logger.debug(f"Scaled coordinates: [{x1_scaled:.1f}, {y1_scaled:.1f}, {x2_scaled:.1f}, {y2_scaled:.1f}]")
                 
                 # Draw rectangle
                 rect = plt.Rectangle(
-                    (x1, y1), x2 - x1, y2 - y1,
+                    (x1_scaled, y1_scaled), x2_scaled - x1_scaled, y2_scaled - y1_scaled,
                     fill=False, color='red', linewidth=2
                 )
                 plt.gca().add_patch(rect)
@@ -1165,6 +1205,7 @@ def test_single_image(
                     for word in line.words
                 )
                 text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
+                logger.debug(f"Block text: {block_text}")
         
         # Add text box with extracted information
         text_box = "\n".join(text_info)
