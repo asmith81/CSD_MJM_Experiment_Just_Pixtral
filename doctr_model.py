@@ -867,8 +867,11 @@ def create_postprocessing_pipeline() -> dict:
         blocks = []
         for page in detection_result.pages:
             for block in page.blocks:
-                # Combine text from all lines in the block
-                block_text = " ".join(line.text for line in block.lines)
+                # Combine text from all words in all lines in the block
+                block_text = " ".join(
+                    word.value for line in block.lines 
+                    for word in line.words
+                )
                 text = clean_text(block_text)
                 if text:  # Only include non-empty blocks
                     blocks.append({
@@ -1119,8 +1122,11 @@ def test_single_image(
                 )
                 plt.gca().add_patch(rect)
                 
-                # Get text from all lines in the block
-                block_text = " ".join(line.text for line in block.lines)
+                # Get text from all words in all lines in the block
+                block_text = " ".join(
+                    word.value for line in block.lines 
+                    for word in line.words
+                )
                 text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
         
         # Add text box with extracted information
