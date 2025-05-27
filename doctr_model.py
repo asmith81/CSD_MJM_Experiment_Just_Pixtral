@@ -867,17 +867,26 @@ def create_postprocessing_pipeline() -> dict:
         blocks = []
         for page in detection_result.pages:
             for block in page.blocks:
-                # Combine text from all words in all lines in the block
-                block_text = " ".join(
-                    word.value for line in block.lines 
-                    for word in line.words
-                )
+                # Get all words and their confidences
+                words = []
+                confidences = []
+                for line in block.lines:
+                    for word in line.words:
+                        words.append(word.value)
+                        confidences.append(word.confidence)
+                
+                # Combine text from all words
+                block_text = " ".join(words)
                 text = clean_text(block_text)
+                
                 if text:  # Only include non-empty blocks
+                    # Calculate average confidence for the block
+                    avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
+                    
                     blocks.append({
                         'text': text,
                         'bbox': block.geometry,  # [x1, y1, x2, y2]
-                        'confidence': block.confidence,
+                        'confidence': avg_confidence,
                         'line_id': getattr(block, 'line_id', -1),  # Get line ID if available
                         'block_id': getattr(block, 'block_id', -1)  # Get block ID if available
                     })
