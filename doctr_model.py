@@ -731,14 +731,6 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
             # Convert PIL Image to tensor
             transforms.ToTensor(),
             
-            # Resize transform with preserve_aspect_ratio
-            Resize(
-                preprocess_config["resize"]["min_size"],
-                interpolation=2,  # BILINEAR
-                preserve_aspect_ratio=True,
-                symmetric_pad=True
-            ),
-            
             # Normalize transform with proper mean/std values
             transforms.Normalize(
                 mean=preprocess_config["normalize"]["mean"],
@@ -751,14 +743,13 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
         pipeline = transforms.Compose(transform_list)
         
         # Log pipeline configuration
-        logger.info("\nPreprocessing Pipeline Configuration:")
-        logger.info(f"Resize: {preprocess_config['resize']['min_size']}")
-        logger.info(f"Normalize: mean={preprocess_config['normalize']['mean']}, std={preprocess_config['normalize']['std']}")
+        print("\nPreprocessing Pipeline Configuration:")
+        print(f"Normalize: mean={preprocess_config['normalize']['mean']}, std={preprocess_config['normalize']['std']}")
         
         return pipeline
         
     except Exception as e:
-        logger.error(f"Error creating preprocessing pipeline: {e}")
+        print(f"Error creating preprocessing pipeline: {e}")
         raise
 
 def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Tensor:
@@ -773,17 +764,27 @@ def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Ten
         torch.Tensor: Processed image tensor
     """
     try:
+        # Print original image info
+        print(f"\nProcessing image:")
+        print(f"Original size: {image.size}")
+        print(f"Original mode: {image.mode}")
+        
         # Apply transforms
         processed = pipeline(image)
+        
+        # Print processed tensor info
+        print(f"Processed shape: {processed.shape}")
+        print(f"Value range: [{processed.min():.3f}, {processed.max():.3f}]")
         
         # Add batch dimension if needed
         if len(processed.shape) == 3:
             processed = processed.unsqueeze(0)
+            print(f"Final shape: {processed.shape}")
         
         return processed
         
     except Exception as e:
-        logger.error(f"Error processing image: {e}")
+        print(f"Error processing image: {e}")
         raise
 
 # %%
@@ -1107,22 +1108,6 @@ def test_single_image(
         with torch.no_grad():
             detection_result = detection_model(processed_image)
         processing_time = time.time() - start_time
-        
-        # Debug model output
-        print("\nModel Output Structure:")
-        print(f"Number of pages: {len(detection_result.pages)}")
-        for i, page in enumerate(detection_result.pages):
-            print(f"\nPage {i+1}:")
-            print(f"Number of blocks: {len(page.blocks)}")
-            for j, block in enumerate(page.blocks):
-                print(f"\nBlock {j+1}:")
-                print(f"Geometry: {block.geometry}")
-                print(f"Number of lines: {len(block.lines)}")
-                for k, line in enumerate(block.lines):
-                    print(f"Line {k+1}:")
-                    print(f"Number of words: {len(line.words)}")
-                    for word in line.words:
-                        print(f"Word: {word.value}, Confidence: {word.confidence:.2f}, Geometry: {word.geometry}")
         
         # Process results
         extracted_data = postprocessing_pipeline["find_key_value_pairs"](detection_result)
