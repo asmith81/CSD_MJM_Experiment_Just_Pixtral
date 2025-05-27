@@ -867,7 +867,9 @@ def create_postprocessing_pipeline() -> dict:
         blocks = []
         for page in detection_result.pages:
             for block in page.blocks:
-                text = clean_text(block.text)
+                # Combine text from all lines in the block
+                block_text = " ".join(line.text for line in block.lines)
+                text = clean_text(block_text)
                 if text:  # Only include non-empty blocks
                     blocks.append({
                         'text': text,
@@ -963,40 +965,47 @@ postprocessing_pipeline = create_postprocessing_pipeline()
 # %%
 def test_postprocessing_pipeline(pipeline: dict) -> None:
     """
-    Test the post-processing pipeline with sample detection result.
+    Test the post-processing pipeline with a simulated docTR Document object.
     
     Args:
         pipeline (dict): Post-processing pipeline functions
     """
     try:
-        # Sample detection result (simulating docTR output)
-        sample_result = {
-            'blocks': [
-                {
-                    'text': 'Work Order:',
-                    'geometry': [100, 100, 200, 130],
-                    'confidence': 0.95
-                },
-                {
-                    'text': '12345',
-                    'geometry': [210, 100, 280, 130],
-                    'confidence': 0.98
-                },
-                {
-                    'text': 'Total Amount:',
-                    'geometry': [100, 150, 200, 180],
-                    'confidence': 0.94
-                },
-                {
-                    'text': '$1,234.56',
-                    'geometry': [210, 150, 280, 180],
-                    'confidence': 0.97
-                }
-            ]
-        }
+        # Create a simulated docTR Document object
+        from doctr.documents import Document, Page, Block, Line, Word
+        
+        # Create words
+        words = [
+            Word("Work", 0.95, [100, 100, 150, 120]),
+            Word("Order:", 0.94, [160, 100, 200, 120]),
+            Word("12345", 0.98, [210, 100, 280, 120]),
+            Word("Total", 0.93, [100, 150, 150, 170]),
+            Word("Amount:", 0.94, [160, 150, 220, 170]),
+            Word("$1,234.56", 0.97, [230, 150, 300, 170])
+        ]
+        
+        # Create lines
+        lines = [
+            Line([words[0], words[1]], 0.95, [100, 100, 200, 120]),
+            Line([words[2]], 0.98, [210, 100, 280, 120]),
+            Line([words[3], words[4]], 0.94, [100, 150, 220, 170]),
+            Line([words[5]], 0.97, [230, 150, 300, 170])
+        ]
+        
+        # Create blocks
+        blocks = [
+            Block([lines[0], lines[1]], 0.96, [100, 100, 280, 120]),
+            Block([lines[2], lines[3]], 0.95, [100, 150, 300, 170])
+        ]
+        
+        # Create page
+        page = Page(blocks, [0, 0, 800, 600])
+        
+        # Create document
+        doc = Document([page])
         
         # Process detection result
-        extracted_data = pipeline["find_key_value_pairs"](sample_result)
+        extracted_data = pipeline["find_key_value_pairs"](doc)
         logger.info("\nPost-processing Pipeline Test:")
         logger.info(f"Extracted data: {json.dumps(extracted_data, indent=2)}")
         
@@ -1091,24 +1100,28 @@ def test_single_image(
         
         # Add extracted text as annotation
         text_info = []
-        for block in detection_result['blocks']:
-            # Scale coordinates to display image size
-            scale_x = display_image.width / original_image.width
-            scale_y = display_image.height / original_image.height
-            
-            x1, y1, x2, y2 = block['geometry']
-            x1, x2 = x1 * scale_x, x2 * scale_x
-            y1, y2 = y1 * scale_y, y2 * scale_y
-            
-            # Draw rectangle
-            rect = plt.Rectangle(
-                (x1, y1), x2 - x1, y2 - y1,
-                fill=False, color='red', linewidth=2
-            )
-            plt.gca().add_patch(rect)
-            
-            # Add text
-            text_info.append(f"Text: {block['text']}\nConf: {block['confidence']:.2f}")
+        for page in detection_result.pages:
+            for block in page.blocks:
+                # Get block coordinates
+                x1, y1, x2, y2 = block.geometry
+                
+                # Scale coordinates to display image size
+                scale_x = display_image.width / original_image.width
+                scale_y = display_image.height / original_image.height
+                
+                x1, x2 = x1 * scale_x, x2 * scale_x
+                y1, y2 = y1 * scale_y, y2 * scale_y
+                
+                # Draw rectangle
+                rect = plt.Rectangle(
+                    (x1, y1), x2 - x1, y2 - y1,
+                    fill=False, color='red', linewidth=2
+                )
+                plt.gca().add_patch(rect)
+                
+                # Get text from all lines in the block
+                block_text = " ".join(line.text for line in block.lines)
+                text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
         
         # Add text box with extracted information
         text_box = "\n".join(text_info)
