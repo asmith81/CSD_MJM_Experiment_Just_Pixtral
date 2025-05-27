@@ -733,9 +733,8 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
             
             # Resize transform with preserve_aspect_ratio
             Resize(
-                target_size=(preprocess_config["resize"]["min_size"], preprocess_config["resize"]["max_size"]),
-                preserve_aspect_ratio=True,
-                symmetric_pad=True  # Add padding to maintain aspect ratio
+                preprocess_config["resize"]["min_size"],
+                preprocess_config["resize"]["max_size"]
             ),
             
             # Normalize transform with proper mean/std values
