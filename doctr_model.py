@@ -705,10 +705,6 @@ def warm_up_model(model: ocr_predictor, config: dict) -> None:
 warm_up_model(detection_model, config)
 warm_up_model(recognition_model, config)
 
-# Print model summaries
-print_model_summary(detection_info)
-print_model_summary(recognition_info)
-
 # %% [markdown]
 """
 ## Image Processing Configuration
@@ -737,8 +733,7 @@ def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
             
             # Resize transform with preserve_aspect_ratio
             Resize(
-                min_size=preprocess_config["resize"]["min_size"],
-                max_size=preprocess_config["resize"]["max_size"],
+                target_size=(preprocess_config["resize"]["min_size"], preprocess_config["resize"]["max_size"]),
                 preserve_aspect_ratio=True,
                 symmetric_pad=True  # Add padding to maintain aspect ratio
             ),
