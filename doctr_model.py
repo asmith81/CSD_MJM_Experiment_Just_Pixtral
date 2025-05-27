@@ -905,13 +905,19 @@ def create_postprocessing_pipeline() -> dict:
                             extracted_data['work_order_line_id'] = current_block.get('line_id', -1)
                         elif any(keyword in text for keyword in ['total', 'amount', 'cost']):
                             try:
-                                # Convert to float, handling different decimal separators
-                                value = float(value.replace('$', '').replace(',', '.').strip())
+                                # Clean the value string by removing currency symbols and handling commas
+                                cleaned_value = value.replace('$', '').replace(',', '').strip()
+                                # Convert to float
+                                value_float = float(cleaned_value)
+                                extracted_data['total_cost'] = value_float
+                                extracted_data['total_cost_confidence'] = confidence
+                                extracted_data['total_cost_line_id'] = current_block.get('line_id', -1)
+                            except ValueError as e:
+                                logger.warning(f"Could not convert cost value '{value}': {str(e)}")
+                                # Store the original string value if conversion fails
                                 extracted_data['total_cost'] = value
                                 extracted_data['total_cost_confidence'] = confidence
                                 extracted_data['total_cost_line_id'] = current_block.get('line_id', -1)
-                            except ValueError:
-                                logger.warning(f"Could not convert cost value: {value}")
             
             i += 1
         
