@@ -44,6 +44,7 @@ import time
 import json
 import logging
 from datetime import datetime
+import gc
 
 # External dependencies
 import yaml
@@ -547,53 +548,14 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         print(f"Using recognition model: {reco_name}")
         print(f"Using device: {device}")
         
-        # Verify model availability
-        from doctr.models import detection_predictor, recognition_predictor
-        print("\nVerifying model availability...")
-        
-        # Check detection model
-        try:
-            det_model = detection_predictor(
-                arch=model_name,
-                pretrained=det_config["pretrained"]
-            )
-            print(f"✓ Detection model '{model_name}' loaded successfully")
-            print(f"Detection model type: {type(det_model)}")
-            print(f"Detection model device: {next(det_model.parameters()).device}")
-        except Exception as e:
-            print(f"Failed to load detection model: {e}")
-            raise
-        
-        # Check recognition model
-        try:
-            reco_model = recognition_predictor(
-                arch=reco_name,
-                pretrained=reco_config["pretrained"]
-            )
-            print(f"✓ Recognition model '{reco_name}' loaded successfully")
-            print(f"Recognition model type: {type(reco_model)}")
-            print(f"Recognition model device: {next(reco_model.parameters()).device}")
-        except Exception as e:
-            print(f"Failed to load recognition model: {e}")
-            raise
-        
         # Initialize combined OCR model
         print("\nInitializing combined OCR model...")
         detection_model = ocr_predictor(
             det_arch=model_name,
             reco_arch=reco_name,
-            pretrained=det_config["pretrained"],
+            pretrained=True,
             assume_straight_pages=True,
-            export_as_straight_boxes=True,
-            det_bs=1,
-            reco_bs=1,
-            det_thresh=0.3,
-            det_box_thresh=0.3,
-            det_min_size=10,
-            det_max_size=2048,
-            det_rotated=False,
-            det_use_polygons=False,
-            reco_thresh=0.3
+            export_as_straight_boxes=True
         )
         
         # Move model to specified device
@@ -624,23 +586,15 @@ def initialize_detection_model(config: dict, device: torch.device) -> tuple:
         model_info = {
             "name": model_name,
             "recognition_model": reco_name,
-            "pretrained": det_config["pretrained"],
-            "device": str(device),
-            "min_size": det_config["min_size"],
-            "max_size": det_config["max_size"],
-            "det_thresh": 0.3,
-            "det_box_thresh": 0.3,
-            "reco_thresh": 0.3
+            "pretrained": True,
+            "device": str(device)
         }
         
         # Log model details
         print("\nModel Configuration:")
         print(f"Model architecture: {model_name}")
         print(f"Recognition model: {reco_name}")
-        print(f"Pretrained: {det_config['pretrained']}")
-        print(f"Input size range: {det_config['min_size']} - {det_config['max_size']}")
-        print(f"Detection threshold: 0.3")
-        print(f"Recognition threshold: 0.3")
+        print(f"Pretrained: True")
         
         # Log memory usage if using CUDA
         if device.type == "cuda":
@@ -778,46 +732,6 @@ warm_up_model(recognition_model, config)
 """
 
 # %%
-def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
-    """
-    Create preprocessing pipeline for document images.
-    
-    Args:
-        config (dict): Model configuration
-    
-    Returns:
-        transforms.Compose: Preprocessing pipeline
-    """
-    try:
-        # Get preprocessing configuration
-        preprocess_config = config["preprocessing"]
-        
-        # Create transforms
-        transform_list = [
-            # Convert PIL Image to tensor
-            transforms.ToTensor(),
-            
-            # Normalize transform with proper mean/std values
-            transforms.Normalize(
-                mean=preprocess_config["normalize"]["mean"],
-                std=preprocess_config["normalize"]["std"],
-                inplace=True  # Perform normalization in-place for efficiency
-            )
-        ]
-        
-        # Create pipeline using torchvision's Compose
-        pipeline = transforms.Compose(transform_list)
-        
-        # Log pipeline configuration
-        print("\nPreprocessing Pipeline Configuration:")
-        print(f"Normalize: mean={preprocess_config['normalize']['mean']}, std={preprocess_config['normalize']['std']}")
-        
-        return pipeline
-        
-    except Exception as e:
-        print(f"Error creating preprocessing pipeline: {e}")
-        raise
-
 def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Tensor:
     """
     Process a single image using the preprocessing pipeline.
@@ -835,20 +749,8 @@ def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Ten
         print(f"Original size: {image.size}")
         print(f"Original mode: {image.mode}")
         
-        # Calculate target size while maintaining aspect ratio
-        # Use model's min_size as target
-        min_size = 1024  # Model's minimum size requirement
-        ratio = min_size / min(image.width, image.height)
-        new_size = (int(image.width * ratio), int(image.height * ratio))
-        print(f"Resizing to: {new_size}")
-        
-        # Create a copy and resize it
-        resized_image = image.copy()
-        resized_image = resized_image.resize(new_size, Image.Resampling.LANCZOS)
-        print(f"Resized image size: {resized_image.size}")
-        
-        # Apply transforms to the resized image
-        processed = pipeline(resized_image)
+        # Convert PIL Image to tensor
+        processed = pipeline(image)
         
         # Print processed tensor info
         print(f"Processed shape: {processed.shape}")
@@ -863,6 +765,43 @@ def process_image(image: Image.Image, pipeline: transforms.Compose) -> torch.Ten
         
     except Exception as e:
         print(f"Error processing image: {e}")
+        raise
+
+def create_preprocessing_pipeline(config: dict) -> transforms.Compose:
+    """
+    Create preprocessing pipeline for document images.
+    
+    Args:
+        config (dict): Model configuration
+    
+    Returns:
+        transforms.Compose: Preprocessing pipeline
+    """
+    try:
+        # Create transforms
+        transform_list = [
+            # Convert PIL Image to tensor
+            transforms.ToTensor(),
+            
+            # Normalize transform with ImageNet mean/std values
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+                inplace=True
+            )
+        ]
+        
+        # Create pipeline using torchvision's Compose
+        pipeline = transforms.Compose(transform_list)
+        
+        # Log pipeline configuration
+        print("\nPreprocessing Pipeline Configuration:")
+        print("Normalize: mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]")
+        
+        return pipeline
+        
+    except Exception as e:
+        print(f"Error creating preprocessing pipeline: {e}")
         raise
 
 # %%
@@ -1137,6 +1076,54 @@ test_postprocessing_pipeline(postprocessing_pipeline)
 """
 
 # %%
+def get_gpu_memory_info():
+    """Get current GPU memory usage."""
+    if torch.cuda.is_available():
+        memory_allocated = torch.cuda.memory_allocated() / (1024**2)  # MB
+        memory_reserved = torch.cuda.memory_reserved() / (1024**2)    # MB
+        memory_free = torch.cuda.get_device_properties(0).total_memory / (1024**2) - memory_allocated  # MB
+        return {
+            'allocated': memory_allocated,
+            'reserved': memory_reserved,
+            'free': memory_free
+        }
+    return None
+
+def clear_gpu_memory():
+    """Clear GPU memory cache."""
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        gc.collect()
+
+def resize_image_for_memory(image: Image.Image, max_size: int = 2048) -> Image.Image:
+    """
+    Resize image to fit within memory constraints while maintaining aspect ratio.
+    
+    Args:
+        image (Image.Image): Input image
+        max_size (int): Maximum dimension size
+    
+    Returns:
+        Image.Image: Resized image
+    """
+    # Get current memory info
+    mem_info = get_gpu_memory_info()
+    if mem_info and mem_info['free'] < 1000:  # If less than 1GB free
+        print(f"Low GPU memory: {mem_info['free']:.2f}MB free")
+        # Calculate new size based on available memory
+        scale_factor = min(1.0, (mem_info['free'] / 2000) ** 0.5)  # Scale down if memory is low
+        max_size = int(max_size * scale_factor)
+        print(f"Scaling down to max_size: {max_size}")
+    
+    # Calculate new dimensions
+    ratio = max_size / max(image.width, image.height)
+    if ratio < 1:  # Only resize if image is larger than max_size
+        new_width = int(image.width * ratio)
+        new_height = int(image.height * ratio)
+        print(f"Resizing image from {image.size} to {(new_width, new_height)}")
+        return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    return image
+
 def test_single_image(
     image_path: str,
     detection_model: ocr_predictor,
@@ -1158,6 +1145,9 @@ def test_single_image(
         dict: Processed results
     """
     try:
+        # Clear GPU memory before processing
+        clear_gpu_memory()
+        
         # Load and display original image
         original_image = Image.open(image_path)
         # Convert to RGB if not already
@@ -1168,15 +1158,16 @@ def test_single_image(
         print(f"Original image size: {original_image.size}")
         print(f"Image mode: {original_image.mode}")
         
-        # Calculate target size for model processing (using model's min_size)
-        min_size = 1024  # Model's minimum size requirement
-        ratio = min_size / min(original_image.width, original_image.height)
-        model_width = int(original_image.width * ratio)
-        model_height = int(original_image.height * ratio)
+        # Check GPU memory before processing
+        mem_info = get_gpu_memory_info()
+        if mem_info:
+            print(f"\nGPU Memory before processing:")
+            print(f"Allocated: {mem_info['allocated']:.2f}MB")
+            print(f"Reserved: {mem_info['reserved']:.2f}MB")
+            print(f"Free: {mem_info['free']:.2f}MB")
         
-        # Create resized image for model processing
-        model_image = original_image.resize((model_width, model_height), Image.Resampling.LANCZOS)
-        print(f"Model image size: {model_image.size}")
+        # Resize image if needed for memory constraints
+        processed_image = resize_image_for_memory(original_image)
         
         # Create display version of the image
         scale_x = max_display_size[0] / original_image.width
@@ -1187,28 +1178,23 @@ def test_single_image(
         display_image = original_image.resize((display_width, display_height), Image.Resampling.LANCZOS)
         print(f"Display image size: {display_image.size}")
         
-        # Preprocess image for model
-        print("\nPreprocessing for model:")
-        processed_image = preprocessing_pipeline(model_image)
-        print(f"Processed image shape before unsqueeze: {processed_image.shape}")
-        print(f"Processed image value range: [{processed_image.min():.3f}, {processed_image.max():.3f}]")
-        
-        # Ensure the processed image has the correct shape [B, C, H, W]
-        if len(processed_image.shape) == 3:
-            processed_image = processed_image.unsqueeze(0)  # Add batch dimension if needed
-            print(f"Processed image shape after unsqueeze: {processed_image.shape}")
-        
-        # Move to device if using CUDA
-        if torch.cuda.is_available():
-            processed_image = processed_image.cuda()
-            print(f"Image moved to device: {processed_image.device}")
-        
         # Run detection and recognition
         print("\nRunning detection and recognition...")
         start_time = time.time()
         with torch.no_grad():
             detection_result = detection_model(processed_image)
         processing_time = time.time() - start_time
+        
+        # Check GPU memory after processing
+        mem_info = get_gpu_memory_info()
+        if mem_info:
+            print(f"\nGPU Memory after processing:")
+            print(f"Allocated: {mem_info['allocated']:.2f}MB")
+            print(f"Reserved: {mem_info['reserved']:.2f}MB")
+            print(f"Free: {mem_info['free']:.2f}MB")
+        
+        # Clear GPU memory after processing
+        clear_gpu_memory()
         
         # Print raw model output
         print("\n" + "="*50)
@@ -1238,78 +1224,11 @@ def test_single_image(
                         print(f"    Confidence: {word.confidence:.3f}")
                         print(f"    Geometry: {word.geometry}")
         
-        print("\n" + "="*50)
-        print("POST-PROCESSING RESULTS")
-        print("="*50)
+        # Process post-processing pipeline
+        image_result = postprocessing_pipeline["find_key_value_pairs"](detection_result)
         
-        # Process results
-        extracted_data = postprocessing_pipeline["find_key_value_pairs"](detection_result)
-        formatted_output = postprocessing_pipeline["format_output"](extracted_data)
-        
-        # Print results
-        print(f"\nProcessing time: {processing_time:.2f} seconds")
-        print("\nExtracted Data:")
-        print(json.dumps(formatted_output, indent=2))
-        
-        # Print results in a more readable format
-        print("\nExtracted Fields:")
-        print("-"*30)
-        if formatted_output.get('work_order'):
-            print(f"Work Order: {formatted_output['work_order']}")
-            print(f"Confidence: {formatted_output.get('work_order_confidence', 0.0):.2f}")
-        else:
-            print("Work Order: Not found")
-            
-        if formatted_output.get('total_cost'):
-            print(f"\nTotal Cost: {formatted_output['total_cost']}")
-            print(f"Confidence: {formatted_output.get('total_cost_confidence', 0.0):.2f}")
-        else:
-            print("\nTotal Cost: Not found")
-        
-        # Create visualization using display image
-        plt.figure(figsize=(12, 8))
-        plt.imshow(display_image)
-        plt.axis('off')
-        plt.title("Processed Image")
-        
-        # Add extracted text as annotation
-        text_info = []
-        print("\nProcessing blocks for visualization:")
-        for page in detection_result.pages:
-            for block in page.blocks:
-                # Get block coordinates
-                if isinstance(block.geometry, (list, tuple)) and len(block.geometry) == 4:
-                    x1, y1, x2, y2 = block.geometry
-                    # Scale coordinates to display image size
-                    x1 = x1 * display_width / model_width
-                    y1 = y1 * display_height / model_height
-                    x2 = x2 * display_width / model_width
-                    y2 = y2 * display_height / model_height
-                    
-                    # Draw rectangle
-                    rect = plt.Rectangle(
-                        (x1, y1), x2 - x1, y2 - y1,
-                        fill=False, color='red', linewidth=2
-                    )
-                    plt.gca().add_patch(rect)
-                    
-                    # Get text from all words in all lines in the block
-                    block_text = " ".join(
-                        word.value for line in block.lines 
-                        for word in line.words
-                    )
-                    text_info.append(f"Text: {block_text}\nConf: {block.confidence:.2f}")
-        
-        # Add text box with extracted information
-        text_box = "\n".join(text_info)
-        plt.figtext(
-            0.02, 0.02, text_box,
-            bbox=dict(facecolor='white', alpha=0.8),
-            fontsize=8
-        )
-        
-        plt.tight_layout()
-        plt.show()
+        # Format output
+        formatted_output = postprocessing_pipeline["format_output"](image_result)
         
         return formatted_output
         
@@ -1396,6 +1315,25 @@ def process_batch(
         
         for i, image_path in enumerate(tqdm.tqdm(image_files, desc="Processing images")):
             try:
+                # Clear GPU memory before processing each image
+                clear_gpu_memory()
+                
+                # Load and process image
+                original_image = Image.open(image_path)
+                if original_image.mode != 'RGB':
+                    original_image = original_image.convert('RGB')
+                
+                # Check GPU memory before processing
+                mem_info = get_gpu_memory_info()
+                if mem_info:
+                    logger.info(f"\nGPU Memory before processing {image_path.name}:")
+                    logger.info(f"Allocated: {mem_info['allocated']:.2f}MB")
+                    logger.info(f"Reserved: {mem_info['reserved']:.2f}MB")
+                    logger.info(f"Free: {mem_info['free']:.2f}MB")
+                
+                # Resize image if needed for memory constraints
+                processed_image = resize_image_for_memory(original_image)
+                
                 # Process single image
                 image_result = test_single_image(
                     str(image_path),
@@ -1403,6 +1341,17 @@ def process_batch(
                     preprocessing_pipeline,
                     postprocessing_pipeline
                 )
+                
+                # Check GPU memory after processing
+                mem_info = get_gpu_memory_info()
+                if mem_info:
+                    logger.info(f"\nGPU Memory after processing {image_path.name}:")
+                    logger.info(f"Allocated: {mem_info['allocated']:.2f}MB")
+                    logger.info(f"Reserved: {mem_info['reserved']:.2f}MB")
+                    logger.info(f"Free: {mem_info['free']:.2f}MB")
+                
+                # Clear GPU memory after processing
+                clear_gpu_memory()
                 
                 # Add to current batch
                 current_batch.append({
@@ -1882,39 +1831,4 @@ def generate_analysis_report(analysis: dict) -> str:
     report.append("- Processing Time Distribution")
     
     report.append("\n" + "=" * 80)
-    return "\n".join(report)
-
-# %%
-# Generate outputs
-if analysis_results_dir.exists():
-    # Create analysis directory if it doesn't exist
-    analysis_dir = ROOT_DIR / "analysis"
-    analysis_dir.mkdir(exist_ok=True)
-    
-    # Save analysis results to analysis directory
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    analysis_file = analysis_dir / f"analysis_{timestamp}.json"
-    with open(analysis_file, 'w') as f:
-        json.dump(analysis_results, f, indent=2)
-    
-    # Save test results to results directory
-    test_results_file = ROOT_DIR / "results" / f"test_results_{timestamp}.json"
-    with open(test_results_file, 'w') as f:
-        json.dump({
-            'metadata': {
-                'timestamp': timestamp,
-                'model_info': {
-                    'detection_model': detection_model.__class__.__name__,
-                    'recognition_model': recognition_model.__class__.__name__,
-                    'device': str(device)
-                }
-            },
-            'results': analysis_results
-        }, f, indent=2)
-    
-    logger.info("\nResults have been saved:")
-    logger.info(f"Analysis file: {analysis_file}")
-    logger.info(f"Test results file: {test_results_file}")
-else:
-    logger.warning(f"Analysis results directory not found at {analysis_results_dir}")
-    logger.info("Please run batch processing and analysis first.") 
+    return "\n".join(report) 
