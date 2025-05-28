@@ -1148,15 +1148,18 @@ def test_single_image(
         # Clear GPU memory before processing
         clear_gpu_memory()
         
-        # Load and display original image
+        # Load image using docTR's DocumentFile
+        doc = DocumentFile.from_images(image_path)
+        
+        # Create display version of the image
         original_image = Image.open(image_path)
-        # Convert to RGB if not already
-        if original_image.mode != 'RGB':
-            original_image = original_image.convert('RGB')
-            
-        print(f"\nImage Processing:")
-        print(f"Original image size: {original_image.size}")
-        print(f"Image mode: {original_image.mode}")
+        scale_x = max_display_size[0] / original_image.width
+        scale_y = max_display_size[1] / original_image.height
+        scale_factor = min(scale_x, scale_y)
+        display_width = int(original_image.width * scale_factor)
+        display_height = int(original_image.height * scale_factor)
+        display_image = original_image.resize((display_width, display_height), Image.Resampling.LANCZOS)
+        print(f"Display image size: {display_image.size}")
         
         # Check GPU memory before processing
         mem_info = get_gpu_memory_info()
@@ -1166,23 +1169,11 @@ def test_single_image(
             print(f"Reserved: {mem_info['reserved']:.2f}MB")
             print(f"Free: {mem_info['free']:.2f}MB")
         
-        # Resize image if needed for memory constraints
-        processed_image = resize_image_for_memory(original_image)
-        
-        # Create display version of the image
-        scale_x = max_display_size[0] / original_image.width
-        scale_y = max_display_size[1] / original_image.height
-        scale_factor = min(scale_x, scale_y)
-        display_width = int(original_image.width * scale_factor)
-        display_height = int(original_image.height * scale_factor)
-        display_image = original_image.resize((display_width, display_height), Image.Resampling.LANCZOS)
-        print(f"Display image size: {display_image.size}")
-        
         # Run detection and recognition
         print("\nRunning detection and recognition...")
         start_time = time.time()
         with torch.no_grad():
-            detection_result = detection_model(processed_image)
+            detection_result = detection_model(doc)
         processing_time = time.time() - start_time
         
         # Check GPU memory after processing
