@@ -212,11 +212,6 @@ def extract_work_order_and_total(result) -> dict:
         # Convert result to JSON for easier processing
         json_result = result.export()
         
-        # Debug: Print the full JSON structure
-        print("DEBUG: Full JSON structure:")
-        print(json.dumps(json_result, indent=2))
-        print("=" * 80)
-        
         extracted_data = {
             "work_order_number": None,
             "total_cost": None,
@@ -295,11 +290,9 @@ def extract_work_order_and_total(result) -> dict:
             # First, check within the label block itself if provided
             if label_block:
                 block_words, block_text, center_x, center_y = get_block_info(label_block)
-                print(f"DEBUG: Checking within label block: '{block_text}'")
                 if block_words:
                     for word in block_words:
                         word_text = word['value'].strip()
-                        print(f"DEBUG: Checking word: '{word_text}'")
                         # Improved monetary pattern - look for $ symbol OR decimal numbers that look like money
                         is_monetary = False
                         if '$' in word_text:
@@ -320,10 +313,8 @@ def extract_work_order_and_total(result) -> dict:
                         
                         if is_monetary:
                             clean_amount = word_text.replace('$', '').replace(',', '').strip()
-                            print(f"DEBUG: Found potential monetary value: '{clean_amount}'")
                             try:
                                 float(clean_amount)
-                                print(f"DEBUG: Successfully validated monetary value: '{clean_amount}'")
                                 candidates.append({
                                     'value': clean_amount,
                                     'distance': 0,  # Same block = distance 0
@@ -331,7 +322,6 @@ def extract_work_order_and_total(result) -> dict:
                                     'to_right': True   # Assume to the right within block
                                 })
                             except ValueError:
-                                print(f"DEBUG: Failed to validate monetary value: '{clean_amount}'")
                                 continue
             
             # Then check nearby blocks
@@ -402,7 +392,6 @@ def extract_work_order_and_total(result) -> dict:
                     continue
                 
                 block_text_lower = block_text.lower()
-                print(f"DEBUG: Checking block: '{block_text}' -> '{block_text_lower}'")
                 
                 # Look for MJM Order Number label
                 if ('mjm' in block_text_lower and 'order' in block_text_lower and 'number' in block_text_lower):
@@ -416,12 +405,10 @@ def extract_work_order_and_total(result) -> dict:
                 
                 # Look for Grand Total label (separate condition, not elif!)
                 if ('grand' in block_text_lower and 'total' in block_text_lower):
-                    print(f"DEBUG: Found Grand Total block: '{block_text}'")
                     extracted_data["extraction_confidence"]["spatial_match"] = True
                     
                     # Find nearby monetary values, including within this same block
                     total_cost = find_nearby_monetary_value(center_x, center_y, all_blocks, label_block=block)
-                    print(f"DEBUG: Total cost found: {total_cost}")
                     if total_cost:
                         extracted_data["total_cost"] = total_cost
                         extracted_data["extraction_confidence"]["total_cost_found"] = True
