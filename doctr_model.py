@@ -200,7 +200,8 @@ else:
 # %%
 def extract_work_order_and_total(result) -> dict:
     """
-    Extract work order number and total cost from docTR result using spatial proximity and label-value relationships.
+    Extract work order number and total cost from docTR result using document type classification
+    and targeted spatial analysis.
     
     Args:
         result: docTR result object
@@ -218,7 +219,8 @@ def extract_work_order_and_total(result) -> dict:
             "extraction_confidence": {
                 "work_order_found": False,
                 "total_cost_found": False,
-                "spatial_match": False
+                "spatial_match": False,
+                "document_type": None
             }
         }
         
@@ -250,168 +252,278 @@ def extract_work_order_and_total(result) -> dict:
             
             return block_words, block_text, center_x, center_y
         
-        def find_nearby_numeric_value(target_x, target_y, all_blocks, max_distance=0.15):
-            """Find numeric values near a target coordinate."""
-            candidates = []
+        def fuzzy_contains(text, target_words, threshold=0.7):
+            """Check if text contains target words with OCR error tolerance."""
+            text_lower = text.lower()
             
+            # Direct substring check first (fastest)
+            if all(word.lower() in text_lower for word in target_words):
+                return True
+            
+            # Character substitution tolerance for common OCR errors
+            ocr_substitutions = {
+                'o': '0', '0': 'o', 'i': '1', '1': 'i', 'l': '1', '1': 'l',
+                's': '5', '5': 's', 'g': '9', '9': 'g', 't': 'f', 'f': 't'
+            }
+            
+            # Create variations of target words
+            for target in target_words:
+                variations = [target.lower()]
+                for i, char in enumerate(target.lower()):
+                    if char in ocr_substitutions:
+                        new_word = target.lower()[:i] + ocr_substitutions[char] + target.lower()[i+1:]
+                        variations.append(new_word)
+                
+                # Check if any variation is found
+                found = False
+                for var in variations:
+                    if var in text_lower:
+                        found = True
+                        break
+                
+                if not found:
+                    return False
+            
+            return True
+        
+        def classify_document_type(all_blocks):
+            """Determine if document is Invoice or Estimate based on top content."""
+            # Check blocks in the top third of the document
+            top_blocks = []
+            for block in all_blocks:
+                _, block_text, _, center_y = get_block_info(block)
+                if block_text and center_y < 0.33:  # Top third
+                    top_blocks.append(block_text.lower())
+            
+            top_content = ' '.join(top_blocks)
+            
+            # Check for document type indicators
+            if fuzzy_contains(top_content, ['invoice']):
+                return 'invoice'
+            elif fuzzy_contains(top_content, ['estimate']):
+                return 'estimate'
+            
+            return None
+        
+        def find_primary_key_invoice(all_blocks):
+            """Find work order number in invoice documents."""
             for block in all_blocks:
                 block_words, block_text, center_x, center_y = get_block_info(block)
                 if not block_words:
                     continue
                 
-                # Calculate distance from target
-                distance = ((center_x - target_x) ** 2 + (center_y - target_y) ** 2) ** 0.5
-                
-                if distance <= max_distance:
-                    # Look for numeric values in this block
+                # Look for MJM Work Order Number pattern
+                if fuzzy_contains(block_text, ['mjm', 'work', 'order', 'number']) or \
+                   fuzzy_contains(block_text, ['mjm', 'order', 'number']):
+                    
+                    # First check within the same block for numbers
                     for word in block_words:
                         word_text = word['value'].strip()
                         if word_text.isdigit() and 4 <= len(word_text) <= 6:
-                            candidates.append({
-                                'value': word_text,
-                                'distance': distance,
-                                'same_line': abs(center_y - target_y) < 0.05,
-                                'to_right': center_x > target_x
-                            })
-            
-            # Sort candidates by priority: same line, to the right, then by distance
-            candidates.sort(key=lambda x: (
-                not x['same_line'],  # Same line first
-                not x['to_right'],   # To the right second
-                x['distance']        # Closest third
-            ))
-            
-            return candidates[0]['value'] if candidates else None
-        
-        def find_nearby_monetary_value(target_x, target_y, all_blocks, label_block=None, max_distance=0.15):
-            """Find monetary values near a target coordinate, including within the label block itself."""
-            candidates = []
-            
-            # First, check within the label block itself if provided
-            if label_block:
-                block_words, block_text, center_x, center_y = get_block_info(label_block)
-                if block_words:
-                    for word in block_words:
-                        word_text = word['value'].strip()
-                        # Improved monetary pattern - look for $ symbol OR decimal numbers that look like money
-                        is_monetary = False
-                        if '$' in word_text:
-                            is_monetary = True
-                        elif '.' in word_text:
-                            # Check if it's a decimal number that could be monetary (like 950.00)
-                            clean_test = word_text.replace(',', '').strip()
-                            try:
-                                float_val = float(clean_test)
-                                # Check if it has exactly 2 decimal places (typical for money)
-                                if '.' in clean_test and len(clean_test.split('.')[1]) == 2:
-                                    is_monetary = True
-                                # Or if it's a reasonable monetary amount (> 1.00)
-                                elif float_val >= 1.0:
-                                    is_monetary = True
-                            except ValueError:
-                                pass
+                            return word_text
+                    
+                    # Then look for numbers to the right and nearby
+                    candidates = []
+                    for other_block in all_blocks:
+                        other_words, other_text, other_x, other_y = get_block_info(other_block)
+                        if not other_words:
+                            continue
                         
-                        if is_monetary:
-                            clean_amount = word_text.replace('$', '').replace(',', '').strip()
-                            try:
-                                float(clean_amount)
-                                candidates.append({
-                                    'value': clean_amount,
-                                    'distance': 0,  # Same block = distance 0
-                                    'same_line': True,  # Same block = same line
-                                    'to_right': True   # Assume to the right within block
-                                })
-                            except ValueError:
-                                continue
+                        # Calculate distance and position
+                        distance = ((other_x - center_x) ** 2 + (other_y - center_y) ** 2) ** 0.5
+                        if distance <= 0.2:  # Within reasonable distance
+                            for word in other_words:
+                                word_text = word['value'].strip()
+                                if word_text.isdigit() and 4 <= len(word_text) <= 6:
+                                    candidates.append({
+                                        'value': word_text,
+                                        'distance': distance,
+                                        'same_line': abs(other_y - center_y) < 0.05,
+                                        'to_right': other_x > center_x
+                                    })
+                    
+                    # Sort by preference: same line and to the right, then by distance
+                    candidates.sort(key=lambda x: (
+                        not x['same_line'],
+                        not x['to_right'],
+                        x['distance']
+                    ))
+                    
+                    if candidates:
+                        return candidates[0]['value']
             
-            # Then check nearby blocks
+            return None
+        
+        def find_primary_key_estimate(all_blocks):
+            """Find estimate number in estimate documents."""
             for block in all_blocks:
                 block_words, block_text, center_x, center_y = get_block_info(block)
                 if not block_words:
                     continue
                 
-                # Skip the label block if we already checked it
-                if label_block and block is label_block:
-                    continue
-                
-                # Calculate distance from target
-                distance = ((center_x - target_x) ** 2 + (center_y - target_y) ** 2) ** 0.5
-                
-                if distance <= max_distance:
-                    # Look for monetary values in this block
+                # Look for Estimate Number pattern
+                if fuzzy_contains(block_text, ['estimate', 'number']):
+                    
+                    # First check within the same block
                     for word in block_words:
                         word_text = word['value'].strip()
-                        # Improved monetary pattern - look for $ symbol OR decimal numbers that look like money
-                        is_monetary = False
-                        if '$' in word_text:
-                            is_monetary = True
-                        elif '.' in word_text:
-                            # Check if it's a decimal number that could be monetary (like 950.00)
-                            clean_test = word_text.replace(',', '').strip()
-                            try:
-                                float_val = float(clean_test)
-                                # Check if it has exactly 2 decimal places (typical for money)
-                                if '.' in clean_test and len(clean_test.split('.')[1]) == 2:
-                                    is_monetary = True
-                                # Or if it's a reasonable monetary amount (> 1.00)
-                                elif float_val >= 1.0:
-                                    is_monetary = True
-                            except ValueError:
-                                pass
+                        if word_text.isdigit() and 4 <= len(word_text) <= 6:
+                            return word_text
+                    
+                    # Look for numbers below and nearby
+                    candidates = []
+                    for other_block in all_blocks:
+                        other_words, other_text, other_x, other_y = get_block_info(other_block)
+                        if not other_words:
+                            continue
                         
-                        if is_monetary:
-                            clean_amount = word_text.replace('$', '').replace(',', '').strip()
-                            try:
-                                float(clean_amount)
-                                candidates.append({
-                                    'value': clean_amount,
-                                    'distance': distance,
-                                    'same_line': abs(center_y - target_y) < 0.05,
-                                    'to_right': center_x > target_x
-                                })
-                            except ValueError:
-                                continue
+                        # Calculate distance and position
+                        distance = ((other_x - center_x) ** 2 + (other_y - center_y) ** 2) ** 0.5
+                        if distance <= 0.2:  # Within reasonable distance
+                            for word in other_words:
+                                word_text = word['value'].strip()
+                                if word_text.isdigit() and 4 <= len(word_text) <= 6:
+                                    candidates.append({
+                                        'value': word_text,
+                                        'distance': distance,
+                                        'below': other_y > center_y,
+                                        'nearby_x': abs(other_x - center_x) < 0.1
+                                    })
+                    
+                    # Sort by preference: below and nearby horizontally, then by distance
+                    candidates.sort(key=lambda x: (
+                        not x['below'],
+                        not x['nearby_x'],
+                        x['distance']
+                    ))
+                    
+                    if candidates:
+                        return candidates[0]['value']
             
-            # Sort candidates by priority
-            candidates.sort(key=lambda x: (
-                not x['same_line'],
-                not x['to_right'],
-                x['distance']
-            ))
-            
-            return candidates[0]['value'] if candidates else None
+            return None
         
-        # Process each page (usually just one)
+        def find_grand_total(all_blocks):
+            """Find grand total amount with emphasis on lower portion of document."""
+            # First, identify blocks in the lower portion (bottom half)
+            lower_blocks = []
+            for block in all_blocks:
+                _, block_text, center_x, center_y = get_block_info(block)
+                if center_y > 0.5:  # Lower half
+                    lower_blocks.append((block, center_x, center_y))
+            
+            # If we have lower blocks, prioritize them
+            target_blocks = lower_blocks if lower_blocks else [(block, *get_block_info(block)[2:4]) for block in all_blocks]
+            
+            for block, center_x, center_y in target_blocks:
+                block_words, block_text, _, _ = get_block_info(block)
+                if not block_words:
+                    continue
+                
+                # Look for Grand Total pattern
+                if fuzzy_contains(block_text, ['grand', 'total']) or \
+                   fuzzy_contains(block_text, ['total']):
+                    
+                    # Check within the same block first
+                    monetary_candidates = []
+                    for word in block_words:
+                        word_text = word['value'].strip()
+                        clean_amount = extract_monetary_value(word_text)
+                        if clean_amount:
+                            monetary_candidates.append({
+                                'value': clean_amount,
+                                'distance': 0,
+                                'same_block': True
+                            })
+                    
+                    # Look for monetary values to the right and nearby
+                    for other_block in all_blocks:
+                        other_words, other_text, other_x, other_y = get_block_info(other_block)
+                        if not other_words or other_block == block:
+                            continue
+                        
+                        distance = ((other_x - center_x) ** 2 + (other_y - center_y) ** 2) ** 0.5
+                        if distance <= 0.2:  # Within reasonable distance
+                            for word in other_words:
+                                word_text = word['value'].strip()
+                                clean_amount = extract_monetary_value(word_text)
+                                if clean_amount:
+                                    monetary_candidates.append({
+                                        'value': clean_amount,
+                                        'distance': distance,
+                                        'same_block': False,
+                                        'to_right': other_x > center_x,
+                                        'same_line': abs(other_y - center_y) < 0.05
+                                    })
+                    
+                    # Sort by preference
+                    monetary_candidates.sort(key=lambda x: (
+                        not x.get('same_block', False),
+                        not x.get('same_line', False),
+                        not x.get('to_right', False),
+                        x['distance']
+                    ))
+                    
+                    if monetary_candidates:
+                        return monetary_candidates[0]['value']
+            
+            return None
+        
+        def extract_monetary_value(text):
+            """Extract clean monetary value from text."""
+            if not text:
+                return None
+            
+            # Remove common prefixes and clean up
+            clean_text = text.replace('$', '').replace(',', '').strip()
+            
+            try:
+                # Try to parse as float
+                amount = float(clean_text)
+                
+                # Reasonable range check (between $10 and $10,000)
+                if 10.0 <= amount <= 10000.0:
+                    # Format consistently
+                    if '.' in clean_text:
+                        return f"{amount:.2f}"
+                    else:
+                        # If no decimal, assume whole dollars
+                        return f"{amount:.2f}"
+                        
+            except ValueError:
+                pass
+            
+            return None
+        
+        # Main processing logic
         for page in json_result['pages']:
             all_blocks = page['blocks']
             
-            # Find work order number using label-value proximity
-            for block in all_blocks:
-                block_words, block_text, center_x, center_y = get_block_info(block)
-                if not block_words:
-                    continue
-                
-                block_text_lower = block_text.lower()
-                
-                # Look for MJM Order Number label
-                if ('mjm' in block_text_lower and 'order' in block_text_lower and 'number' in block_text_lower):
-                    extracted_data["extraction_confidence"]["spatial_match"] = True
-                    
-                    # Find nearby numeric values
-                    work_order = find_nearby_numeric_value(center_x, center_y, all_blocks)
-                    if work_order:
-                        extracted_data["work_order_number"] = work_order
-                        extracted_data["extraction_confidence"]["work_order_found"] = True
-                
-                # Look for Grand Total label (separate condition, not elif!)
-                if ('grand' in block_text_lower and 'total' in block_text_lower):
-                    extracted_data["extraction_confidence"]["spatial_match"] = True
-                    
-                    # Find nearby monetary values, including within this same block
-                    total_cost = find_nearby_monetary_value(center_x, center_y, all_blocks, label_block=block)
-                    if total_cost:
-                        extracted_data["total_cost"] = total_cost
-                        extracted_data["extraction_confidence"]["total_cost_found"] = True
+            # Step 1: Classify document type
+            doc_type = classify_document_type(all_blocks)
+            extracted_data["extraction_confidence"]["document_type"] = doc_type
+            
+            if doc_type:
+                extracted_data["extraction_confidence"]["spatial_match"] = True
+            
+            # Step 2: Extract primary key based on document type
+            primary_key = None
+            if doc_type == 'invoice':
+                primary_key = find_primary_key_invoice(all_blocks)
+            elif doc_type == 'estimate':
+                primary_key = find_primary_key_estimate(all_blocks)
+            else:
+                # Fallback: try both methods
+                primary_key = find_primary_key_invoice(all_blocks) or find_primary_key_estimate(all_blocks)
+            
+            if primary_key:
+                extracted_data["work_order_number"] = primary_key
+                extracted_data["extraction_confidence"]["work_order_found"] = True
+            
+            # Step 3: Extract total cost
+            total_cost = find_grand_total(all_blocks)
+            if total_cost:
+                extracted_data["total_cost"] = total_cost
+                extracted_data["extraction_confidence"]["total_cost_found"] = True
         
         return extracted_data
         
@@ -423,7 +535,8 @@ def extract_work_order_and_total(result) -> dict:
             "extraction_confidence": {
                 "work_order_found": False,
                 "total_cost_found": False,
-                "spatial_match": False
+                "spatial_match": False,
+                "document_type": None
             },
             "error": str(e)
         }
