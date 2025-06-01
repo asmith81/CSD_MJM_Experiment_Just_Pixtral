@@ -402,6 +402,7 @@ def extract_work_order_and_total(result) -> dict:
                     continue
                 
                 block_text_lower = block_text.lower()
+                print(f"DEBUG: Checking block: '{block_text}' -> '{block_text_lower}'")
                 
                 # Look for MJM Order Number label
                 if ('mjm' in block_text_lower and 'order' in block_text_lower and 'number' in block_text_lower):
@@ -412,10 +413,9 @@ def extract_work_order_and_total(result) -> dict:
                     if work_order:
                         extracted_data["work_order_number"] = work_order
                         extracted_data["extraction_confidence"]["work_order_found"] = True
-                        break
                 
-                # Look for Grand Total label
-                elif ('grand' in block_text_lower and 'total' in block_text_lower):
+                # Look for Grand Total label (separate condition, not elif!)
+                if ('grand' in block_text_lower and 'total' in block_text_lower):
                     print(f"DEBUG: Found Grand Total block: '{block_text}'")
                     extracted_data["extraction_confidence"]["spatial_match"] = True
                     
