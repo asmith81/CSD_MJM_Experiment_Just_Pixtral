@@ -212,6 +212,11 @@ def extract_work_order_and_total(result) -> dict:
         # Convert result to JSON for easier processing
         json_result = result.export()
         
+        # Debug: Print the full JSON structure
+        print("DEBUG: Full JSON structure:")
+        print(json.dumps(json_result, indent=2))
+        print("=" * 80)
+        
         extracted_data = {
             "work_order_number": None,
             "total_cost": None,
@@ -290,14 +295,35 @@ def extract_work_order_and_total(result) -> dict:
             # First, check within the label block itself if provided
             if label_block:
                 block_words, block_text, center_x, center_y = get_block_info(label_block)
+                print(f"DEBUG: Checking within label block: '{block_text}'")
                 if block_words:
                     for word in block_words:
                         word_text = word['value'].strip()
-                        if ('$' in word_text or 
-                            (word_text.replace(',', '').replace('.', '').isdigit() and '.' in word_text)):
+                        print(f"DEBUG: Checking word: '{word_text}'")
+                        # Improved monetary pattern - look for $ symbol OR decimal numbers that look like money
+                        is_monetary = False
+                        if '$' in word_text:
+                            is_monetary = True
+                        elif '.' in word_text:
+                            # Check if it's a decimal number that could be monetary (like 950.00)
+                            clean_test = word_text.replace(',', '').strip()
+                            try:
+                                float_val = float(clean_test)
+                                # Check if it has exactly 2 decimal places (typical for money)
+                                if '.' in clean_test and len(clean_test.split('.')[1]) == 2:
+                                    is_monetary = True
+                                # Or if it's a reasonable monetary amount (> 1.00)
+                                elif float_val >= 1.0:
+                                    is_monetary = True
+                            except ValueError:
+                                pass
+                        
+                        if is_monetary:
                             clean_amount = word_text.replace('$', '').replace(',', '').strip()
+                            print(f"DEBUG: Found potential monetary value: '{clean_amount}'")
                             try:
                                 float(clean_amount)
+                                print(f"DEBUG: Successfully validated monetary value: '{clean_amount}'")
                                 candidates.append({
                                     'value': clean_amount,
                                     'distance': 0,  # Same block = distance 0
@@ -305,6 +331,7 @@ def extract_work_order_and_total(result) -> dict:
                                     'to_right': True   # Assume to the right within block
                                 })
                             except ValueError:
+                                print(f"DEBUG: Failed to validate monetary value: '{clean_amount}'")
                                 continue
             
             # Then check nearby blocks
@@ -324,8 +351,25 @@ def extract_work_order_and_total(result) -> dict:
                     # Look for monetary values in this block
                     for word in block_words:
                         word_text = word['value'].strip()
-                        if ('$' in word_text or 
-                            (word_text.replace(',', '').replace('.', '').isdigit() and '.' in word_text)):
+                        # Improved monetary pattern - look for $ symbol OR decimal numbers that look like money
+                        is_monetary = False
+                        if '$' in word_text:
+                            is_monetary = True
+                        elif '.' in word_text:
+                            # Check if it's a decimal number that could be monetary (like 950.00)
+                            clean_test = word_text.replace(',', '').strip()
+                            try:
+                                float_val = float(clean_test)
+                                # Check if it has exactly 2 decimal places (typical for money)
+                                if '.' in clean_test and len(clean_test.split('.')[1]) == 2:
+                                    is_monetary = True
+                                # Or if it's a reasonable monetary amount (> 1.00)
+                                elif float_val >= 1.0:
+                                    is_monetary = True
+                            except ValueError:
+                                pass
+                        
+                        if is_monetary:
                             clean_amount = word_text.replace('$', '').replace(',', '').strip()
                             try:
                                 float(clean_amount)
@@ -372,10 +416,12 @@ def extract_work_order_and_total(result) -> dict:
                 
                 # Look for Grand Total label
                 elif ('grand' in block_text_lower and 'total' in block_text_lower):
+                    print(f"DEBUG: Found Grand Total block: '{block_text}'")
                     extracted_data["extraction_confidence"]["spatial_match"] = True
                     
                     # Find nearby monetary values, including within this same block
                     total_cost = find_nearby_monetary_value(center_x, center_y, all_blocks, label_block=block)
+                    print(f"DEBUG: Total cost found: {total_cost}")
                     if total_cost:
                         extracted_data["total_cost"] = total_cost
                         extracted_data["extraction_confidence"]["total_cost_found"] = True
