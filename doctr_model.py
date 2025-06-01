@@ -149,34 +149,171 @@ def process_single_image(image_path: str) -> None:
         processing_time = time.time() - start_time
         print(f"Inference completed in {processing_time:.2f} seconds")
         
-        # Display results
+        # Add rendered text output for easy comparison
         print("\n" + "="*50)
-        print("MODEL OUTPUT")
+        print("RENDERED TEXT OUTPUT")
+        print("="*50)
+        rendered_text = result.render()
+        print(rendered_text)
         print("="*50)
         
-        for page_idx, page in enumerate(result.pages):
-            print(f"\nPage {page_idx + 1}:")
-            print(f"Number of blocks: {len(page.blocks)}")
-            
-            for block_idx, block in enumerate(page.blocks):
-                print(f"\nBlock {block_idx + 1}:")
-                print(f"Block confidence: {block.confidence:.3f}")
-                print(f"Number of lines: {len(block.lines)}")
-                
-                for line_idx, line in enumerate(block.lines):
-                    print(f"\n  Line {line_idx + 1}:")
-                    print(f"  Line confidence: {line.confidence:.3f}")
-                    print(f"  Number of words: {len(line.words)}")
-                    
-                    for word_idx, word in enumerate(line.words):
-                        print(f"    Word {word_idx + 1}:")
-                        print(f"    Text: {word.value}")
-                        print(f"    Confidence: {word.confidence:.3f}")
-                        print(f"    Geometry: {word.geometry}")
+        # Store result globally for post-processing
+        global last_result
+        last_result = result
         
     except Exception as e:
         print(f"Error processing image: {e}")
         raise
+
+# %% [markdown]
+"""
+## Post-Process Single Image
+"""
+
+# %%
+def extract_work_order_and_total(result) -> dict:
+    """
+    Extract work order number and total cost from docTR result using spatial and text filtering.
+    
+    Args:
+        result: docTR result object
+        
+    Returns:
+        dict: Extracted data with work_order_number and total_cost
+    """
+    try:
+        # Convert result to JSON for easier processing
+        json_result = result.export()
+        
+        extracted_data = {
+            "work_order_number": None,
+            "total_cost": None,
+            "extraction_confidence": {
+                "work_order_found": False,
+                "total_cost_found": False,
+                "spatial_match": False
+            }
+        }
+        
+        # Process each page (usually just one)
+        for page in json_result['pages']:
+            # Analyze each block
+            for block in page['blocks']:
+                # Get all words in this block
+                block_words = []
+                for line in block['lines']:
+                    for word in line['words']:
+                        block_words.append(word)
+                
+                # Skip empty blocks
+                if not block_words:
+                    continue
+                
+                # Calculate block position (using first word's geometry)
+                first_word_geom = block_words[0]['geometry']
+                block_x = first_word_geom[0][0]  # Top-left x coordinate
+                block_y = first_word_geom[0][1]  # Top-left y coordinate
+                
+                # Extract all text from block for pattern matching
+                block_text = ' '.join(word['value'] for word in block_words)
+                block_text_lower = block_text.lower()
+                
+                # Look for work order number
+                if ('mjm' in block_text_lower or 'order' in block_text_lower) and block_x > 0.5:
+                    # This block likely contains work order info
+                    extracted_data["extraction_confidence"]["spatial_match"] = True
+                    
+                    # Look for numeric values in this block or adjacent blocks
+                    for word in block_words:
+                        word_text = word['value'].strip()
+                        # Look for 4-6 digit numbers
+                        if word_text.isdigit() and 4 <= len(word_text) <= 6:
+                            extracted_data["work_order_number"] = word_text
+                            extracted_data["extraction_confidence"]["work_order_found"] = True
+                            break
+                
+                # Look for total cost
+                if ('grand' in block_text_lower or 'total' in block_text_lower) and block_x > 0.5 and block_y > 0.7:
+                    # This block likely contains total cost info
+                    extracted_data["extraction_confidence"]["spatial_match"] = True
+                    
+                    # Look for monetary values in this block
+                    for word in block_words:
+                        word_text = word['value'].strip()
+                        # Look for currency patterns (with or without $)
+                        if ('$' in word_text or 
+                            (word_text.replace(',', '').replace('.', '').isdigit() and '.' in word_text)):
+                            # Clean up the monetary value
+                            clean_amount = word_text.replace('$', '').replace(',', '').strip()
+                            try:
+                                # Validate it's a proper monetary format
+                                float(clean_amount)
+                                extracted_data["total_cost"] = clean_amount
+                                extracted_data["extraction_confidence"]["total_cost_found"] = True
+                                break
+                            except ValueError:
+                                continue
+        
+        return extracted_data
+        
+    except Exception as e:
+        print(f"Error in post-processing: {e}")
+        return {
+            "work_order_number": None,
+            "total_cost": None,
+            "extraction_confidence": {
+                "work_order_found": False,
+                "total_cost_found": False,
+                "spatial_match": False
+            },
+            "error": str(e)
+        }
+
+def post_process_single_image():
+    """
+    Post-process the last processed image result to extract structured data.
+    """
+    try:
+        # Check if we have a result to process
+        if 'last_result' not in globals():
+            print("No image result available. Please run the single image test first.")
+            return
+        
+        print("\n" + "="*50)
+        print("POST-PROCESSING EXTRACTION")
+        print("="*50)
+        
+        # Extract structured data
+        extracted_data = extract_work_order_and_total(last_result)
+        
+        # Display results
+        print("\nExtracted Data:")
+        print(json.dumps(extracted_data, indent=2))
+        
+        # Provide user feedback
+        if extracted_data["extraction_confidence"]["work_order_found"]:
+            print(f"\n✅ Work Order Number found: {extracted_data['work_order_number']}")
+        else:
+            print("\n❌ Work Order Number not found")
+            
+        if extracted_data["extraction_confidence"]["total_cost_found"]:
+            print(f"✅ Total Cost found: ${extracted_data['total_cost']}")
+        else:
+            print("❌ Total Cost not found")
+            
+        if extracted_data["extraction_confidence"]["spatial_match"]:
+            print("✅ Spatial filtering successful")
+        else:
+            print("❌ No spatial matches found")
+        
+        return extracted_data
+        
+    except Exception as e:
+        print(f"Error in post-processing: {e}")
+        return None
+
+# Run post-processing on the last result
+post_process_single_image()
 
 # %% [markdown]
 """
