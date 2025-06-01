@@ -482,88 +482,160 @@ post_process_single_image()
 """
 
 # %%
-def process_batch(image_dir: str, output_dir: str = None) -> None:
+def generate_test_id() -> str:
+    """Generate a unique test identifier using timestamp."""
+    return datetime.now().strftime("%Y%m%d_%H%M%S")
+
+def collect_test_metadata() -> dict:
+    """Collect metadata about the current test configuration."""
+    return {
+        "test_id": generate_test_id(),
+        "timestamp": datetime.now().isoformat(),
+        "model_info": {
+            "name": "docTR",
+            "version": "1.0",
+            "model_id": "db_resnet50+crnn_vgg16_bn",
+            "quantization": "N/A",
+            "parameters": {
+                "resolve_blocks": True,
+                "device": str(device),
+                "det_arch": "db_resnet50",
+                "reco_arch": "crnn_vgg16_bn"
+            }
+        },
+        "prompt_type": "N/A (OCR only)",
+        "system_resources": check_cuda_availability()
+    }
+
+def save_incremental_results(results_file: Path, results: list, metadata: dict):
+    """Save results incrementally to avoid losing progress."""
+    complete_results = {
+        "metadata": metadata,
+        "results": results
+    }
+    
+    with open(results_file, 'w') as f:
+        json.dump(complete_results, f, indent=2)
+
+def process_single_image_for_batch(image_path: str) -> dict:
     """
-    Process a batch of images and save results.
+    Process a single image for batch processing, returning structured results.
+    
+    Args:
+        image_path (str): Path to the image file
+        
+    Returns:
+        dict: Processing results including extracted data and metadata
+    """
+    result_entry = {
+        "image_name": Path(image_path).name,
+        "status": "processing",
+        "timestamp": datetime.now().isoformat()
+    }
+    
+    try:
+        print(f"Processing image: {Path(image_path).name}")
+        
+        # Load image using DocumentFile
+        doc = DocumentFile.from_images(image_path)
+        
+        # Run inference with timing
+        start_time = time.time()
+        with torch.no_grad():
+            doctr_result = model(doc)
+        processing_time = time.time() - start_time
+        
+        # Get rendered text output
+        rendered_text = doctr_result.render()
+        
+        # Extract structured data using the same post-processing logic
+        extracted_data = extract_work_order_and_total(doctr_result)
+        
+        # Update result entry with success data
+        result_entry.update({
+            "status": "completed",
+            "processing_time": round(processing_time, 2),
+            "extracted_data": {
+                "work_order_number": extracted_data["work_order_number"],
+                "total_cost": extracted_data["total_cost"]
+            },
+            "extraction_confidence": extracted_data["extraction_confidence"],
+            "raw_ocr_output": rendered_text
+        })
+        
+        print(f"✅ Successfully processed {Path(image_path).name}")
+        return result_entry
+        
+    except Exception as e:
+        print(f"❌ Error processing {Path(image_path).name}: {e}")
+        result_entry.update({
+            "status": "error",
+            "error": {
+                "message": str(e),
+                "type": "processing_error"
+            }
+        })
+        return result_entry
+
+def process_batch(image_dir: str = None, output_dir: str = None) -> str:
+    """
+    Process a batch of images and save results incrementally.
     
     Args:
         image_dir (str): Directory containing images to process
         output_dir (str): Directory to save results
+        
+    Returns:
+        str: Path to the results file
     """
     try:
-        # Set up output directory
+        # Set up directories
+        if image_dir is None:
+            image_dir = ROOT_DIR / "data" / "images"
         if output_dir is None:
-            output_dir = ROOT_DIR / "results" / "batch_processing"
+            output_dir = ROOT_DIR / "results"
+        
+        image_dir = Path(image_dir)
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Get list of image files
         image_files = []
         for ext in ['.jpg', '.jpeg', '.png', '.tiff', '.bmp']:
-            image_files.extend(list(Path(image_dir).glob(f'*{ext}')))
-            image_files.extend(list(Path(image_dir).glob(f'*{ext.upper()}')))
+            image_files.extend(list(image_dir.glob(f'*{ext}')))
+            image_files.extend(list(image_dir.glob(f'*{ext.upper()}')))
         
         if not image_files:
             raise ValueError(f"No image files found in {image_dir}")
         
+        # Generate test metadata
+        metadata = collect_test_metadata()
+        test_id = metadata["test_id"]
+        results_file = output_dir / f"test_results_{test_id}.json"
+        
         print(f"\nFound {len(image_files)} images to process")
+        print(f"Results will be saved to: {results_file}")
+        print("=" * 50)
         
         # Process each image
         results = []
         for i, image_path in enumerate(image_files, 1):
-            print(f"\nProcessing image {i}/{len(image_files)}: {image_path.name}")
+            print(f"\n[{i}/{len(image_files)}] ", end="")
             
-            try:
-                # Load and process image
-                doc = DocumentFile.from_images(str(image_path))
-                with torch.no_grad():
-                    result = model(doc)
-                
-                # Extract text and confidence scores
-                image_result = {
-                    'image_path': str(image_path),
-                    'timestamp': datetime.now().isoformat(),
-                    'pages': []
-                }
-                
-                for page in result.pages:
-                    page_data = {
-                        'blocks': []
-                    }
-                    for block in page.blocks:
-                        block_data = {
-                            'confidence': block.confidence,
-                            'lines': []
-                        }
-                        for line in block.lines:
-                            line_data = {
-                                'confidence': line.confidence,
-                                'words': []
-                            }
-                            for word in line.words:
-                                line_data['words'].append({
-                                    'text': word.value,
-                                    'confidence': word.confidence,
-                                    'geometry': word.geometry
-                                })
-                            block_data['lines'].append(line_data)
-                        page_data['blocks'].append(block_data)
-                    image_result['pages'].append(page_data)
-                
-                results.append(image_result)
-                print(f"Successfully processed {image_path.name}")
-                
-            except Exception as e:
-                print(f"Error processing {image_path.name}: {e}")
-                continue
+            # Process single image
+            result = process_single_image_for_batch(str(image_path))
+            results.append(result)
+            
+            # Save incremental results after each image
+            save_incremental_results(results_file, results, metadata)
+            
+        print("\n" + "=" * 50)
+        print(f"Batch processing completed!")
+        print(f"Processed: {len([r for r in results if r['status'] == 'completed'])}/{len(results)} images")
+        print(f"Errors: {len([r for r in results if r['status'] == 'error'])}/{len(results)} images")
+        print(f"Results saved to: {results_file}")
         
-        # Save results
-        output_file = output_dir / "batch_results.json"
-        with open(output_file, 'w') as f:
-            json.dump(results, f, indent=2)
-        
-        print(f"\nBatch processing completed!")
-        print(f"Results saved to: {output_file}")
+        return str(results_file)
         
     except Exception as e:
         print(f"Error in batch processing: {e}")
@@ -571,9 +643,4 @@ def process_batch(image_dir: str, output_dir: str = None) -> None:
 
 # %%
 # Test batch processing
-test_images_dir = ROOT_DIR / "test_images"
-if test_images_dir.exists():
-    process_batch(str(test_images_dir))
-else:
-    print(f"Test images directory not found at {test_images_dir}")
-    print("Please create a test_images directory with some sample images.") 
+test_batch_results = process_batch() 
