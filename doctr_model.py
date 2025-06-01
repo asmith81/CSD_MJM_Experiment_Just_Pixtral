@@ -100,7 +100,8 @@ def initialize_model() -> tuple:
         model = ocr_predictor(
             det_arch='db_resnet50',
             reco_arch='crnn_vgg16_bn',
-            pretrained=True
+            pretrained=True,
+            resolve_blocks=True
         )
         
         # Move model to appropriate device
@@ -136,8 +137,21 @@ def process_single_image(image_path: str) -> None:
     try:
         print(f"\nProcessing image: {image_path}")
         
+        # Load and display the image
+        print("Loading and displaying image...")
+        image = Image.open(image_path)
+        
+        # Create a display version of the image with a max size of 800x800
+        display_image = image.copy()
+        max_display_size = (800, 800)
+        display_image.thumbnail(max_display_size, Image.Resampling.LANCZOS)
+        
+        # Display the image
+        print("\nInput Image (resized for display):")
+        display(display_image)
+        
         # Load image using DocumentFile
-        print("Loading image with DocumentFile...")
+        print("\nLoading image with DocumentFile...")
         doc = DocumentFile.from_images(image_path)
         print(f"Document loaded successfully")
         
@@ -167,13 +181,26 @@ def process_single_image(image_path: str) -> None:
 
 # %% [markdown]
 """
+## Test with Sample Image
+"""
+
+# %%
+# Test with a sample image
+test_image_path = ROOT_DIR / "data" / "images" / "1017.jpg"
+if test_image_path.exists():
+    process_single_image(str(test_image_path))
+else:
+    print(f"Test image not found at {test_image_path}")
+    print("Please ensure the image file exists at the specified path.")
+# %% [markdown]
+"""
 ## Post-Process Single Image
 """
 
 # %%
 def extract_work_order_and_total(result) -> dict:
     """
-    Extract work order number and total cost from docTR result using spatial and text filtering.
+    Extract work order number and total cost from docTR result using spatial proximity and label-value relationships.
     
     Args:
         result: docTR result object
@@ -195,64 +222,138 @@ def extract_work_order_and_total(result) -> dict:
             }
         }
         
-        # Process each page (usually just one)
-        for page in json_result['pages']:
-            # Analyze each block
-            for block in page['blocks']:
-                # Get all words in this block
-                block_words = []
-                for line in block['lines']:
-                    for word in line['words']:
-                        block_words.append(word)
-                
-                # Skip empty blocks
+        def get_block_info(block):
+            """Extract block information including text and spatial coordinates."""
+            block_words = []
+            for line in block['lines']:
+                for word in line['words']:
+                    block_words.append(word)
+            
+            if not block_words:
+                return None, None, None, None
+            
+            # Calculate block center point for better spatial comparison
+            all_coords = []
+            for word in block_words:
+                coords = word['geometry']
+                all_coords.extend(coords)
+            
+            if not all_coords:
+                return None, None, None, None
+            
+            # Calculate center point
+            center_x = sum(coord[0] for coord in all_coords) / len(all_coords)
+            center_y = sum(coord[1] for coord in all_coords) / len(all_coords)
+            
+            # Get block text
+            block_text = ' '.join(word['value'] for word in block_words)
+            
+            return block_words, block_text, center_x, center_y
+        
+        def find_nearby_numeric_value(target_x, target_y, all_blocks, max_distance=0.15):
+            """Find numeric values near a target coordinate."""
+            candidates = []
+            
+            for block in all_blocks:
+                block_words, block_text, center_x, center_y = get_block_info(block)
                 if not block_words:
                     continue
                 
-                # Calculate block position (using first word's geometry)
-                first_word_geom = block_words[0]['geometry']
-                block_x = first_word_geom[0][0]  # Top-left x coordinate
-                block_y = first_word_geom[0][1]  # Top-left y coordinate
+                # Calculate distance from target
+                distance = ((center_x - target_x) ** 2 + (center_y - target_y) ** 2) ** 0.5
                 
-                # Extract all text from block for pattern matching
-                block_text = ' '.join(word['value'] for word in block_words)
-                block_text_lower = block_text.lower()
-                
-                # Look for work order number
-                if ('mjm' in block_text_lower or 'order' in block_text_lower) and block_x > 0.5:
-                    # This block likely contains work order info
-                    extracted_data["extraction_confidence"]["spatial_match"] = True
-                    
-                    # Look for numeric values in this block or adjacent blocks
+                if distance <= max_distance:
+                    # Look for numeric values in this block
                     for word in block_words:
                         word_text = word['value'].strip()
-                        # Look for 4-6 digit numbers
                         if word_text.isdigit() and 4 <= len(word_text) <= 6:
-                            extracted_data["work_order_number"] = word_text
-                            extracted_data["extraction_confidence"]["work_order_found"] = True
-                            break
+                            candidates.append({
+                                'value': word_text,
+                                'distance': distance,
+                                'same_line': abs(center_y - target_y) < 0.05,
+                                'to_right': center_x > target_x
+                            })
+            
+            # Sort candidates by priority: same line, to the right, then by distance
+            candidates.sort(key=lambda x: (
+                not x['same_line'],  # Same line first
+                not x['to_right'],   # To the right second
+                x['distance']        # Closest third
+            ))
+            
+            return candidates[0]['value'] if candidates else None
+        
+        def find_nearby_monetary_value(target_x, target_y, all_blocks, max_distance=0.15):
+            """Find monetary values near a target coordinate."""
+            candidates = []
+            
+            for block in all_blocks:
+                block_words, block_text, center_x, center_y = get_block_info(block)
+                if not block_words:
+                    continue
                 
-                # Look for total cost
-                if ('grand' in block_text_lower or 'total' in block_text_lower) and block_x > 0.5 and block_y > 0.7:
-                    # This block likely contains total cost info
-                    extracted_data["extraction_confidence"]["spatial_match"] = True
-                    
+                # Calculate distance from target
+                distance = ((center_x - target_x) ** 2 + (center_y - target_y) ** 2) ** 0.5
+                
+                if distance <= max_distance:
                     # Look for monetary values in this block
                     for word in block_words:
                         word_text = word['value'].strip()
-                        # Look for currency patterns (with or without $)
                         if ('$' in word_text or 
                             (word_text.replace(',', '').replace('.', '').isdigit() and '.' in word_text)):
-                            # Clean up the monetary value
                             clean_amount = word_text.replace('$', '').replace(',', '').strip()
                             try:
-                                # Validate it's a proper monetary format
                                 float(clean_amount)
-                                extracted_data["total_cost"] = clean_amount
-                                extracted_data["extraction_confidence"]["total_cost_found"] = True
-                                break
+                                candidates.append({
+                                    'value': clean_amount,
+                                    'distance': distance,
+                                    'same_line': abs(center_y - target_y) < 0.05,
+                                    'to_right': center_x > target_x
+                                })
                             except ValueError:
                                 continue
+            
+            # Sort candidates by priority
+            candidates.sort(key=lambda x: (
+                not x['same_line'],
+                not x['to_right'],
+                x['distance']
+            ))
+            
+            return candidates[0]['value'] if candidates else None
+        
+        # Process each page (usually just one)
+        for page in json_result['pages']:
+            all_blocks = page['blocks']
+            
+            # Find work order number using label-value proximity
+            for block in all_blocks:
+                block_words, block_text, center_x, center_y = get_block_info(block)
+                if not block_words:
+                    continue
+                
+                block_text_lower = block_text.lower()
+                
+                # Look for MJM Order Number label
+                if ('mjm' in block_text_lower and 'order' in block_text_lower and 'number' in block_text_lower):
+                    extracted_data["extraction_confidence"]["spatial_match"] = True
+                    
+                    # Find nearby numeric values
+                    work_order = find_nearby_numeric_value(center_x, center_y, all_blocks)
+                    if work_order:
+                        extracted_data["work_order_number"] = work_order
+                        extracted_data["extraction_confidence"]["work_order_found"] = True
+                        break
+                
+                # Look for Grand Total label
+                elif ('grand' in block_text_lower and 'total' in block_text_lower):
+                    extracted_data["extraction_confidence"]["spatial_match"] = True
+                    
+                    # Find nearby monetary values
+                    total_cost = find_nearby_monetary_value(center_x, center_y, all_blocks)
+                    if total_cost:
+                        extracted_data["total_cost"] = total_cost
+                        extracted_data["extraction_confidence"]["total_cost_found"] = True
         
         return extracted_data
         
@@ -315,19 +416,7 @@ def post_process_single_image():
 # Run post-processing on the last result
 post_process_single_image()
 
-# %% [markdown]
-"""
-## Test with Sample Image
-"""
 
-# %%
-# Test with a sample image
-test_image_path = ROOT_DIR / "data" / "images" / "1017.jpg"
-if test_image_path.exists():
-    process_single_image(str(test_image_path))
-else:
-    print(f"Test image not found at {test_image_path}")
-    print("Please ensure the image file exists at the specified path.")
 
 # %% [markdown]
 """
