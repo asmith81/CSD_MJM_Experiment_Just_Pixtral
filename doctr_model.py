@@ -283,13 +283,38 @@ def extract_work_order_and_total(result) -> dict:
             
             return candidates[0]['value'] if candidates else None
         
-        def find_nearby_monetary_value(target_x, target_y, all_blocks, max_distance=0.15):
-            """Find monetary values near a target coordinate."""
+        def find_nearby_monetary_value(target_x, target_y, all_blocks, label_block=None, max_distance=0.15):
+            """Find monetary values near a target coordinate, including within the label block itself."""
             candidates = []
             
+            # First, check within the label block itself if provided
+            if label_block:
+                block_words, block_text, center_x, center_y = get_block_info(label_block)
+                if block_words:
+                    for word in block_words:
+                        word_text = word['value'].strip()
+                        if ('$' in word_text or 
+                            (word_text.replace(',', '').replace('.', '').isdigit() and '.' in word_text)):
+                            clean_amount = word_text.replace('$', '').replace(',', '').strip()
+                            try:
+                                float(clean_amount)
+                                candidates.append({
+                                    'value': clean_amount,
+                                    'distance': 0,  # Same block = distance 0
+                                    'same_line': True,  # Same block = same line
+                                    'to_right': True   # Assume to the right within block
+                                })
+                            except ValueError:
+                                continue
+            
+            # Then check nearby blocks
             for block in all_blocks:
                 block_words, block_text, center_x, center_y = get_block_info(block)
                 if not block_words:
+                    continue
+                
+                # Skip the label block if we already checked it
+                if label_block and block is label_block:
                     continue
                 
                 # Calculate distance from target
@@ -349,8 +374,8 @@ def extract_work_order_and_total(result) -> dict:
                 elif ('grand' in block_text_lower and 'total' in block_text_lower):
                     extracted_data["extraction_confidence"]["spatial_match"] = True
                     
-                    # Find nearby monetary values
-                    total_cost = find_nearby_monetary_value(center_x, center_y, all_blocks)
+                    # Find nearby monetary values, including within this same block
+                    total_cost = find_nearby_monetary_value(center_x, center_y, all_blocks, label_block=block)
                     if total_cost:
                         extracted_data["total_cost"] = total_cost
                         extracted_data["extraction_confidence"]["total_cost_found"] = True
